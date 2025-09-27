@@ -23,21 +23,21 @@
 return [
     'nav' => [
         'inquiries' => [
-            '_insert_after' => 'front', // フロントページ管理のあとに追加、または '_insert_before' => 'media'
-            'text' => 'pages-plugin::admin.nav.inquiries.text',
-            'icon' => 'fas fa-fw fa-file-alt', // ページ管理
+            '_insert_after' => 'front', // フロントページ管理のあとに追加
+            'text' => 'dixlase-inquiry::admin.nav.inquiries.text',
+            'icon' => 'fas fa-fw fa-envelope', // 問い合わせ管理
             'can' => 'admin',
             'children' => [
                 'index' => [
-                    'text' => 'pages-plugin::admin.nav.inquiries.index',
-                    'route' => 'pages-plugin::admin.inquiries.index',
-                    'icon' => 'fas fa-fw fa-file', // ページ一覧
+                    'text' => 'dixlase-inquiry::admin.nav.inquiries.index',
+                    'route' => 'admin.inquiries.index',
+                    'icon' => 'fas fa-fw fa-list', // 問い合わせ一覧
                     'can' => 'admin',
                 ],
-                'create' => [
-                    'text' => 'pages-plugin::admin.nav.inquiries.create',
-                    'route' => 'pages-plugin::admin.inquiries.create',
-                    'icon' => 'fas fa-fw fa-file-circle-plus', // ページ作成
+                'settings' => [
+                    'text' => 'dixlase-inquiry::admin.nav.inquiries.settings',
+                    'route' => 'admin.inquiries.settings',
+                    'icon' => 'fas fa-fw fa-cog', // 設定
                     'can' => 'admin',
                 ],
             ],
