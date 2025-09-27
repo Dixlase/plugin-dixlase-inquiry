@@ -41,6 +41,26 @@ return new class extends Migration
             $table->boolean('phone_required')->default(false);
             $table->boolean('show_address')->default(true);
             $table->boolean('address_required')->default(false);
+            
+            // お問い合わせ設定
+            $table->boolean('show_subject')->default(true);
+            $table->boolean('subject_required')->default(false);
+            $table->boolean('show_postal_code')->default(true);
+            $table->boolean('postal_code_required')->default(false);
+            
+            // 自動返信設定
+            $table->boolean('auto_reply_enabled')->default(true);
+            $table->string('auto_reply_from_email')->nullable();
+            $table->string('auto_reply_subject')->default('お問い合わせを受け付けました');
+            $table->text('auto_reply_body')->nullable();
+            
+            // フォーム表示設定
+            $table->boolean('use_single_page')->default(true);
+            $table->boolean('show_confirmation_page')->default(true);
+            
+            // 名前フィールドの設定（多言語対応）
+            $table->boolean('name_order_western')->default(false); // false=姓名, true=名姓
+            
             $table->timestamps();
         });
     }

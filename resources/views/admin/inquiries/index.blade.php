@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-@extends('admin.layouts.app')
+@extends('admin::partials.layout')
 
 @section('title', __('dixlase-inquiry::admin.pages.index.title'))
 
@@ -34,7 +34,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <i class="fas fa-envelope text-4xl text-gray-400 mb-4"></i>
                     <p class="text-gray-600 dark:text-gray-400">{{ __('dixlase-inquiry::admin.pages.index.no_inquiries') }}</p>
                     <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                        <a href="{{ route('admin.inquiries.settings') }}" class="text-blue-600 hover:text-blue-800">{{ __('dixlase-inquiry::admin.nav.inquiries.settings') }}</a>から{{ __('dixlase-inquiry::admin.pages.index.setup_message') }}
+                        <a href="{{ route('admin.dixlase-inquiry::admin.inquiries.settings') }}" class="text-blue-600 hover:text-blue-800">{{ __('dixlase-inquiry::admin.nav.inquiries.settings') }}</a>から{{ __('dixlase-inquiry::admin.pages.index.setup_message') }}
                     </p>
                 </div>
             </div>
