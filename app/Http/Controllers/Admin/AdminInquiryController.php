@@ -26,6 +26,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
+use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 
 class AdminInquiryController extends Controller
@@ -33,6 +34,7 @@ class AdminInquiryController extends Controller
 
     use AdminInterfaceTrait;
     use AdminLoggedInTrait;
+    
     public function __construct()
     {
         $this->initialize();
@@ -42,61 +44,66 @@ class AdminInquiryController extends Controller
     public function index()
     {
         // 問い合わせ一覧を表示
-        return view('inquiry::admin.inquiries.index');
+        return view('dixlase-inquiry::admin.inquiries.index');
     }
 
     public function show($id)
     {
         // 問い合わせ詳細を表示
-        return view('inquiry::admin.inquiries.detail', compact('id'));
+        return view('dixlase-inquiry::admin.inquiries.detail', compact('id'));
     }
 
     public function destroy($id)
     {
         // 問い合わせを削除
-        return redirect()->route('admin.inquiries.index')->with('success', '問い合わせを削除しました。');
+        return redirect()->route('admin.dixlase-inquiry::admin.inquiries.index')->with('success', '問い合わせを削除しました。');
     }
 
     public function settings()
     {
-        $settings = \DB::table('inquiry_settings')->first();
+        $settings = InquirySetting::getSettings();
+        $this->viewParams['settings'] = $settings;
+        $this->viewParams['heading'] = '問い合わせフォーム設定';
         
-        if (!$settings) {
-            // Initialize default settings if not exists
-            $settings = (object)[
-                'admin_email' => '',
-                'subject' => 'お問い合わせありがとうございます',
-                'body' => '以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n電話番号: {{phone}}\n住所: {{address}}\n\nお問い合わせ内容:\n{{message}}',
-                'use_recaptcha' => false,
-                'show_phone' => true,
-                'phone_required' => false,
-                'show_address' => true,
-                'address_required' => false,
-            ];
-        }
-        
-        return view('inquiry::admin.inquiries.settings', compact('settings'));
+        return view('dixlase-inquiry::admin.settings', $this->viewParams);
     }
     
     public function updateSettings(Request $request)
     {
         $validated = $request->validate([
             'admin_email' => 'required|email',
-            'subject' => 'required|string|max:255',
-            'body' => 'required|string',
+            'subject' => 'nullable|string|max:255',
+            'body' => 'nullable|string',
             'use_recaptcha' => 'boolean',
             'show_phone' => 'boolean',
             'phone_required' => 'boolean',
             'show_address' => 'boolean',
             'address_required' => 'boolean',
+            'show_subject' => 'boolean',
+            'subject_required' => 'boolean',
+            'show_postal_code' => 'boolean',
+            'postal_code_required' => 'boolean',
+            'auto_reply_enabled' => 'boolean',
+            'auto_reply_from_email' => 'nullable|email',
+            'auto_reply_subject' => 'nullable|string|max:255',
+            'auto_reply_body' => 'nullable|string',
+            'use_single_page' => 'boolean',
+            'show_confirmation_page' => 'boolean',
+            'name_order_western' => 'boolean',
         ]);
         
-        // Update or create settings
-        if (\DB::table('inquiry_settings')->exists()) {
-            \DB::table('inquiry_settings')->update($validated);
-        } else {
-            \DB::table('inquiry_settings')->insert($validated);
+        // Convert checkbox values (unchecked checkboxes don't send data)
+        $booleanFields = [
+            'use_recaptcha', 'show_phone', 'phone_required', 'show_address', 'address_required',
+            'show_subject', 'subject_required', 'show_postal_code', 'postal_code_required',
+            'auto_reply_enabled', 'use_single_page', 'show_confirmation_page', 'name_order_western'
+        ];
+        
+        foreach ($booleanFields as $field) {
+            $validated[$field] = $validated[$field] ?? false;
         }
+        
+        InquirySetting::updateSettings($validated);
         
         return redirect()->back()->with('success', '設定を保存しました。');
     }

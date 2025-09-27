@@ -21,7 +21,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use App\Models\SecuritySetting;
+use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,23 +39,17 @@ use App\Models\SecuritySetting;
 |
 */
 
-// 設定またはコンフィグから管理画面URLを取得
-$adminUrl = SecuritySetting::get('admin_url', config('security.admin_url'));
-
-// 管理画面用のルートグループ（セキュリティミドルウェア付き）
-Route::prefix($adminUrl)
-    ->name('admin.')
-    ->middleware(['auth:member', 'admin.ip'])
+// 問い合わせ管理
+Route::prefix('inquiries')
+    ->name('dixlase-inquiry::admin.inquiries.')
+    ->middleware(['admin.ip']) // IPアドレスフィルタを適用
     ->group(function () {
-        // 問い合わせ管理
-        Route::prefix('inquiries')
-            ->name('inquiries.')
-            ->controller(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController::class)
-            ->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::get('/settings', 'settings')->name('settings');
-                Route::post('/settings', 'updateSettings')->name('settings.update');
-                Route::get('/{id}', 'show')->name('show');
-                Route::delete('/{id}', 'destroy')->name('destroy');
-            });
+        // 認証チェックを各ルートで実行
+        Route::middleware(['auth:member'])->group(function () {
+            Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
+            Route::get('/settings', [AdminInquiryController::class, 'settings'])->name('settings');
+            Route::post('/settings', [AdminInquiryController::class, 'updateSettings'])->name('settings.update');
+            Route::get('/{id}', [AdminInquiryController::class, 'show'])->name('show');
+            Route::delete('/{id}', [AdminInquiryController::class, 'destroy'])->name('destroy');
+        });
     });

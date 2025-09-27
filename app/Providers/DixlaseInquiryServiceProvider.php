@@ -48,12 +48,11 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // プラグインを.gitignore除外リストに自動追加
         PluginGitignoreHelper::addPlugin('DixlaseInquiry');
         
-        // Load routes
+        // Load routes (PluginServiceProviderの自動読み込みを無効化したため、手動で読み込み)
         $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/admin.php');
         
         // Load views
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'inquiry');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
         
         // Load translations
         $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'dixlase-inquiry');
@@ -65,6 +64,39 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
+        
+        // Merge admin navigation
+        $this->mergeAdminNavigation();
+    }
+    
+    /**
+     * 管理画面のナビゲーション設定をマージ
+     */
+    protected function mergeAdminNavigation()
+    {
+        $configFile = __DIR__ . '/../../config/admin.php';
+        
+        if (!file_exists($configFile)) {
+            return;
+        }
+
+        $pluginConfig = require $configFile;
+        
+        if (!isset($pluginConfig['nav']) || !is_array($pluginConfig['nav'])) {
+            return;
+        }
+
+        // 既存のナビゲーション設定を取得
+        $existingNav = config('admin.nav', []);
+        
+        // プラグインのナビゲーション設定をマージ
+        foreach ($pluginConfig['nav'] as $key => $value) {
+            // _insert_after や _insert_before は無視して直接追加
+            $existingNav[$key] = $value;
+        }
+        
+        // 設定を更新
+        config(['admin.nav' => $existingNav]);
     }
     
     /**

@@ -30,13 +30,13 @@ return [
             'children' => [
                 'index' => [
                     'text' => 'dixlase-inquiry::admin.nav.inquiries.index',
-                    'route' => 'admin.inquiries.index',
+                    'route' => 'admin.dixlase-inquiry::admin.inquiries.index',
                     'icon' => 'fas fa-fw fa-list', // 問い合わせ一覧
                     'can' => 'admin',
                 ],
                 'settings' => [
                     'text' => 'dixlase-inquiry::admin.nav.inquiries.settings',
-                    'route' => 'admin.inquiries.settings',
+                    'route' => 'admin.dixlase-inquiry::admin.inquiries.settings',
                     'icon' => 'fas fa-fw fa-cog', // 設定
                     'can' => 'admin',
                 ],
