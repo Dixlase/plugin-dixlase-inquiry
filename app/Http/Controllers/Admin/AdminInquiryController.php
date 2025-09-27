@@ -39,6 +39,24 @@ class AdminInquiryController extends Controller
         $this->initializeAfterLogin();
     }
 
+    public function index()
+    {
+        // 問い合わせ一覧を表示
+        return view('inquiry::admin.inquiries.index');
+    }
+
+    public function show($id)
+    {
+        // 問い合わせ詳細を表示
+        return view('inquiry::admin.inquiries.detail', compact('id'));
+    }
+
+    public function destroy($id)
+    {
+        // 問い合わせを削除
+        return redirect()->route('admin.inquiries.index')->with('success', '問い合わせを削除しました。');
+    }
+
     public function settings()
     {
         $settings = \DB::table('inquiry_settings')->first();

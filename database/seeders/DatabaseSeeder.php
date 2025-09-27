@@ -1,10 +1,10 @@
 <?php
 
 /**
- * This file is part of Dixlase Pages.
+ * This file is part of DixlaseInquiry.
  *
- * Copyright (C) 2025 exc-d
- * https://exc-d.com
+ * Copyright (C) 2025 exc-D inc.
+ * Website: https://exc-d.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Plugins\DixlasePages\Database\Seeders;
+namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

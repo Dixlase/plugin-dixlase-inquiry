@@ -1,7 +1,7 @@
 {
-    "software": "DixlaseInquiry",
+    "software": "Dixlase Inquiry",
     "author": "exc-D inc.",
     "website": "https://exc-d.com",
-    "license": "GPL",
+    "license": "GPL-3.0",
     "template": "license-gpl.txt"
 }

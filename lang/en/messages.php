@@ -21,5 +21,12 @@
  */
 
 return [
+    'nav' => [
+        'inquiries' => [
+            'text' => 'Inquiry Management',
+            'index' => 'Inquiry List',
+            'settings' => 'Settings',
+        ],
+    ],
     'hello' => 'Hello, world!',
 ];

@@ -47,5 +47,15 @@ Route::prefix($adminUrl)
     ->name('admin.')
     ->middleware(['auth:member', 'admin.ip'])
     ->group(function () {
-        // 管理画面のルートをここに定義します
+        // 問い合わせ管理
+        Route::prefix('inquiries')
+            ->name('inquiries.')
+            ->controller(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/settings', 'settings')->name('settings');
+                Route::post('/settings', 'updateSettings')->name('settings.update');
+                Route::get('/{id}', 'show')->name('show');
+                Route::delete('/{id}', 'destroy')->name('destroy');
+            });
     });

@@ -23,10 +23,21 @@
 return [
     'nav' => [
         'inquiries' => [
-            'text' => 'お問い合わせ管理',
-            'index' => 'お問い合わせ一覧',
-            'settings' => '設定',
+            'text' => 'Inquiry Management',
+            'index' => 'Inquiry List',
+            'settings' => 'Settings',
         ],
     ],
-    'hello' => 'こんにちは、世界！'
+    'pages' => [
+        'index' => [
+            'title' => 'Inquiry List',
+            'heading' => 'Inquiry List',
+            'no_inquiries' => 'No inquiries yet.',
+            'setup_message' => 'Please configure the inquiry form from settings.',
+        ],
+        'settings' => [
+            'title' => 'Inquiry Settings',
+            'heading' => 'Inquiry Settings',
+        ],
+    ],
 ];

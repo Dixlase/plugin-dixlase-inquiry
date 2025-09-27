@@ -24,6 +24,7 @@ namespace Plugins\DixlaseInquiry\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Plugins\DixlaseInquiry\Shortcodes\InquiryFormShortcode;
+use App\Helpers\PluginGitignoreHelper;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
@@ -32,16 +33,11 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // `admin.nav` の設定をマージ
-        $this->mergeAdminNavConfig(__DIR__ . '/../../config/admin.php');
-        
-
         // Register shortcode
         $this->app->extend('shortcode', function ($shortcodeManager, $app) {
             $shortcodeManager->add('inquiry_form', InquiryFormShortcode::class);
             return $shortcodeManager;
         });
-
     }
 
     /**
@@ -49,11 +45,18 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // プラグインを.gitignore除外リストに自動追加
+        PluginGitignoreHelper::addPlugin('DixlaseInquiry');
+        
         // Load routes
         $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/admin.php');
         
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'inquiry');
+        
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'dixlase-inquiry');
         
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
@@ -62,5 +65,14 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
+    }
+    
+    /**
+     * プラグインアンインストール時の処理
+     */
+    public function uninstall(): void
+    {
+        // プラグインを.gitignore除外リストから削除
+        PluginGitignoreHelper::removePlugin('DixlaseInquiry');
     }
 }
