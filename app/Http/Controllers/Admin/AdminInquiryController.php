@@ -63,7 +63,6 @@ class AdminInquiryController extends Controller
     {
         $settings = InquirySetting::getSettings();
         $this->viewParams['settings'] = $settings;
-        $this->viewParams['heading'] = '問い合わせフォーム設定';
         
         return view('dixlase-inquiry::admin.settings', $this->viewParams);
     }

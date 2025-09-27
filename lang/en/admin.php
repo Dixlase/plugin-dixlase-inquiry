@@ -28,6 +28,18 @@ return [
             'settings' => 'Settings',
         ],
     ],
+    
+    'inquiries' => [
+        'index' => [
+            'heading' => 'Inquiry List',
+        ],
+        'settings' => [
+            'heading' => 'Inquiry Form Settings',
+        ],
+        'show' => [
+            'heading' => 'Inquiry Details',
+        ],
+    ],
     'pages' => [
         'index' => [
             'title' => 'Inquiry List',

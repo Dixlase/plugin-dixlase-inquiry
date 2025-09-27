@@ -28,6 +28,18 @@ return [
             'settings' => '設定',
         ],
     ],
+    
+    'inquiries' => [
+        'index' => [
+            'heading' => 'お問い合わせ一覧',
+        ],
+        'settings' => [
+            'heading' => 'お問い合わせフォーム設定',
+        ],
+        'show' => [
+            'heading' => 'お問い合わせ詳細',
+        ],
+    ],
     'pages' => [
         'index' => [
             'title' => 'お問い合わせ一覧',
