@@ -22,22 +22,15 @@
 
 return [
     'nav' => [
-        'inquiries' => [
-            '_insert_after' => 'front', // フロントページ管理のあとに追加
-            'text' => 'dixlase-inquiry::admin.nav.inquiries.text',
-            'icon' => 'fas fa-fw fa-envelope', // 問い合わせ管理
+        'settings' => [
+            'text' => 'common.settings', // 親項目のテキスト
+            'icon' => 'fas fa-fw fa-cog', // 親項目のアイコン
             'can' => 'admin',
             'children' => [
-                'index' => [
-                    'text' => 'dixlase-inquiry::admin.nav.inquiries.index',
-                    'route' => 'admin.dixlase-inquiry::admin.inquiries.index',
-                    'icon' => 'fas fa-fw fa-list', // 問い合わせ一覧
-                    'can' => 'admin',
-                ],
-                'settings' => [
-                    'text' => 'dixlase-inquiry::admin.nav.inquiries.settings',
-                    'route' => 'admin.dixlase-inquiry::admin.inquiries.settings',
-                    'icon' => 'fas fa-fw fa-cog', // 設定
+                'inquiries' => [
+                    'text' => 'dixlase-inquiry::admin.nav.settings.inquiry',
+                    'route' => 'admin.dixlase-inquiry::admin.settings.inquiry',
+                    'icon' => 'fas fa-fw fa-envelope',
                     'can' => 'admin',
                 ],
             ],

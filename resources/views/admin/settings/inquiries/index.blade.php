@@ -2,7 +2,7 @@
 This file is part of DixlaseInquiry.
 
 Copyright (C) 2025 exc-D inc.
-https://exc-d.com
+Website: https://exc-d.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('admin::partials.layout')
 
 @section('content')
-    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiries.settings.update') }}" method="POST">
+    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.settings.inquiry.update') }}" method="POST">
         @csrf
         
         <!-- 基本設定 -->
@@ -92,12 +92,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-                <!-- 題名 -->
+                <!-- 題名フィールド -->
                 <div>
                     @include('components::form.checkbox', [
                         'name' => 'show_subject',
                         'label' => '題名フィールドを表示',
-                        'checked' => old('show_subject', $settings->show_subject ?? true)
+                        'checked' => old('show_subject', $settings->show_subject ?? false)
                     ])
                 </div>
                 <div>
@@ -108,12 +108,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-                <!-- 郵便番号 -->
+                <!-- 郵便番号フィールド -->
                 <div>
                     @include('components::form.checkbox', [
                         'name' => 'show_postal_code',
                         'label' => '郵便番号フィールドを表示',
-                        'checked' => old('show_postal_code', $settings->show_postal_code ?? true)
+                        'checked' => old('show_postal_code', $settings->show_postal_code ?? false)
                     ])
                 </div>
                 <div>
@@ -124,12 +124,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-                <!-- 住所 -->
+                <!-- 住所フィールド -->
                 <div>
                     @include('components::form.checkbox', [
                         'name' => 'show_address',
                         'label' => '住所フィールドを表示',
-                        'checked' => old('show_address', $settings->show_address ?? true)
+                        'checked' => old('show_address', $settings->show_address ?? false)
                     ])
                 </div>
                 <div>
@@ -140,7 +140,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-                <!-- 電話番号 -->
+                <!-- 電話番号フィールド -->
                 <div>
                     @include('components::form.checkbox', [
                         'name' => 'show_phone',
@@ -315,7 +315,7 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
-// チェックボックスの変更を監視
+// 自動返信チェックボックスの変更イベントを監視
 document.addEventListener('DOMContentLoaded', function() {
     const autoReplyCheckbox = document.querySelector('input[name="auto_reply_enabled"]');
     if (autoReplyCheckbox) {

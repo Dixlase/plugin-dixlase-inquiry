@@ -43,28 +43,19 @@ class AdminInquiryController extends Controller
 
     public function index()
     {
+        $settings = InquirySetting::getSettings();
+        $this->viewParams['settings'] = $settings;
         // 問い合わせ一覧を表示
-        return view('dixlase-inquiry::admin.inquiries.index');
+        return view('dixlase-inquiry::admin.inquiries.index', $this->viewParams);
     }
 
-    public function show($id)
-    {
-        // 問い合わせ詳細を表示
-        return view('dixlase-inquiry::admin.inquiries.detail', compact('id'));
-    }
 
-    public function destroy($id)
-    {
-        // 問い合わせを削除
-        return redirect()->route('admin.dixlase-inquiry::admin.inquiries.index')->with('success', '問い合わせを削除しました。');
-    }
 
     public function settings()
     {
-        $settings = InquirySetting::getSettings();
-        $this->viewParams['settings'] = $settings;
+
         
-        return view('dixlase-inquiry::admin.settings', $this->viewParams);
+        return view('dixlase-inquiry::admin.settings.inquiries.index', $this->viewParams);
     }
     
     public function updateSettings(Request $request)

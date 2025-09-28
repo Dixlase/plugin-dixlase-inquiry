@@ -22,10 +22,8 @@
 
 return [
     'nav' => [
-        'inquiries' => [
-            'text' => 'Inquiry Management',
-            'index' => 'Inquiry List',
-            'settings' => 'Settings',
+        'settings' => [
+            'inquiry' => 'Inquiry Settings',
         ],
     ],
     

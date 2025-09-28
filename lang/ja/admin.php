@@ -22,10 +22,8 @@
 
 return [
     'nav' => [
-        'inquiries' => [
-            'text' => 'お問い合わせ管理',
-            'index' => 'お問い合わせ一覧',
-            'settings' => '設定',
+        'settings' => [
+            'inquiry' => 'お問い合わせ設定',
         ],
     ],
     
