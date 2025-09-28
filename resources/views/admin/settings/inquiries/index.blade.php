@@ -20,22 +20,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @extends('admin::partials.layout')
 
+@section('title', __('dixlase-inquiry::admin.settings.inquiry.heading'))
+
 @section('content')
     <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.settings.inquiry.update') }}" method="POST">
         @csrf
         
         <!-- 基本設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.basic.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.basic.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.basic.admin_email') }}</legend>
                 @include('components::form.text', [
                     'name' => 'admin_email',
-                    'label' => __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email'),
+                    'label' => __('dixlase-inquiry::admin.settings.basic.admin_email'),
                     'value' => old('admin_email', $settings->admin_email ?? ''),
                     'required' => true,
-                    'help' => __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email_help')
+                    'help' => __('dixlase-inquiry::admin.settings.basic.admin_email_help')
                 ])
             </fieldset>
         </section>
@@ -43,10 +45,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- フォーム表示設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.display.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.display.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.display.form_type') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.display.form_type') }}</legend>
             
             <div class="grid grid-cols-1 gap-6">
                 @include('components::form.radio-group', [
@@ -72,10 +74,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         
         <!-- フォーム項目設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.form_fields.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.form_fields.name_order') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.name_order') }}</legend>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- 名前の順序 -->
@@ -163,33 +165,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- 完了ページ設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.completion.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.completion.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.completion.title_text') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.completion.title_text') }}</legend>
                 @include('components::form.text', [
                     'name' => 'completion_title',
-                    'label' => __('dixlase-inquiry::inquiry.admin.settings.completion.title_text'),
+                    'label' => __('dixlase-inquiry::admin.settings.completion.title_text'),
                     'value' => old('completion_title', $settings->completion_title ?? '送信完了'),
-                    'help' => __('dixlase-inquiry::inquiry.admin.settings.completion.title_help')
+                    'help' => __('dixlase-inquiry::admin.settings.completion.title_help')
                 ])
             </fieldset>
 
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.completion.message') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.completion.message') }}</legend>
                 @include('components::form.textarea', [
                     'name' => 'completion_message',
-                    'label' => __('dixlase-inquiry::inquiry.admin.settings.completion.message'),
+                    'label' => __('dixlase-inquiry::admin.settings.completion.message'),
                     'value' => old('completion_message', $settings->completion_message ?? 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。'),
                     'rows' => 4,
-                    'help' => __('dixlase-inquiry::inquiry.admin.settings.completion.message_help')
+                    'help' => __('dixlase-inquiry::admin.settings.completion.message_help')
                 ])
             </fieldset>
         </section>
 
         <!-- 自動返信設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.auto_reply.title') }}</h2>
             
             <fieldset>
 
@@ -203,7 +205,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <div x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
                         <div x-show="autoReplyEnabled" class="space-y-6">
                             <fieldset>
-                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.from_email') }}</legend>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.from_email') }}</legend>
                                 @include('components::form.text', [
                                     'name' => 'auto_reply_from_email',
                                     'label' => '自動返信の送信元メールアドレス',
@@ -213,7 +215,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             </fieldset>
 
                             <fieldset>
-                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.subject') }}</legend>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.subject') }}</legend>
                                 @include('components::form.text', [
                                     'name' => 'auto_reply_subject',
                                     'label' => '自動返信の件名',
@@ -222,7 +224,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             </fieldset>
 
                             <fieldset>
-                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.body') }}</legend>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.body') }}</legend>
                                 @include('components::form.textarea', [
                                     'name' => 'auto_reply_body',
                                     'label' => '自動返信の本文',
@@ -239,10 +241,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- 管理者通知設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.admin_notification.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.subject') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.subject') }}</legend>
                 @include('components::form.text', [
                     'name' => 'subject',
                     'label' => '管理者通知の件名',
@@ -251,7 +253,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </fieldset>
 
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.body') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.body') }}</legend>
                 @include('components::form.textarea', [
                     'name' => 'body',
                     'label' => '管理者通知の本文',
@@ -266,17 +268,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- セキュリティ設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.security.title') }}</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.security.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.security.use_recaptcha') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.security.use_recaptcha') }}</legend>
                 
                 <div class="grid grid-cols-1 gap-6">
                     @include('components::form.checkbox', [
                         'name' => 'use_recaptcha',
-                        'label' => __('dixlase-inquiry::inquiry.admin.settings.security.use_recaptcha'),
+                        'label' => __('dixlase-inquiry::admin.settings.security.use_recaptcha'),
                         'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false),
-                        'help' => __('dixlase-inquiry::inquiry.admin.settings.security.recaptcha_help')
+                        'help' => __('dixlase-inquiry::admin.settings.security.recaptcha_help')
                     ])
                 </div>
             </fieldset>
@@ -290,8 +292,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         'id' => 'confirmationModal',
         'label' => __('common.save'),
         'onclick' => "openModal('confirmInquirySettingsModal')",
-        'title' => __('dixlase-inquiry::inquiry.admin.settings.confirm_title'),
-        'message' => __('dixlase-inquiry::inquiry.admin.settings.confirm_message'),
+        'title' => __('dixlase-inquiry::admin.settings.confirm_title'),
+        'message' => __('dixlase-inquiry::admin.settings.confirm_message'),
         'confirm_label' => __('common.save'),
         'cancel_label' => __('common.cancel'),
         'form' => 'inquiry-settings-form',

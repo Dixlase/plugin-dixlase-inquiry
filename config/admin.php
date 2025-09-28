@@ -21,16 +21,19 @@
  */
 
 return [
+    // プラグイン設定画面のルート名
+    'settings_route' => 'admin.dixlase-inquiry::admin.settings.inquiry',
+    
     'nav' => [
         'settings' => [
-            'text' => 'common.settings', // 親項目のテキスト
-            'icon' => 'fas fa-fw fa-cog', // 親項目のアイコン
+            'text' => 'common.settings', // 視項目のテキスト
+            'icon' => 'fas fa-fw fa-cog', // 視項目のアイコン
             'can' => 'admin',
             'children' => [
                 'inquiries' => [
                     'text' => 'dixlase-inquiry::admin.nav.settings.inquiry',
                     'route' => 'admin.dixlase-inquiry::admin.settings.inquiry',
-                    'icon' => 'fas fa-fw fa-envelope',
+                    'icon' => 'fas fa-fw fa-envelope', // 問い合わせ設定
                     'can' => 'admin',
                 ],
             ],
