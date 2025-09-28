@@ -73,6 +73,8 @@ class AdminInquiryController extends Controller
             'admin_email' => 'required|email',
             'subject' => 'nullable|string|max:255',
             'body' => 'nullable|string',
+            'completion_title' => 'nullable|string|max:255',
+            'completion_message' => 'nullable|string',
             'use_recaptcha' => 'boolean',
             'show_phone' => 'boolean',
             'phone_required' => 'boolean',

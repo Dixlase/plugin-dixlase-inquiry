@@ -21,28 +21,61 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('admin::partials.layout')
 
 @section('content')
-    <form action="{{ route('admin.dixlase-inquiry::admin.inquiries.settings.update') }}" method="POST">
+    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiries.settings.update') }}" method="POST">
         @csrf
         
         <!-- 基本設定 -->
         <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.basic.title') }}</h2>
             
-            <div class="grid grid-cols-1 gap-6">
-                <!-- 送信先メールアドレス -->
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email') }}</legend>
                 @include('components::form.text', [
                     'name' => 'admin_email',
-                    'label' => '送信先メールアドレス',
+                    'label' => __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email'),
                     'value' => old('admin_email', $settings->admin_email ?? ''),
                     'required' => true,
-                    'help' => '問い合わせ内容が送信されるメールアドレスを入力してください。'
+                    'help' => __('dixlase-inquiry::inquiry.admin.settings.basic.admin_email_help')
                 ])
-            </div>
+            </fieldset>
         </section>
 
+
+        <!-- フォーム表示設定 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.display.title') }}</h2>
+            
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.display.form_type') }}</legend>
+            
+            <div class="grid grid-cols-1 gap-6">
+                @include('components::form.radio-group', [
+                    'name' => 'use_single_page',
+                    'label' => 'フォーム表示方式',
+                    'options' => [
+                        '1' => 'シングルページ（動的に確認画面・完了画面を表示）',
+                        '0' => '別ページ（入力画面・確認画面・完了画面を別々のページで表示）'
+                    ],
+                    'value' => old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0',
+                    'help' => 'シングルページ方式では、1つのページ内で入力から完了まで処理されます。'
+                ])
+
+                @include('components::form.checkbox', [
+                    'name' => 'show_confirmation_page',
+                    'label' => '確認画面を表示する',
+                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true),
+                    'help' => 'チェックを外すと、入力後すぐに送信されます。'
+                ])
+            </div>
+            </fieldset>
+        </section>
+        
         <!-- フォーム項目設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">フォーム項目設定</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.form_fields.title') }}</h2>
+            
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.form_fields.name_order') }}</legend>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- 名前の順序 -->
@@ -122,83 +155,103 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         'checked' => old('phone_required', $settings->phone_required ?? false)
                     ])
                 </div>
-            </div>
+                </div>
+            </fieldset>
         </section>
 
-        <!-- フォーム表示設定 -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">フォーム表示設定</h2>
-            
-            <div class="grid grid-cols-1 gap-6">
-                @include('components::form.radio-group', [
-                    'name' => 'use_single_page',
-                    'label' => 'フォーム表示方式',
-                    'options' => [
-                        '1' => 'シングルページ（動的に確認画面・完了画面を表示）',
-                        '0' => '別ページ（入力画面・確認画面・完了画面を別々のページで表示）'
-                    ],
-                    'value' => old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0',
-                    'help' => 'シングルページ方式では、1つのページ内で入力から完了まで処理されます。'
-                ])
+        
 
-                @include('components::form.checkbox', [
-                    'name' => 'show_confirmation_page',
-                    'label' => '確認画面を表示する',
-                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true),
-                    'help' => 'チェックを外すと、入力後すぐに送信されます。'
+        <!-- 完了ページ設定 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.completion.title') }}</h2>
+            
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.completion.title_text') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'completion_title',
+                    'label' => __('dixlase-inquiry::inquiry.admin.settings.completion.title_text'),
+                    'value' => old('completion_title', $settings->completion_title ?? '送信完了'),
+                    'help' => __('dixlase-inquiry::inquiry.admin.settings.completion.title_help')
                 ])
-            </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.completion.message') }}</legend>
+                @include('components::form.textarea', [
+                    'name' => 'completion_message',
+                    'label' => __('dixlase-inquiry::inquiry.admin.settings.completion.message'),
+                    'value' => old('completion_message', $settings->completion_message ?? 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。'),
+                    'rows' => 4,
+                    'help' => __('dixlase-inquiry::inquiry.admin.settings.completion.message_help')
+                ])
+            </fieldset>
         </section>
 
         <!-- 自動返信設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">自動返信設定</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.title') }}</h2>
             
-            <div class="grid grid-cols-1 gap-6">
-                @include('components::form.checkbox', [
-                    'name' => 'auto_reply_enabled',
-                    'label' => '自動返信を有効にする',
-                    'checked' => old('auto_reply_enabled', $settings->auto_reply_enabled ?? true)
-                ])
+            <fieldset>
 
-                <div x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
-                    <div x-show="autoReplyEnabled" class="space-y-6">
-                        @include('components::form.text', [
-                            'name' => 'auto_reply_from_email',
-                            'label' => '自動返信の送信元メールアドレス',
-                            'value' => old('auto_reply_from_email', $settings->auto_reply_from_email ?? ''),
-                            'help' => '空の場合は、システムのデフォルト送信元アドレスが使用されます。'
-                        ])
+                <div class="grid grid-cols-1 gap-6">
+                    @include('components::form.checkbox', [
+                        'name' => 'auto_reply_enabled',
+                        'label' => '自動返信を有効にする',
+                        'checked' => old('auto_reply_enabled', $settings->auto_reply_enabled ?? true)
+                    ])
 
-                        @include('components::form.text', [
-                            'name' => 'auto_reply_subject',
-                            'label' => '自動返信の件名',
-                            'value' => old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました'),
-                        ])
+                    <div x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
+                        <div x-show="autoReplyEnabled" class="space-y-6">
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.from_email') }}</legend>
+                                @include('components::form.text', [
+                                    'name' => 'auto_reply_from_email',
+                                    'label' => '自動返信の送信元メールアドレス',
+                                    'value' => old('auto_reply_from_email', $settings->auto_reply_from_email ?? ''),
+                                    'help' => '空の場合は、システムのデフォルト送信元アドレスが使用されます。'
+                                ])
+                            </fieldset>
 
-                        @include('components::form.textarea', [
-                            'name' => 'auto_reply_body',
-                            'label' => '自動返信の本文',
-                            'value' => old('auto_reply_body', $settings->auto_reply_body ?? ''),
-                            'rows' => 8,
-                            'help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}'
-                        ])
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.subject') }}</legend>
+                                @include('components::form.text', [
+                                    'name' => 'auto_reply_subject',
+                                    'label' => '自動返信の件名',
+                                    'value' => old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました'),
+                                ])
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.auto_reply.body') }}</legend>
+                                @include('components::form.textarea', [
+                                    'name' => 'auto_reply_body',
+                                    'label' => '自動返信の本文',
+                                    'value' => old('auto_reply_body', $settings->auto_reply_body ?? ''),
+                                    'rows' => 8,
+                                    'help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}'
+                                ])
+                            </fieldset>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </fieldset>
         </section>
 
         <!-- 管理者通知設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">管理者通知設定</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.title') }}</h2>
             
-            <div class="grid grid-cols-1 gap-6">
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.subject') }}</legend>
                 @include('components::form.text', [
                     'name' => 'subject',
                     'label' => '管理者通知の件名',
                     'value' => old('subject', $settings->subject ?? 'お問い合わせありがとうございます'),
                 ])
+            </fieldset>
 
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.admin_notification.body') }}</legend>
                 @include('components::form.textarea', [
                     'name' => 'body',
                     'label' => '管理者通知の本文',
@@ -206,33 +259,43 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     'rows' => 8,
                     'help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}'
                 ])
-            </div>
+            </fieldset>
         </section>
+
+        
 
         <!-- セキュリティ設定 -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">セキュリティ設定</h2>
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::inquiry.admin.settings.security.title') }}</h2>
             
-            <div class="grid grid-cols-1 gap-6">
-                @include('components::form.checkbox', [
-                    'name' => 'use_recaptcha',
-                    'label' => 'reCAPTCHAを使用する',
-                    'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false),
-                    'help' => 'スパム対策としてreCAPTCHAを有効にします。事前にセキュリティ設定でreCAPTCHAの設定が必要です。'
-                ])
-            </div>
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::inquiry.admin.settings.security.use_recaptcha') }}</legend>
+                
+                <div class="grid grid-cols-1 gap-6">
+                    @include('components::form.checkbox', [
+                        'name' => 'use_recaptcha',
+                        'label' => __('dixlase-inquiry::inquiry.admin.settings.security.use_recaptcha'),
+                        'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false),
+                        'help' => __('dixlase-inquiry::inquiry.admin.settings.security.recaptcha_help')
+                    ])
+                </div>
+            </fieldset>
         </section>
 
-        <!-- 保存ボタン -->
-        <div class="flex justify-end">
-            @include('components::form.button', [
-                'type' => 'submit',
-                'label' => '設定を保存',
-                'variant' => 'primary',
-                'icon' => 'fas fa-save'
-            ])
-        </div>
     </form>
+@endsection
+
+@section('save')
+    @include('components.save', [
+        'id' => 'confirmationModal',
+        'label' => __('common.save'),
+        'onclick' => "openModal('confirmInquirySettingsModal')",
+        'title' => __('dixlase-inquiry::inquiry.admin.settings.confirm_title'),
+        'message' => __('dixlase-inquiry::inquiry.admin.settings.confirm_message'),
+        'confirm_label' => __('common.save'),
+        'cancel_label' => __('common.cancel'),
+        'form' => 'inquiry-settings-form',
+    ])
 @endsection
 
 @push('scripts')
@@ -240,7 +303,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 document.addEventListener('alpine:init', () => {
     Alpine.data('inquirySettings', () => ({
         autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }},
-        
         init() {
             // 自動返信チェックボックスの変更を監視
             this.$watch('autoReplyEnabled', (value) => {
