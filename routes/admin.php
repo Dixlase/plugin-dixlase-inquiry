@@ -47,9 +47,19 @@ Route::prefix('inquiries')
         // 認証チェックを各ルートで実行
         Route::middleware(['auth:member'])->group(function () {
             Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
-            Route::get('/settings', [AdminInquiryController::class, 'settings'])->name('settings');
-            Route::post('/settings', [AdminInquiryController::class, 'updateSettings'])->name('settings.update');
             Route::get('/{id}', [AdminInquiryController::class, 'show'])->name('show');
             Route::delete('/{id}', [AdminInquiryController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+// 設定管理
+Route::prefix('settings')
+    ->name('dixlase-inquiry::admin.settings.')
+    ->middleware(['admin.ip']) // IPアドレスフィルタを適用
+    ->group(function () {
+        // 認証チェックを各ルートで実行
+        Route::middleware(['auth:member'])->group(function () {
+            Route::get('/inquiries', [AdminInquiryController::class, 'settings'])->name('inquiry');
+            Route::post('/inquiries', [AdminInquiryController::class, 'updateSettings'])->name('inquiry.update');
         });
     });

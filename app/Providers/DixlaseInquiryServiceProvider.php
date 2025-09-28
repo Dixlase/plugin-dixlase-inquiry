@@ -23,13 +23,13 @@
 namespace Plugins\DixlaseInquiry\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Plugins\DixlaseInquiry\Shortcodes\InquiryFormShortcode;
+use App\Traits\PluginLoaderTrait;
 use App\Helpers\PluginGitignoreHelper;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
+    use PluginLoaderTrait;
     /**
-     * Register services.
      */
     public function register(): void
     {
@@ -38,6 +38,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
             $shortcodeManager->add('inquiry_form', InquiryFormShortcode::class);
             return $shortcodeManager;
         });
+        
+        // Merge admin navigation
+        $this->mergeAdminNavigation('DixlaseInquiry', __DIR__ . '/../../config/admin.php');
     }
 
     /**
@@ -64,39 +67,6 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
-        
-        // Merge admin navigation
-        $this->mergeAdminNavigation();
-    }
-    
-    /**
-     * 管理画面のナビゲーション設定をマージ
-     */
-    protected function mergeAdminNavigation()
-    {
-        $configFile = __DIR__ . '/../../config/admin.php';
-        
-        if (!file_exists($configFile)) {
-            return;
-        }
-
-        $pluginConfig = require $configFile;
-        
-        if (!isset($pluginConfig['nav']) || !is_array($pluginConfig['nav'])) {
-            return;
-        }
-
-        // 既存のナビゲーション設定を取得
-        $existingNav = config('admin.nav', []);
-        
-        // プラグインのナビゲーション設定をマージ
-        foreach ($pluginConfig['nav'] as $key => $value) {
-            // _insert_after や _insert_before は無視して直接追加
-            $existingNav[$key] = $value;
-        }
-        
-        // 設定を更新
-        config(['admin.nav' => $existingNav]);
     }
     
     /**
