@@ -60,7 +60,6 @@ return [
     'validation' => [
         'required' => ':attributeは必須項目です。',
         'email' => ':attributeは有効なメールアドレスを入力してください。',
-        'max' => ':attributeは:max文字以内で入力してください。',
     ],
     'admin' => [
         'settings' => [
@@ -73,7 +72,6 @@ return [
             'form_fields' => [
                 'title' => 'フォーム項目設定',
                 'name_order' => '名前の表示順序',
-                'name_order_japanese' => '日本式（姓・名）',
                 'name_order_western' => '欧米式（名・姓）',
                 'name_order_help' => '英語版では自動的に欧米式（名・姓）の順序になります。',
                 'show_subject' => '題名フィールドを表示',
@@ -87,6 +85,7 @@ return [
             ],
             'display' => [
                 'title' => 'フォーム表示設定',
+                'form_type' => 'フォーム表示方式',
                 'use_single_page' => 'フォーム表示方式',
                 'single_page' => 'シングルページ（動的に確認画面・完了画面を表示）',
                 'separate_pages' => '別ページ（入力画面・確認画面・完了画面を別々のページで表示）',
@@ -107,14 +106,26 @@ return [
                 'title' => '管理者通知設定',
                 'subject' => '管理者通知の件名',
                 'body' => '管理者通知の本文',
-                'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
+            ],
+            'completion' => [
+                'title' => '完了ページ設定',
+                'title_text' => '完了ページの見出し',
+                'title_help' => '問い合わせ送信完了時に表示される見出しテキスト',
+                'message' => '完了ページのメッセージ',
+                'message_help' => '問い合わせ送信完了時に表示されるメッセージ。HTMLタグが使用できます。',
             ],
             'security' => [
                 'title' => 'セキュリティ設定',
                 'use_recaptcha' => 'reCAPTCHAを使用する',
                 'recaptcha_help' => 'スパム対策としてreCAPTCHAを有効にします。事前にセキュリティ設定でreCAPTCHAの設定が必要です。',
             ],
-            'save' => '設定を保存',
+            'confirm_title' => '問い合わせ設定の保存',
+            'confirm_message' => '問い合わせ設定を保存してもよろしいですか？',
         ],
+    ],
+
+    'messages' => [
+        'settings_updated' => '設定が正常に更新されました。',
+        'validation_error' => '入力内容に誤りがあります。',
     ],
 ];
