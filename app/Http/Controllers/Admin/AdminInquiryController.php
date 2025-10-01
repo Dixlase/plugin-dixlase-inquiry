@@ -26,6 +26,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
+use App\Models\BaseSetting;
+use App\Models\SecuritySetting;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 
@@ -53,7 +55,28 @@ class AdminInquiryController extends Controller
 
     public function settings()
     {
-
+        $settings = InquirySetting::getSettings();
+        
+        // メールテスト状態を取得（DB優先、セッションは一時的な状態のみ）
+        $sessionTestResults = session('mail_test_results', []);
+        
+        $mailConnectionTested = (bool) ($sessionTestResults['mail_connection_tested'] ?? BaseSetting::getValue('mail_connection_tested', false));
+        $mailSendTested = (bool) ($sessionTestResults['mail_send_tested'] ?? BaseSetting::getValue('mail_send_tested', false));
+        $mailReceiveTested = (bool) ($sessionTestResults['mail_receive_tested'] ?? BaseSetting::getValue('mail_receive_tested', false));
+        
+        // CAPTCHA設定状況を確認
+        $captchaEnabled = filter_var(SecuritySetting::get('captcha_enabled', false), FILTER_VALIDATE_BOOLEAN);
+        $captchaDriver = SecuritySetting::get('captcha_driver', '');
+        $captchaTestResult = session('captcha_test_result', SecuritySetting::get('captcha_test_result', false));
+        $captchaAuthenticated = filter_var($captchaTestResult, FILTER_VALIDATE_BOOLEAN);
+        
+        $this->viewParams['settings'] = $settings;
+        $this->viewParams['mailConnectionTested'] = $mailConnectionTested;
+        $this->viewParams['mailSendTested'] = $mailSendTested;
+        $this->viewParams['mailReceiveTested'] = $mailReceiveTested;
+        $this->viewParams['captchaEnabled'] = $captchaEnabled;
+        $this->viewParams['captchaDriver'] = $captchaDriver;
+        $this->viewParams['captchaAuthenticated'] = $captchaAuthenticated;
         
         return view('dixlase-inquiry::admin.settings.inquiries.index', $this->viewParams);
     }

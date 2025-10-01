@@ -129,11 +129,13 @@ return [
             ],
             'security' => [
                 'title' => 'セキュリティ設定',
-                'use_recaptcha' => 'reCAPTCHAを使用する',
-                'recaptcha_help' => 'スパム対策としてreCAPTCHAを有効にします。事前にセキュリティ設定でreCAPTCHAの設定が必要です。',
+                'use_recaptcha' => 'CAPTCHAを使用する',
+                'recaptcha_help' => 'スパム対策としてCAPTCHAを有効にします。事前にセキュリティ設定でCAPTCHAの設定が必要です。',
             ],
             'confirm_title' => '問い合わせ設定の保存',
             'confirm_message' => '問い合わせ設定を保存してもよろしいですか？',
+            'mail_test_required' => '問い合わせフォーム機能を使用するには、<a href=":url" class="text-blue-600 hover:text-blue-800 underline">基本設定</a>でメールサーバー設定とメールテストをすべて完了してください。メールサーバーが設定されていない場合、問い合わせフォームは正常に動作しません。',
+            'captcha_test_required' => 'CAPTCHA機能を使用するには、<a href=":url" class="text-blue-600 hover:text-blue-800 underline">セキュリティ設定</a>でCAPTCHA設定と認証テストをすべて完了してください。CAPTCHA設定が未完了の場合、CAPTCHA機能は正常に動作しません。',
         ],
 
     'messages' => [
