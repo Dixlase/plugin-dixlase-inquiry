@@ -129,11 +129,13 @@ return [
             ],
             'security' => [
                 'title' => 'Security Settings',
-                'use_recaptcha' => 'Use reCAPTCHA',
-                'recaptcha_help' => 'Enable reCAPTCHA for spam protection. reCAPTCHA must be configured in security settings first.',
+                'use_recaptcha' => 'Use CAPTCHA',
+                'recaptcha_help' => 'Enable CAPTCHA for spam protection. CAPTCHA must be configured in security settings first.',
             ],
             'confirm_title' => 'Save Inquiry Settings',
             'confirm_message' => 'Are you sure you want to save the inquiry settings?',
+            'mail_test_required' => 'To use the contact form functionality, please complete mail server settings and mail tests in the <a href=":url" class="text-blue-600 hover:text-blue-800 underline">base settings</a>. The contact form will not function properly without proper mail server configuration.',
+            'captcha_test_required' => 'To use the CAPTCHA functionality, please complete CAPTCHA settings and authentication tests in the <a href=":url" class="text-blue-600 hover:text-blue-800 underline">security settings</a>. The CAPTCHA feature will not function properly without proper CAPTCHA configuration.',
         ],
 
     'messages' => [

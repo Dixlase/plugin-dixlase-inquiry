@@ -36,7 +36,7 @@ class InquirySettingsSeeder extends Seeder
         if (!InquirySetting::exists()) {
             InquirySetting::create([
                 'admin_email' => 'admin@example.com',
-                'subject' => 'お問い合わせありがとうございます',
+                'subject' => 'お問い合わせを受け付けました',
                 'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
                 'use_recaptcha' => false,
                 'show_phone' => true,
@@ -49,7 +49,7 @@ class InquirySettingsSeeder extends Seeder
                 'postal_code_required' => false,
                 'auto_reply_enabled' => true,
                 'auto_reply_from_email' => '',
-                'auto_reply_subject' => 'お問い合わせを受け付けました',
+                'auto_reply_subject' => 'お問い合わせありがとうございます',
                 'auto_reply_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
                 'use_single_page' => true,
                 'show_confirmation_page' => true,

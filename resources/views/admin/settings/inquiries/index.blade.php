@@ -23,6 +23,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @section('title', __('dixlase-inquiry::admin.settings.inquiry.heading'))
 
 @section('content')
+    <!-- メールサーバー設定の確認メッセージ -->
+    @if(!($mailConnectionTested && $mailSendTested && $mailReceiveTested))
+        <div class="mb-6">
+            @include('components.message', [
+                'type' => 'warning',
+                'message' => __('dixlase-inquiry::admin.settings.mail_test_required', ['url' => route('admin.settings.base')])
+            ])
+        </div>
+    @endif
+
     <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.settings.inquiry.update') }}" method="POST">
         @csrf
         
@@ -270,6 +280,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.security.title') }}</h2>
             
+            <!-- CAPTCHA設定の確認メッセージ -->
+            @if(!($captchaEnabled && !empty($captchaDriver) && $captchaAuthenticated))
+                <div class="mb-4">
+                    @include('components.message', [
+                        'type' => 'warning',
+                        'message' => __('dixlase-inquiry::admin.settings.captcha_test_required', ['url' => route('admin.settings.security')])
+                    ])
+                </div>
+            @endif
+            
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.security.use_recaptcha') }}</legend>
                 
@@ -277,9 +297,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     @include('components::form.checkbox', [
                         'name' => 'use_recaptcha',
                         'label' => __('dixlase-inquiry::admin.settings.security.use_recaptcha'),
-                        'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false),
-                        'help' => __('dixlase-inquiry::admin.settings.security.recaptcha_help')
+                        'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false)
                     ])
+                    
+                    <!-- ヘルプテキスト -->
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        {{ __('dixlase-inquiry::admin.settings.security.recaptcha_help') }}
+                    </div>
                 </div>
             </fieldset>
         </section>
