@@ -71,6 +71,19 @@ return [
     'validation' => [
         'required' => ':attributeは必須項目です。',
         'email' => ':attributeは有効なメールアドレスを入力してください。',
+        'admin_email_required' => '管理者メールアドレスは必須です。',
+        'admin_email_invalid' => '有効なメールアドレスを入力してください。',
+        'auto_reply_from_email_invalid' => '自動返信の送信元メールアドレスが無効です。',
+        'last_name_required' => '姓は必須です。',
+        'first_name_required' => '名は必須です。',
+        'email_required' => 'メールアドレスは必須です。',
+        'email_invalid' => '有効なメールアドレスを入力してください。',
+        'message_required' => 'お問い合わせ内容は必須です。',
+        'subject_required' => '題名は必須です。',
+        'postal_code_required' => '郵便番号は必須です。',
+        'address_required' => '住所は必須です。',
+        'phone_required' => '電話番号は必須です。',
+        'recaptcha_required' => 'reCAPTCHA認証が必要です。',
     ],
     'settings' => [
             'inquiry' => [
