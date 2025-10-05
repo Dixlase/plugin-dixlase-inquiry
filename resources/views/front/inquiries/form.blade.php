@@ -18,39 +18,142 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-
-<form action="{{ route('inquiry.submit') }}" method="POST">
-    @csrf
-    <div class="form-group">
-        <label>お名前 <span class="required">*</span></label>
-        <input type="text" name="name" class="form-control" required>
-    </div>
+<section>
+    <h2>{{ __('dixlase-inquiry::front.form.heading') }}</h2>
     
-    <div class="form-group">
-        <label>メールアドレス <span class="required">*</span></label>
-        <input type="email" name="email" class="form-control" required>
-    </div>
+    <form action="{{ route('inquiry.submit') }}" method="POST">
+        @csrf
 
-    @if($settings->show_phone)
-    <div class="form-group">
-        <label>電話番号 @if($settings->phone_required)<span class="required">*</span>@endif</label>
-        <input type="tel" name="phone" class="form-control" 
-            @if($settings->phone_required) required @endif>
-    </div>
-    @endif
+        <!-- 題名 -->
+        @if($settings->show_subject ?? false)
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.subject') }}</legend>
+            @include('components::form.text', [
+                'name' => 'subject',
+                'value' => old('subject'),
+                'required' => $settings->subject_required ?? false,
+                'placeholder' => __('dixlase-inquiry::front.form.subject_placeholder'),
+            ])
+        </fieldset>
+        @endif
 
-    @if($settings->show_address)
-    <div class="form-group">
-        <label>住所 @if($settings->address_required)<span class="required">*</span>@endif</label>
-        <input type="text" name="address" class="form-control"
-            @if($settings->address_required) required @endif>
-    </div>
-    @endif
+        <!-- 名前（日本式：姓・名 / 欧米式：名・姓） -->
+        @if($settings->name_order_western ?? false)
+        <!-- 欧米式（名・姓） -->
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.first_name') }}</legend>
+            @include('components::form.text', [
+                'name' => 'first_name',
+                'value' => old('first_name'),
+                'required' => true,
+                'placeholder' => __('dixlase-inquiry::front.form.first_name_placeholder'),
+            ])
+        </fieldset>
 
-    <div class="form-group">
-        <label>本文 <span class="required">*</span></label>
-        <textarea name="message" rows="5" class="form-control" required></textarea>
-    </div>
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.last_name') }}</legend>
+            @include('components::form.text', [
+                'name' => 'last_name',
+                'value' => old('last_name'),
+                'required' => true,
+                'placeholder' => __('dixlase-inquiry::front.form.last_name_placeholder'),
+            ])
+        </fieldset>
+        @else
+        <!-- 日本式（姓・名） -->
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.last_name') }}</legend>
+            @include('components::form.text', [
+                'name' => 'last_name',
+                'value' => old('last_name'),
+                'required' => true,
+                'placeholder' => __('dixlase-inquiry::front.form.last_name_placeholder'),
+            ])
+        </fieldset>
 
-    <button type="submit" class="btn btn-primary">送信する</button>
-</form>
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.first_name') }}</legend>
+            @include('components::form.text', [
+                'name' => 'first_name',
+                'value' => old('first_name'),
+                'required' => true,
+                'placeholder' => __('dixlase-inquiry::front.form.first_name_placeholder'),
+            ])
+        </fieldset>
+        @endif
+
+        <!-- メールアドレス -->
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.email') }}</legend>
+            @include('components::form.text', [
+                'type' => 'email',
+                'name' => 'email',
+                'value' => old('email'),
+                'required' => true,
+                'placeholder' => __('dixlase-inquiry::front.form.email_placeholder'),
+            ])
+        </fieldset>
+
+        <!-- 郵便番号 -->
+        @if($settings->show_postal_code ?? false)
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.postal_code') }}</legend>
+            @include('components::form.text', [
+                'name' => 'postal_code',
+                'value' => old('postal_code'),
+                'required' => $settings->postal_code_required ?? false,
+                'placeholder' => __('dixlase-inquiry::front.form.postal_code_placeholder'),
+            ])
+        </fieldset>
+        @endif
+
+        <!-- 住所 -->
+        @if($settings->show_address ?? false)
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.address') }}</legend>
+            @include('components::form.text', [
+                'name' => 'address',
+                'value' => old('address'),
+                'required' => $settings->address_required ?? false,
+                'placeholder' => __('dixlase-inquiry::front.form.address_placeholder'),
+            ])
+        </fieldset>
+        @endif
+
+        <!-- 電話番号 -->
+        @if($settings->show_phone ?? true)
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.phone') }}</legend>
+            @include('components::form.text', [
+                'type' => 'tel',
+                'name' => 'phone',
+                'value' => old('phone'),
+                'required' => $settings->phone_required ?? false,
+                'placeholder' => __('dixlase-inquiry::front.form.phone_placeholder'),
+            ])
+        </fieldset>
+        @endif
+
+        <!-- 問い合わせ内容 -->
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.message') }}</legend>
+            @include('components::form.textarea', [
+                'name' => 'message',
+                'value' => old('message'),
+                'required' => true,
+                'rows' => 5,
+                'placeholder' => __('dixlase-inquiry::front.form.message_placeholder'),
+            ])
+        </fieldset>
+
+        <!-- 送信ボタン -->
+        <div class="flex gap-2 mt-4">
+            @include('components::form.button', [
+                'type' => 'submit',
+                'variant' => 'primary',
+                'label' => __('dixlase-inquiry::front.form.submit'),
+                'icon' => 'fas fa-paper-plane',
+            ])
+        </div>
+    </form>
+</section>

@@ -1,0 +1,95 @@
+{{--
+This file is part of DixlaseInquiry.
+
+Copyright (C) 2025 exc-D inc.
+https://exc-d.com
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+--}}
+
+<section>
+    <h2>{{ $settings->completion_title ?? __('dixlase-inquiry::front.complete.title') }}</h2>
+    
+    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 my-6">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-3xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-green-800 dark:text-green-300">
+                    {!! $settings->completion_message ?? __('dixlase-inquiry::front.complete.message') !!}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 送信内容の概要（オプション） -->
+    @if(isset($inquiry))
+    <div class="mt-8">
+        <h3 class="text-lg font-semibold mb-4">{{ __('dixlase-inquiry::front.complete.inquiry_details') }}</h3>
+        
+        <div class="space-y-3">
+            <!-- 受付番号 -->
+            @if(!empty($inquiry->id))
+            <div class="flex">
+                <dt class="w-1/3 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ __('dixlase-inquiry::front.complete.inquiry_number') }}
+                </dt>
+                <dd class="w-2/3 text-gray-900 dark:text-white">
+                    #{{ str_pad($inquiry->id, 6, '0', STR_PAD_LEFT) }}
+                </dd>
+            </div>
+            @endif
+
+            <!-- 送信日時 -->
+            <div class="flex">
+                <dt class="w-1/3 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ __('dixlase-inquiry::front.complete.submitted_at') }}
+                </dt>
+                <dd class="w-2/3 text-gray-900 dark:text-white">
+                    {{ $inquiry->created_at->format('Y年m月d日 H:i') }}
+                </dd>
+            </div>
+
+            <!-- メールアドレス -->
+            <div class="flex">
+                <dt class="w-1/3 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ __('dixlase-inquiry::front.form.email') }}
+                </dt>
+                <dd class="w-2/3 text-gray-900 dark:text-white">
+                    {{ $inquiry->email }}
+                </dd>
+            </div>
+        </div>
+
+        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
+            <p class="text-sm text-blue-800 dark:text-blue-300">
+                <i class="fas fa-info-circle mr-2"></i>
+                {{ __('dixlase-inquiry::front.complete.auto_reply_notice') }}
+            </p>
+        </div>
+    </div>
+    @endif
+
+    <!-- トップページへ戻るボタン -->
+    <div class="mt-8">
+        @include('components::form.button', [
+            'type' => 'link',
+            'href' => route('front.index'),
+            'variant' => 'primary',
+            'label' => __('dixlase-inquiry::front.complete.back_to_home'),
+            'icon' => 'fas fa-home',
+        ])
+    </div>
+</section>

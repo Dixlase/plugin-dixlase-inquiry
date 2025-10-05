@@ -24,6 +24,8 @@ namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Plugins\DixlaseInquiry\App\Http\Requests\FrontInquirySubmitRequest;
+use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class FrontInquiryController extends Controller
 {
@@ -35,78 +37,66 @@ class FrontInquiryController extends Controller
 
     public function form()
     {
-        $settings = \DB::table('inquiry_settings')->first();
+        $settings = InquirySetting::getSettings();
         
-        if (!$settings || empty($settings->admin_email)) {
-            return view('inquiry::front.inquiries.error', [
-                'message' => 'お問い合わせ機能は現在ご利用いただけません。'
+        if (!$settings || empty($settings['admin_email'])) {
+            return view('dixlase-inquiry::front.inquiries.error', [
+                'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ]);
         }
         
-        return view('inquiry::front.inquiries.form', compact('settings'));
+        return view('dixlase-inquiry::front.inquiries.form', compact('settings'));
     }
     
-    public function submit(Request $request)
+    public function submit(FrontInquirySubmitRequest $request)
     {
-        $settings = \DB::table('inquiry_settings')->first();
+        $settings = InquirySetting::getSettings();
         
-        if (!$settings || empty($settings->admin_email)) {
+        if (!$settings || empty($settings['admin_email'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'お問い合わせ機能は現在ご利用いただけません。'
+                'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ], 400);
         }
         
-        $rules = [
-            'name' => $settings->name_required ? 'required|string|max:255' : 'nullable|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => $settings->phone_required ? 'required|string|max:20' : 'nullable|string|max:20',
-            'address' => $settings->address_required ? 'required|string|max:255' : 'nullable|string|max:255',
-            'message' => 'required|string',
-        ];
-        
-        if ($settings->use_recaptcha) {
-            $rules['g-recaptcha-response'] = 'required|captcha';
-        }
-        
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
         
         try {
             // Prepare email content
-            $emailBody = $settings->body;
+            $emailBody = $settings['body'];
             foreach ($validated as $key => $value) {
                 $emailBody = str_replace('{{' . $key . '}}', $value, $emailBody);
             }
             
             // Send email to admin
             \Mail::raw($emailBody, function($message) use ($settings, $validated) {
-                $message->to($settings->admin_email)
-                        ->subject('新しいお問い合わせがありました');
+                $message->to($settings['admin_email'])
+                        ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
             });
             
             // Send auto-reply if enabled
-            if (!empty($settings->subject) && !empty($settings->body)) {
-                $replyBody = $settings->body;
+            if ($settings['auto_reply_enabled'] && !empty($settings['auto_reply_subject']) && !empty($settings['auto_reply_body'])) {
+                $replyBody = $settings['auto_reply_body'];
                 foreach ($validated as $key => $value) {
                     $replyBody = str_replace('{{' . $key . '}}', $value, $replyBody);
                 }
                 
                 \Mail::raw($replyBody, function($message) use ($settings, $validated) {
                     $message->to($validated['email'])
-                            ->subject($settings->subject);
+                            ->subject($settings['auto_reply_subject']);
                 });
             }
             
             return response()->json([
                 'success' => true,
-                'message' => 'お問い合わせが送信されました。ありがとうございます。'
+                'message' => __('dixlase-inquiry::front.messages.submit_success')
             ]);
             
         } catch (\Exception $e) {
             \Log::error('Inquiry send failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'お問い合わせの送信中にエラーが発生しました。しばらくしてからもう一度お試しください。'
+                'message' => __('dixlase-inquiry::front.messages.submit_error')
             ], 500);
         }
     }

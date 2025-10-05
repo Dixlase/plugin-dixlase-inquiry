@@ -29,6 +29,7 @@ use App\Traits\AdminLoggedInTrait;
 use App\Models\BaseSetting;
 use App\Models\SecuritySetting;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Http\Requests\AdminInquirySettingsRequest;
 
 
 class AdminInquiryController extends Controller
@@ -81,46 +82,13 @@ class AdminInquiryController extends Controller
         return view('dixlase-inquiry::admin.settings.inquiries.index', $this->viewParams);
     }
     
-    public function updateSettings(Request $request)
+    public function updateSettings(AdminInquirySettingsRequest $request)
     {
-        $validated = $request->validate([
-            'admin_email' => 'required|email',
-            'subject' => 'nullable|string|max:255',
-            'body' => 'nullable|string',
-            'completion_title' => 'nullable|string|max:255',
-            'completion_message' => 'nullable|string',
-            'use_recaptcha' => 'boolean',
-            'show_phone' => 'boolean',
-            'phone_required' => 'boolean',
-            'show_address' => 'boolean',
-            'address_required' => 'boolean',
-            'show_subject' => 'boolean',
-            'subject_required' => 'boolean',
-            'show_postal_code' => 'boolean',
-            'postal_code_required' => 'boolean',
-            'auto_reply_enabled' => 'boolean',
-            'auto_reply_from_email' => 'nullable|email',
-            'auto_reply_subject' => 'nullable|string|max:255',
-            'auto_reply_body' => 'nullable|string',
-            'use_single_page' => 'boolean',
-            'show_confirmation_page' => 'boolean',
-            'name_order_western' => 'boolean',
-        ]);
-        
-        // Convert checkbox values (unchecked checkboxes don't send data)
-        $booleanFields = [
-            'use_recaptcha', 'show_phone', 'phone_required', 'show_address', 'address_required',
-            'show_subject', 'subject_required', 'show_postal_code', 'postal_code_required',
-            'auto_reply_enabled', 'use_single_page', 'show_confirmation_page', 'name_order_western'
-        ];
-        
-        foreach ($booleanFields as $field) {
-            $validated[$field] = $validated[$field] ?? false;
-        }
+        $validated = $request->validated();
         
         InquirySetting::updateSettings($validated);
         
-        return redirect()->back()->with('success', '設定を保存しました。');
+        return redirect()->back()->with('success', __('dixlase-inquiry::admin.messages.settings_updated'));
     }
 
 }
