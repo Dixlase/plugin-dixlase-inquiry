@@ -71,6 +71,11 @@ return [
     'validation' => [
         'required' => 'The :attribute field is required.',
         'email' => 'Please enter a valid email address for :attribute.',
+        'admin_email_required' => 'Admin email address is required.',
+        'admin_email_invalid' => 'Please enter a valid email address.',
+        'auto_reply_from_email_invalid' => 'Auto-reply from email address is invalid.',
+        'inquiry_url_slug_required' => 'URL slug is required.',
+        'inquiry_url_slug_format' => 'URL slug can only contain lowercase letters, numbers, and hyphens (-).',
     ],
     'settings' => [
             'inquiry' => [
@@ -103,6 +108,12 @@ return [
                 'single_page' => 'Single Page (Dynamic confirmation and completion screens)',
                 'separate_pages' => 'Separate Pages (Input, confirmation, and completion screens on separate pages)',
                 'single_page_help' => 'Single page method processes everything from input to completion on one page.',
+                'shortcode_label' => 'Shortcode',
+                'shortcode_help' => 'Paste this shortcode into pages or themes to use.',
+                'inquiry_url' => 'Inquiry Page URL',
+                'inquiry_url_slug' => 'URL Slug',
+                'inquiry_url_slug_help' => 'Set the URL for the inquiry page (e.g., inquiry → /inquiry). Only lowercase letters, numbers, and hyphens are allowed.',
+                'preview_page_help' => 'Opens the inquiry page in a new tab. You can preview before saving the settings.',
                 'show_confirmation' => 'Show Confirmation Screen',
                 'show_confirmation_help' => 'If unchecked, the form will be submitted immediately after input.',
             ],

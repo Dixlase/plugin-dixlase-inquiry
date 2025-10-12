@@ -23,22 +23,19 @@
 namespace Plugins\DixlaseInquiry\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 use App\Traits\PluginLoaderTrait;
 use App\Helpers\PluginGitignoreHelper;
+use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
     use PluginLoaderTrait;
     /**
+     * Register services.
      */
     public function register(): void
     {
-        // Register shortcode
-        $this->app->extend('shortcode', function ($shortcodeManager, $app) {
-            $shortcodeManager->add('inquiry_form', InquiryFormShortcode::class);
-            return $shortcodeManager;
-        });
-        
         // Merge admin navigation
         $this->mergeAdminNavigation('DixlaseInquiry', __DIR__ . '/../../config/admin.php');
     }
@@ -54,6 +51,12 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // Load routes (PluginServiceProviderの自動読み込みを無効化したため、手動で読み込み)
         $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
         
+        // 動的ルート登録（別ページモード用）
+        $this->registerDynamicRoutes();
+        
+        // ショートコード登録
+        $this->registerShortcodes();
+        
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
         
@@ -67,6 +70,45 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
+    }
+    
+    /**
+     * ショートコード登録
+     */
+    protected function registerShortcodes(): void
+    {
+        if ($this->app->bound('shortcode')) {
+            $shortcode = $this->app['shortcode'];
+            $shortcode->add('inquiry', \Plugins\DixlaseInquiry\App\Shortcodes\InquiryFormShortcode::class);
+        }
+    }
+    
+    /**
+     * 動的ルート登録
+     */
+    protected function registerDynamicRoutes(): void
+    {
+        try {
+            $settings = InquirySetting::getSettings();
+            
+            // 別ページモードの場合のみルート登録
+            if (!$settings->use_single_page) {
+                $slug = $settings->inquiry_url_slug ?? 'inquiry';
+                
+                Route::middleware(['web', 'front.ip'])
+                    ->group(function () use ($slug) {
+                        Route::get($slug, [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'index'])
+                            ->name('inquiry.index');
+                        Route::post($slug . '/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'confirm'])
+                            ->name('inquiry.confirm');
+                        Route::post($slug . '/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'send'])
+                            ->name('inquiry.send');
+                    });
+            }
+        } catch (\Exception $e) {
+            // データベースがまだ存在しない場合などのエラーを無視
+            \Log::debug('Failed to register dynamic inquiry routes: ' . $e->getMessage());
+        }
     }
     
     /**

@@ -18,11 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-<section>
-    <h2>{{ __('dixlase-inquiry::front.form.heading') }}</h2>
-    
-    <form action="{{ route('inquiry.submit') }}" method="POST">
-        @csrf
+@extends('themes::layouts.app')
+
+@section('title', __('dixlase-inquiry::front.form.title'))
+
+@section('content')
+    <div class="dixlase-inquiry">
+        <!-- メインコンテンツ -->
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                <!-- ページヘッダー -->
+                <header class="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        {{ __('dixlase-inquiry::front.form.heading') }}
+                    </h1>
+                </header>
+                
+                <!-- フォームコンテンツ -->
+                <div class="px-6 py-8">
+                    <form action="{{ $settings->show_confirmation_page ? route('inquiry.confirm') : route('inquiry.send') }}" method="POST">
+                        @csrf
 
         <!-- 題名 -->
         @if($settings->show_subject ?? false)
@@ -147,7 +162,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </fieldset>
 
         <!-- 送信ボタン -->
-        <div class="flex gap-2 mt-4">
+        <div class="flex gap-2 mt-6">
             @include('components::form.button', [
                 'type' => 'submit',
                 'variant' => 'primary',
@@ -155,5 +170,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 'icon' => 'fas fa-paper-plane',
             ])
         </div>
-    </form>
-</section>
+                    </form>
+                </div>
+            </article>
+        </div>
+    </div>
+@endsection

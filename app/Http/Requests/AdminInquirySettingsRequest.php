@@ -60,6 +60,7 @@ class AdminInquirySettingsRequest extends FormRequest
             'auto_reply_body' => 'nullable|string',
             'use_single_page' => 'boolean',
             'show_confirmation_page' => 'boolean',
+            'inquiry_url_slug' => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
             'name_order_western' => 'boolean',
         ];
     }
@@ -103,6 +104,8 @@ class AdminInquirySettingsRequest extends FormRequest
             'admin_email.required' => __('dixlase-inquiry::admin.validation.admin_email_required'),
             'admin_email.email' => __('dixlase-inquiry::admin.validation.admin_email_invalid'),
             'auto_reply_from_email.email' => __('dixlase-inquiry::admin.validation.auto_reply_from_email_invalid'),
+            'inquiry_url_slug.required' => __('dixlase-inquiry::admin.validation.inquiry_url_slug_required'),
+            'inquiry_url_slug.regex' => __('dixlase-inquiry::admin.validation.inquiry_url_slug_format'),
         ];
     }
 }

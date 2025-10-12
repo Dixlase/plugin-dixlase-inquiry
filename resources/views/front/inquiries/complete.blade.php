@@ -18,10 +18,25 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-<section>
-    <h2>{{ $settings->completion_title ?? __('dixlase-inquiry::front.complete.title') }}</h2>
-    
-    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 my-6">
+@extends('themes::layouts.app')
+
+@section('title', $settings->completion_title ?? __('dixlase-inquiry::front.complete.title'))
+
+@section('content')
+    <div class="dixlase-inquiry">
+        <!-- メインコンテンツ -->
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                <!-- ページヘッダー -->
+                <header class="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        {{ $settings->completion_title ?? __('dixlase-inquiry::front.complete.title') }}
+                    </h1>
+                </header>
+                
+                <!-- 完了メッセージ -->
+                <div class="px-6 py-8">
+                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-6">
         <div class="flex items-start">
             <div class="flex-shrink-0">
                 <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-3xl"></i>
@@ -92,4 +107,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             'icon' => 'fas fa-home',
         ])
     </div>
-</section>
+                </div>
+            </article>
+        </div>
+    </div>
+@endsection

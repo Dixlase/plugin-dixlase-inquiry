@@ -29,17 +29,81 @@ use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class FrontInquiryController extends Controller
 {
-
     public function __construct()
     {
-
     }
 
+    /**
+     * 問い合わせフォーム表示（別ページモード）
+     */
+    public function index()
+    {
+        $settings = InquirySetting::getSettings();
+        
+        // シングルページモードの場合は404
+        if ($settings->use_single_page) {
+            abort(404);
+        }
+        
+        return view('dixlase-inquiry::front.inquiries.form', [
+            'settings' => $settings,
+        ]);
+    }
+
+    /**
+     * 確認画面表示（別ページモード）
+     */
+    public function confirm(Request $request)
+    {
+        $settings = InquirySetting::getSettings();
+        
+        // シングルページモードの場合は404
+        if ($settings->use_single_page) {
+            abort(404);
+        }
+        
+        // 確認画面が無効の場合は404
+        if (!$settings->show_confirmation_page) {
+            abort(404);
+        }
+        
+        // バリデーション処理
+        // TODO: バリデーション実装
+        
+        return view('dixlase-inquiry::front.inquiries.confirm', [
+            'settings' => $settings,
+            'data' => $request->all(),
+        ]);
+    }
+
+    /**
+     * 送信処理（別ページモード）
+     */
+    public function send(Request $request)
+    {
+        $settings = InquirySetting::getSettings();
+        
+        // シングルページモードの場合は404
+        if ($settings->use_single_page) {
+            abort(404);
+        }
+        
+        // 送信処理
+        // TODO: メール送信実装
+        
+        return view('dixlase-inquiry::front.inquiries.complete', [
+            'settings' => $settings,
+        ]);
+    }
+
+    /**
+     * フォーム表示（シングルページモード用・旧メソッド）
+     */
     public function form()
     {
         $settings = InquirySetting::getSettings();
         
-        if (!$settings || empty($settings['admin_email'])) {
+        if (!$settings || empty($settings->admin_email)) {
             return view('dixlase-inquiry::front.inquiries.error', [
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ]);
