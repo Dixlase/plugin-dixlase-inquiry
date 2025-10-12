@@ -31,36 +31,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inquiry_settings', function (Blueprint $table) {
+        Schema::create('dxl_plg_dixlase_inquiry_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('admin_email');
-            $table->string('subject')->default('お問い合わせありがとうございます');
-            $table->text('body')->nullable();
-            $table->boolean('use_recaptcha')->default(false);
-            $table->boolean('show_phone')->default(true);
-            $table->boolean('phone_required')->default(false);
-            $table->boolean('show_address')->default(true);
-            $table->boolean('address_required')->default(false);
-            
-            // お問い合わせ設定
-            $table->boolean('show_subject')->default(true);
-            $table->boolean('subject_required')->default(false);
-            $table->boolean('show_postal_code')->default(true);
-            $table->boolean('postal_code_required')->default(false);
-            
-            // 自動返信設定
-            $table->boolean('auto_reply_enabled')->default(true);
-            $table->string('auto_reply_from_email')->nullable();
-            $table->string('auto_reply_subject')->default('お問い合わせを受け付けました');
-            $table->text('auto_reply_body')->nullable();
-            
-            // フォーム表示設定
-            $table->boolean('use_single_page')->default(true);
-            $table->boolean('show_confirmation_page')->default(true);
-            
-            // 名前フィールドの設定（多言語対応）
-            $table->boolean('name_order_western')->default(false); // false=姓名, true=名姓
-            
+            $table->string('name')->unique();
+            $table->text('value')->nullable();
             $table->timestamps();
         });
     }
@@ -70,6 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inquiry_settings');
+        Schema::dropIfExists('dxl_plg_dixlase_inquiry_settings');
     }
 };

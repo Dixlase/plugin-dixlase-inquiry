@@ -18,16 +18,32 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-<section>
-    <h2>{{ __('dixlase-inquiry::front.confirmation.title') }}</h2>
-    
-    <p>{{ __('dixlase-inquiry::front.confirmation.message') }}</p>
+@extends('themes::layouts.app')
 
-    <form action="{{ route('inquiry.send') }}" method="POST">
-        @csrf
+@section('title', __('dixlase-inquiry::front.confirmation.title'))
 
-        <!-- 入力内容の確認表示 -->
-        <div class="space-y-4">
+@section('content')
+    <div class="dixlase-inquiry">
+        <!-- メインコンテンツ -->
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                <!-- ページヘッダー -->
+                <header class="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        {{ __('dixlase-inquiry::front.confirmation.title') }}
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        {{ __('dixlase-inquiry::front.confirmation.message') }}
+                    </p>
+                </header>
+                
+                <!-- 確認内容 -->
+                <div class="px-6 py-8">
+                    <form action="{{ route('inquiry.send') }}" method="POST">
+                        @csrf
+
+                        <!-- 入力内容の確認表示 -->
+                        <div class="space-y-4">
             <!-- 題名 -->
             @if(!empty($data['subject']))
             <div class="border-b pb-2">
@@ -136,5 +152,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 'onclick' => 'history.back()',
             ])
         </div>
-    </form>
-</section>
+                        </div>
+                    </form>
+                </div>
+            </article>
+        </div>
+    </div>
+@endsection

@@ -26,55 +26,50 @@ use Illuminate\Database\Eloquent\Model;
 
 class InquirySetting extends Model
 {
-    protected $table = 'inquiry_settings';
+    protected $table = 'dxl_plg_dixlase_inquiry_settings';
 
     protected $fillable = [
-        'admin_email',
-        'subject',
-        'body',
-        'use_recaptcha',
-        'show_phone',
-        'phone_required',
-        'show_address',
-        'address_required',
-        'show_subject',
-        'subject_required',
-        'show_postal_code',
-        'postal_code_required',
-        'auto_reply_enabled',
-        'auto_reply_from_email',
-        'auto_reply_subject',
-        'auto_reply_body',
-        'use_single_page',
-        'show_confirmation_page',
-        'name_order_western',
+        'name',
+        'value',
     ];
 
-    protected $casts = [
-        'use_recaptcha' => 'boolean',
-        'show_phone' => 'boolean',
-        'phone_required' => 'boolean',
-        'show_address' => 'boolean',
-        'address_required' => 'boolean',
-        'show_subject' => 'boolean',
-        'subject_required' => 'boolean',
-        'show_postal_code' => 'boolean',
-        'postal_code_required' => 'boolean',
-        'auto_reply_enabled' => 'boolean',
-        'use_single_page' => 'boolean',
-        'show_confirmation_page' => 'boolean',
-        'name_order_western' => 'boolean',
-    ];
+    /**
+     * 設定値を取得
+     */
+    public static function get(string $name, $default = null)
+    {
+        $setting = self::where('name', $name)->first();
+        return $setting ? $setting->value : $default;
+    }
+
+    /**
+     * 設定値を保存
+     */
+    public static function set(string $name, $value): void
+    {
+        self::updateOrCreate(
+            ['name' => $name],
+            ['value' => $value]
+        );
+    }
 
     /**
      * 設定を取得（存在しない場合はデフォルト値を返す）
      */
     public static function getSettings()
     {
-        $settings = self::first();
+        $defaults = self::getDefaultSettings();
+        $settings = new \stdClass();
         
-        if (!$settings) {
-            return self::getDefaultSettings();
+        foreach ($defaults as $key => $defaultValue) {
+            $value = self::get($key, $defaultValue);
+            
+            // boolean型の設定値を適切に変換
+            if (is_bool($defaultValue)) {
+                $settings->$key = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            } else {
+                $settings->$key = $value;
+            }
         }
         
         return $settings;
@@ -104,6 +99,7 @@ class InquirySetting extends Model
             'auto_reply_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
             'use_single_page' => true,
             'show_confirmation_page' => true,
+            'inquiry_url_slug' => 'inquiry',
             'name_order_western' => false,
         ];
     }
@@ -113,12 +109,13 @@ class InquirySetting extends Model
      */
     public static function updateSettings(array $data)
     {
-        $settings = self::first();
-        
-        if ($settings) {
-            $settings->update($data);
-        } else {
-            self::create($data);
+        foreach ($data as $name => $value) {
+            // boolean値を文字列に変換
+            if (is_bool($value)) {
+                $value = $value ? '1' : '0';
+            }
+            
+            self::set($name, $value);
         }
         
         return true;
