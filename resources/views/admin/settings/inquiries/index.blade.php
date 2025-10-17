@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-@extends('admin::partials.layout')
+@extends('layouts.admin')
 
 @section('title', __('dixlase-inquiry::admin.settings.inquiry.heading'))
 
@@ -366,9 +366,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @section('save')
     @include('components.save', [
-        'id' => 'confirmationModal',
+        'id_confirmation' => 'confirmInquirySettingsModal',
         'label' => __('common.save'),
-        'onclick' => "openModal('confirmInquirySettingsModal')",
         'title' => __('dixlase-inquiry::admin.settings.confirm_title'),
         'message' => __('dixlase-inquiry::admin.settings.confirm_message'),
         'confirm_label' => __('common.save'),
