@@ -25,41 +25,35 @@ use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController;
 
 /*
 |--------------------------------------------------------------------------
-| 管理画面ルート
+| プラグイン管理画面ルート（自動読み込み）
 |--------------------------------------------------------------------------
 |
-| 管理画面用のルートを登録するファイルです。
-| これらのルートは RouteServiceProvider によって読み込まれ、
-| "web" と "auth" ミドルウェアグループに自動的に割り当てられます。
+| このファイルはプラグインが有効化されている場合、PluginServiceProviderによって
+| 自動的に読み込まれます。以下のミドルウェアが自動適用されます：
 |
-| セキュリティに関する注意:
-| - auth:member ミドルウェアで認証を要求します
-| - admin.ip ミドルウェアでIPアドレスフィルタリングを実施します
-| - IPアドレスフィルタリングを実施しないとセキュリティリスクが高まります
+| - admin.ip: IPアドレスフィルタリング
+| - auth:member: 管理メンバー認証
+| - verified: メール認証済みチェック
+| - log.admin.activity: 管理画面操作ログ
+|
+| ルートプレフィックス: /admin（動的に取得）
+| ルート名プレフィックス: admin.
 |
 */
 
 // 問い合わせ管理
 Route::prefix('inquiries')
     ->name('dixlase-inquiry::admin.inquiries.')
-    ->middleware(['admin.ip']) // IPアドレスフィルタを適用
     ->group(function () {
-        // 認証チェックを各ルートで実行
-        Route::middleware(['auth:member'])->group(function () {
-            Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
-            Route::get('/{id}', [AdminInquiryController::class, 'show'])->name('show');
-            Route::delete('/{id}', [AdminInquiryController::class, 'destroy'])->name('destroy');
-        });
+        Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminInquiryController::class, 'show'])->name('show');
+        Route::delete('/{id}', [AdminInquiryController::class, 'destroy'])->name('destroy');
     });
 
 // 設定管理
 Route::prefix('settings')
     ->name('dixlase-inquiry::admin.settings.')
-    ->middleware(['admin.ip']) // IPアドレスフィルタを適用
     ->group(function () {
-        // 認証チェックを各ルートで実行
-        Route::middleware(['auth:member'])->group(function () {
-            Route::get('/inquiries', [AdminInquiryController::class, 'settings'])->name('inquiry');
-            Route::post('/inquiries', [AdminInquiryController::class, 'updateSettings'])->name('inquiry.update');
-        });
+        Route::get('/inquiries', [AdminInquiryController::class, 'settings'])->name('inquiry');
+        Route::post('/inquiries', [AdminInquiryController::class, 'updateSettings'])->name('inquiry.update');
     });

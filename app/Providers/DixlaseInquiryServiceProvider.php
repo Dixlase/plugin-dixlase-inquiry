@@ -48,10 +48,8 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // プラグインを.gitignore除外リストに自動追加
         PluginGitignoreHelper::addPlugin('DixlaseInquiry');
         
-        // Load routes (PluginServiceProviderの自動読み込みを無効化したため、手動で読み込み)
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
-        
         // 動的ルート登録（別ページモード用）
+        // 注: 静的ルート（routes/web.php, routes/admin.php）はPluginServiceProviderが自動読み込み
         $this->registerDynamicRoutes();
         
         // ショートコード登録
