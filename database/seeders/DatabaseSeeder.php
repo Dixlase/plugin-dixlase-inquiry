@@ -32,9 +32,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Register your seeders here
-        // $this->call([
-        //     YourSeeder::class,
-        // ]);
+        $this->call([
+            InquirySettingsSeeder::class,
+            InquiryRolePermissionSeeder::class,
+        ]);
     }
 }
