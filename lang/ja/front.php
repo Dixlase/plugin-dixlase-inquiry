@@ -43,6 +43,15 @@ return [
         'address_placeholder' => '東京都渋谷区...',
         'phone_placeholder' => '03-1234-5678',
         'message_placeholder' => 'お問い合わせ内容をご記入ください',
+        // 欧米式住所フィールド
+        'street_address' => '番地・建物名',
+        'city' => '市区町村',
+        'state' => '都道府県',
+        'country' => '国',
+        'street_address_placeholder' => '1-2-3 神南, ABCビル 5階',
+        'city_placeholder' => '渋谷区',
+        'state_placeholder' => '東京都',
+        'country_placeholder' => '日本',
     ],
 
     'placeholders' => [
@@ -85,8 +94,15 @@ return [
         'message_required' => 'お問い合わせ内容は必須です。',
         'subject_required' => '題名は必須です。',
         'postal_code_required' => '郵便番号は必須です。',
+        'postal_code_format_japanese' => '郵便番号は「123-4567」または「1234567」の形式で入力してください。',
+        'postal_code_format_western' => '郵便番号は3〜10文字の英数字で入力してください。',
         'address_required' => '住所は必須です。',
+        'street_address_required' => '番地・建物名は必須です。',
+        'city_required' => '市区町村は必須です。',
+        'state_required' => '都道府県は必須です。',
         'phone_required' => '電話番号は必須です。',
+        'phone_format_japanese' => '電話番号は10〜13桁の数字（ハイフン可）で入力してください。',
+        'phone_format_western' => '電話番号は有効な形式で入力してください（例: +1-234-567-8900）。',
         'recaptcha_required' => 'reCAPTCHA認証が必要です。',
     ],
 

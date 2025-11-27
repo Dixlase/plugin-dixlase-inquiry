@@ -130,6 +130,8 @@ return [
                 'subject' => 'Auto-Reply Subject',
                 'body' => 'Auto-Reply Message Body',
                 'body_help' => 'Available variables: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
+                'default_subject' => 'Thank you for your inquiry',
+                'default_body' => "Thank you for contacting us.\n\nWe have received your inquiry with the following details.\nOur team will review your message and get back to you soon.\n\nName: {{name}}\nEmail: {{email}}\nSubject: {{subject}}\n\nMessage:\n{{message}}\n\nBest regards.",
             ],
             'admin_notification' => [
                 'title' => 'Admin Notification Settings',
@@ -138,6 +140,8 @@ return [
                 'subject' => 'Admin Notification Subject',
                 'body' => 'Admin Notification Message Body',
                 'body_help' => 'Available variables: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
+                'default_subject' => 'Inquiry Received',
+                'default_body' => "We have received the following inquiry.\n\nName: {{name}}\nEmail: {{email}}\nSubject: {{subject}}\nPostal Code: {{postal_code}}\nAddress: {{address}}\nPhone: {{phone}}\n\nMessage:\n{{message}}",
             ],
             'completion' => [
                 'title' => 'Completion Page Settings',

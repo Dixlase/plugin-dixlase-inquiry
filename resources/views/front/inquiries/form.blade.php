@@ -124,15 +124,59 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- 住所 -->
         @if($settings->show_address ?? false)
-        <fieldset>
-            <legend>{{ __('dixlase-inquiry::front.form.address') }}</legend>
-            @include('components::form.text', [
-                'name' => 'address',
-                'value' => old('address'),
-                'required' => $settings->address_required ?? false,
-                'placeholder' => __('dixlase-inquiry::front.form.address_placeholder'),
-            ])
-        </fieldset>
+            @if($settings->name_order_western ?? false)
+            <!-- 欧米式住所（番地→市→州→国） -->
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::front.form.street_address') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'street_address',
+                    'value' => old('street_address'),
+                    'required' => $settings->address_required ?? false,
+                    'placeholder' => __('dixlase-inquiry::front.form.street_address_placeholder'),
+                ])
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::front.form.city') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'city',
+                    'value' => old('city'),
+                    'required' => $settings->address_required ?? false,
+                    'placeholder' => __('dixlase-inquiry::front.form.city_placeholder'),
+                ])
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::front.form.state') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'state',
+                    'value' => old('state'),
+                    'required' => false,
+                    'placeholder' => __('dixlase-inquiry::front.form.state_placeholder'),
+                ])
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::front.form.country') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'country',
+                    'value' => old('country'),
+                    'required' => false,
+                    'placeholder' => __('dixlase-inquiry::front.form.country_placeholder'),
+                ])
+            </fieldset>
+            @else
+            <!-- 日本式住所（都道府県→市区町村→番地） -->
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::front.form.address') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'address',
+                    'value' => old('address'),
+                    'required' => $settings->address_required ?? false,
+                    'placeholder' => __('dixlase-inquiry::front.form.address_placeholder'),
+                ])
+            </fieldset>
+            @endif
         @endif
 
         <!-- 電話番号 -->
