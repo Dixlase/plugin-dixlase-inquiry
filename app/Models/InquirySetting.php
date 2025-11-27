@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class InquirySetting extends Model
 {
-    protected $table = 'dxl_plg_dixlase_inquiry_settings';
+    protected $table = 'plg_dixlase_inquiry_settings';
 
     protected $fillable = [
         'name',
