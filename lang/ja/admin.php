@@ -140,6 +140,8 @@ return [
                 'subject' => '自動返信の件名',
                 'body' => '自動返信の本文',
                 'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
+                'default_subject' => 'お問い合わせありがとうございます',
+                'default_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
             ],
             'admin_notification' => [
                 'title' => '管理者通知設定',
@@ -148,6 +150,8 @@ return [
                 'subject' => '管理者通知の件名',
                 'body' => '管理者通知の本文',
                 'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
+                'default_subject' => 'お問い合わせを受け付けました',
+                'default_body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
             ],
             'completion' => [
                 'title' => '完了ページ設定',

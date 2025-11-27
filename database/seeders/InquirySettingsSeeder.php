@@ -23,6 +23,7 @@
 namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class InquirySettingsSeeder extends Seeder
@@ -32,27 +33,41 @@ class InquirySettingsSeeder extends Seeder
      */
     public function run(): void
     {
+        // 基本設定からシステム管理者メールアドレスと言語設定を取得
+        $systemAdminEmail = $this->getBaseSetting('system_admin_email', '');
+        $locale = $this->getBaseSetting('locale', 'ja');
+
+        // 言語ファイルからデフォルトテキストを取得
+        $texts = $this->getLocalizedTexts($locale);
+
         $defaults = [
-            'admin_email' => 'admin@example.com',
-            'subject' => 'お問い合わせを受け付けました',
-            'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
+            // メールアドレス設定（基本設定のシステム管理者メールアドレスを使用）
+            'admin_email' => $systemAdminEmail,
+            'auto_reply_from_email' => $systemAdminEmail,
+
+            // 管理者通知設定（言語別）
+            'subject' => $texts['subject'],
+            'body' => $texts['body'],
+
+            // 自動返信設定（言語別）
+            'auto_reply_enabled' => '1',
+            'auto_reply_subject' => $texts['auto_reply_subject'],
+            'auto_reply_body' => $texts['auto_reply_body'],
+
+            // フォーム表示設定
             'use_recaptcha' => '0',
             'show_phone' => '1',
             'phone_required' => '0',
-            'show_address' => '1',
+            'show_address' => '0',
             'address_required' => '0',
-            'show_subject' => '1',
+            'show_subject' => '0',
             'subject_required' => '0',
-            'show_postal_code' => '1',
+            'show_postal_code' => '0',
             'postal_code_required' => '0',
-            'auto_reply_enabled' => '1',
-            'auto_reply_from_email' => '',
-            'auto_reply_subject' => 'お問い合わせありがとうございます',
-            'auto_reply_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
             'use_single_page' => '1',
             'show_confirmation_page' => '1',
             'inquiry_url_slug' => 'inquiry',
-            'name_order_western' => '0',
+            'name_order_western' => $locale === 'en' ? '1' : '0',
         ];
 
         foreach ($defaults as $name => $value) {
@@ -61,5 +76,40 @@ class InquirySettingsSeeder extends Seeder
                 ['value' => $value]
             );
         }
+    }
+
+    /**
+     * 基本設定から値を取得
+     */
+    protected function getBaseSetting(string $name, mixed $default = null): mixed
+    {
+        $setting = DB::table('base_settings')->where('name', $name)->first();
+
+        return $setting?->value ?? $default;
+    }
+
+    /**
+     * 言語ファイルからデフォルトテキストを取得
+     */
+    protected function getLocalizedTexts(string $locale): array
+    {
+        // プラグインの言語ファイルパス
+        $langPath = dirname(__DIR__, 2) . '/lang';
+
+        // 指定言語のファイルを読み込み、なければ英語をフォールバック
+        $file = "{$langPath}/{$locale}/admin.php";
+        if (!file_exists($file)) {
+            $file = "{$langPath}/en/admin.php";
+        }
+
+        $translations = require $file;
+        $settings = $translations['settings'] ?? [];
+
+        return [
+            'subject' => $settings['admin_notification']['default_subject'] ?? 'Inquiry Received',
+            'body' => $settings['admin_notification']['default_body'] ?? '',
+            'auto_reply_subject' => $settings['auto_reply']['default_subject'] ?? 'Thank you for your inquiry',
+            'auto_reply_body' => $settings['auto_reply']['default_body'] ?? '',
+        ];
     }
 }
