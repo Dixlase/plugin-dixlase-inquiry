@@ -99,7 +99,12 @@ return [
             ],
             'form_fields' => [
                 'title' => 'フォーム項目設定',
+                'show_name' => '名前フィールドを表示',
+                'name_required' => '名前を必須にする',
+                'show_email' => 'メールアドレスフィールドを表示',
+                'email_required' => 'メールアドレスを必須にする',
                 'name_order' => '名前の表示順序',
+                'name_order_japanese' => '日本式（姓・名）',
                 'name_order_western' => '欧米式（名・姓）',
                 'name_order_help' => '英語版では自動的に欧米式（名・姓）の順序になります。',
                 'show_subject' => '題名フィールドを表示',
@@ -138,8 +143,11 @@ return [
             ],
             'admin_notification' => [
                 'title' => '管理者通知設定',
+                'admin_email' => '送信先メールアドレス',
+                'admin_email_help' => '問い合わせ内容が送信されるメールアドレスを入力してください。',
                 'subject' => '管理者通知の件名',
                 'body' => '管理者通知の本文',
+                'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
             ],
             'completion' => [
                 'title' => '完了ページ設定',

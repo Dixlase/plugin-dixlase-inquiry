@@ -89,7 +89,12 @@ return [
             ],
             'form_fields' => [
                 'title' => 'Form Field Settings',
+                'show_name' => 'Show Name Field',
+                'name_required' => 'Make Name Required',
+                'show_email' => 'Show Email Field',
+                'email_required' => 'Make Email Required',
                 'name_order' => 'Name Display Order',
+                'name_order_japanese' => 'Japanese Style (Last, First)',
                 'name_order_western' => 'Western Style (First, Last)',
                 'name_order_help' => 'English version automatically uses Western style (First, Last) order.',
                 'show_subject' => 'Show Subject Field',
@@ -128,8 +133,11 @@ return [
             ],
             'admin_notification' => [
                 'title' => 'Admin Notification Settings',
+                'admin_email' => 'Recipient Email Address',
+                'admin_email_help' => 'Enter the email address where inquiry messages will be sent.',
                 'subject' => 'Admin Notification Subject',
                 'body' => 'Admin Notification Message Body',
+                'body_help' => 'Available variables: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
             ],
             'completion' => [
                 'title' => 'Completion Page Settings',

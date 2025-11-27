@@ -36,24 +36,148 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.settings.inquiry.update') }}" method="POST">
         @csrf
         
-        <!-- 基本設定 -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.basic.title') }}</h2>
+        <!-- 1. フォーム項目設定 -->
+        <section class="mb-8" x-data="{
+            showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
+            showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
+            showAddress: {{ old('show_address', $settings->show_address ?? false) ? 'true' : 'false' }},
+            showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }}
+        }">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::admin.settings.basic.admin_email') }}</legend>
-                @include('components::form.text', [
-                    'name' => 'admin_email',
-                    'label' => __('dixlase-inquiry::admin.settings.basic.admin_email'),
-                    'value' => old('admin_email', $settings->admin_email ?? ''),
-                    'required' => true,
-                    'help' => __('dixlase-inquiry::admin.settings.basic.admin_email_help')
-                ])
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.name_order') }}</legend>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- 名前の順序 -->
+                <div class="lg:col-span-2">
+                    @include('components::form.radio-group', [
+                        'name' => 'name_order_western',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.name_order'),
+                        'options' => [
+                            '0' => __('dixlase-inquiry::admin.settings.form_fields.name_order_japanese'),
+                            '1' => __('dixlase-inquiry::admin.settings.form_fields.name_order_western')
+                        ],
+                        'value' => old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0',
+                        'help' => __('dixlase-inquiry::admin.settings.form_fields.name_order_help')
+                    ])
+                </div>
+                
+                <!-- 名前フィールド（常に表示・必須） -->
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_show_name_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_name'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_name_required_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.name_required'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
+
+                <!-- メールアドレスフィールド（常に表示・必須） -->
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_show_email_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_email'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_email_required_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.email_required'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
+
+
+
+                <!-- 題名フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_subject" x-model="showSubject" {{ old('show_subject', $settings->show_subject ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_subject') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'subject_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.subject_required'),
+                        'checked' => old('subject_required', $settings->subject_required ?? false),
+                        'xBind' => 'showSubject'
+                    ])
+                </div>
+
+                <!-- 郵便番号フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_postal_code" x-model="showPostalCode" {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_postal_code') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'postal_code_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_code_required'),
+                        'checked' => old('postal_code_required', $settings->postal_code_required ?? false),
+                        'xBind' => 'showPostalCode'
+                    ])
+                </div>
+
+                <!-- 住所フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_address" x-model="showAddress" {{ old('show_address', $settings->show_address ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_address') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'address_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.address_required'),
+                        'checked' => old('address_required', $settings->address_required ?? false),
+                        'xBind' => 'showAddress'
+                    ])
+                </div>
+
+                <!-- 電話番号フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_phone" x-model="showPhone" {{ old('show_phone', $settings->show_phone ?? true) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_phone') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'phone_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.phone_required'),
+                        'checked' => old('phone_required', $settings->phone_required ?? false),
+                        'xBind' => 'showPhone'
+                    ])
+                </div>
+                </div>
             </fieldset>
         </section>
 
-
-        <!-- フォーム表示設定 -->
+        <!-- 2. フォーム表示設定 -->
         <section class="mb-8" x-data="{ 
             useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
             inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}'
@@ -125,108 +249,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </div>
                 </div>
 
-                @include('components::form.checkbox', [
+                @include('components::form.toggle', [
                     'name' => 'show_confirmation_page',
                     'label' => __('dixlase-inquiry::admin.settings.display.show_confirmation'),
-                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true),
-                    'help' => __('dixlase-inquiry::admin.settings.display.show_confirmation_help')
+                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true)
                 ])
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.display.show_confirmation_help') }}
+                </p>
             </div>
             </fieldset>
         </section>
-        
-        <!-- フォーム項目設定 -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
-            
-            <fieldset>
-                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.name_order') }}</legend>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 名前の順序 -->
-                <div class="lg:col-span-2">
-                    @include('components::form.radio-group', [
-                        'name' => 'name_order_western',
-                        'label' => '名前の表示順序',
-                        'options' => [
-                            '0' => '日本式（姓・名）',
-                            '1' => '欧米式（名・姓）'
-                        ],
-                        'value' => old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0',
-                        'help' => '英語版では自動的に欧米式（名・姓）の順序になります。'
-                    ])
-                </div>
 
-                <!-- 題名フィールド -->
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'show_subject',
-                        'label' => '題名フィールドを表示',
-                        'checked' => old('show_subject', $settings->show_subject ?? false)
-                    ])
-                </div>
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'subject_required',
-                        'label' => '題名を必須にする',
-                        'checked' => old('subject_required', $settings->subject_required ?? false)
-                    ])
-                </div>
-
-                <!-- 郵便番号フィールド -->
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'show_postal_code',
-                        'label' => '郵便番号フィールドを表示',
-                        'checked' => old('show_postal_code', $settings->show_postal_code ?? false)
-                    ])
-                </div>
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'postal_code_required',
-                        'label' => '郵便番号を必須にする',
-                        'checked' => old('postal_code_required', $settings->postal_code_required ?? false)
-                    ])
-                </div>
-
-                <!-- 住所フィールド -->
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'show_address',
-                        'label' => '住所フィールドを表示',
-                        'checked' => old('show_address', $settings->show_address ?? false)
-                    ])
-                </div>
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'address_required',
-                        'label' => '住所を必須にする',
-                        'checked' => old('address_required', $settings->address_required ?? false)
-                    ])
-                </div>
-
-                <!-- 電話番号フィールド -->
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'show_phone',
-                        'label' => '電話番号フィールドを表示',
-                        'checked' => old('show_phone', $settings->show_phone ?? true)
-                    ])
-                </div>
-                <div>
-                    @include('components::form.checkbox', [
-                        'name' => 'phone_required',
-                        'label' => '電話番号を必須にする',
-                        'checked' => old('phone_required', $settings->phone_required ?? false)
-                    ])
-                </div>
-                </div>
-            </fieldset>
-        </section>
-
-        
-
-        <!-- 完了ページ設定 -->
+        <!-- 3. 完了ページ設定 -->
         <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.completion.title') }}</h2>
             
@@ -252,65 +287,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </fieldset>
         </section>
 
-        <!-- 自動返信設定 -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.auto_reply.title') }}</h2>
-            
-            <fieldset>
-
-                <div class="grid grid-cols-1 gap-6">
-                    @include('components::form.checkbox', [
-                        'name' => 'auto_reply_enabled',
-                        'label' => '自動返信を有効にする',
-                        'checked' => old('auto_reply_enabled', $settings->auto_reply_enabled ?? true)
-                    ])
-
-                    <div x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
-                        <div x-show="autoReplyEnabled" class="space-y-6">
-                            <fieldset>
-                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.from_email') }}</legend>
-                                @include('components::form.text', [
-                                    'name' => 'auto_reply_from_email',
-                                    'label' => '自動返信の送信元メールアドレス',
-                                    'value' => old('auto_reply_from_email', $settings->auto_reply_from_email ?? ''),
-                                    'help' => '空の場合は、システムのデフォルト送信元アドレスが使用されます。'
-                                ])
-                            </fieldset>
-
-                            <fieldset>
-                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.subject') }}</legend>
-                                @include('components::form.text', [
-                                    'name' => 'auto_reply_subject',
-                                    'label' => '自動返信の件名',
-                                    'value' => old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました'),
-                                ])
-                            </fieldset>
-
-                            <fieldset>
-                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.body') }}</legend>
-                                @include('components::form.textarea', [
-                                    'name' => 'auto_reply_body',
-                                    'label' => '自動返信の本文',
-                                    'value' => old('auto_reply_body', $settings->auto_reply_body ?? ''),
-                                    'rows' => 8,
-                                    'help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}'
-                                ])
-                            </fieldset>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-        </section>
-
-        <!-- 管理者通知設定 -->
+        <!-- 4. 管理者通知設定 -->
         <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.admin_notification.title') }}</h2>
             
             <fieldset>
+                <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.admin_email') }}</legend>
+                @include('components::form.text', [
+                    'name' => 'admin_email',
+                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.admin_email'),
+                    'value' => old('admin_email', $settings->admin_email ?? ''),
+                    'required' => true,
+                    'help' => __('dixlase-inquiry::admin.settings.admin_notification.admin_email_help')
+                ])
+            </fieldset>
+
+            <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.subject') }}</legend>
                 @include('components::form.text', [
                     'name' => 'subject',
-                    'label' => '管理者通知の件名',
+                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.subject'),
                     'value' => old('subject', $settings->subject ?? 'お問い合わせありがとうございます'),
                 ])
             </fieldset>
@@ -319,17 +315,69 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.body') }}</legend>
                 @include('components::form.textarea', [
                     'name' => 'body',
-                    'label' => '管理者通知の本文',
+                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.body'),
                     'value' => old('body', $settings->body ?? ''),
                     'rows' => 8,
-                    'help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}'
+                    'help' => __('dixlase-inquiry::admin.settings.admin_notification.body_help')
                 ])
             </fieldset>
         </section>
 
-        
+        <!-- 5. 自動返信設定 -->
+        <section class="mb-8" x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.auto_reply.title') }}</h2>
+            
+            <fieldset>
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="flex items-center space-x-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   name="auto_reply_enabled"
+                                   x-model="autoReplyEnabled"
+                                   {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'checked' : '' }}
+                                   class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        </label>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.auto_reply.enabled') }}</span>
+                    </div>
 
-        <!-- セキュリティ設定 -->
+                    <div x-show="autoReplyEnabled" x-cloak class="space-y-6">
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.from_email') }}</legend>
+                                @include('components::form.text', [
+                                    'name' => 'auto_reply_from_email',
+                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.from_email'),
+                                    'value' => old('auto_reply_from_email', $settings->auto_reply_from_email ?? ''),
+                                    'help' => __('dixlase-inquiry::admin.settings.auto_reply.from_email_help')
+                                ])
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.subject') }}</legend>
+                                @include('components::form.text', [
+                                    'name' => 'auto_reply_subject',
+                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.subject'),
+                                    'value' => old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました'),
+                                ])
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.body') }}</legend>
+                                @include('components::form.textarea', [
+                                    'name' => 'auto_reply_body',
+                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.body'),
+                                    'value' => old('auto_reply_body', $settings->auto_reply_body ?? ''),
+                                    'rows' => 8,
+                                    'help' => __('dixlase-inquiry::admin.settings.auto_reply.body_help')
+                                ])
+                            </fieldset>
+                        </div>
+                </div>
+            </fieldset>
+        </section>
+
+        <!-- 6. セキュリティ設定 -->
         <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.security.title') }}</h2>
             
@@ -347,7 +395,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <legend>{{ __('dixlase-inquiry::admin.settings.security.use_recaptcha') }}</legend>
                 
                 <div class="grid grid-cols-1 gap-6">
-                    @include('components::form.checkbox', [
+                    @include('components::form.toggle', [
                         'name' => 'use_recaptcha',
                         'label' => __('dixlase-inquiry::admin.settings.security.use_recaptcha'),
                         'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false)
@@ -376,35 +424,3 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     ])
 @endsection
 
-@push('scripts')
-<script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('inquirySettings', () => ({
-        autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }},
-        init() {
-            // 自動返信チェックボックスの変更を監視
-            this.$watch('autoReplyEnabled', (value) => {
-                const checkbox = document.querySelector('input[name="auto_reply_enabled"]');
-                if (checkbox) {
-                    checkbox.checked = value;
-                }
-            });
-        }
-    }));
-});
-
-// 自動返信チェックボックスの変更イベントを監視
-document.addEventListener('DOMContentLoaded', function() {
-    const autoReplyCheckbox = document.querySelector('input[name="auto_reply_enabled"]');
-    if (autoReplyCheckbox) {
-        autoReplyCheckbox.addEventListener('change', function() {
-            // Alpine.jsのデータを更新
-            const component = document.querySelector('[x-data*="autoReplyEnabled"]');
-            if (component && component._x_dataStack) {
-                component._x_dataStack[0].autoReplyEnabled = this.checked;
-            }
-        });
-    }
-});
-</script>
-@endpush
