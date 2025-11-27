@@ -1,6 +1,7 @@
 {
     "name": "dixlase/dixlase-inquiry",
     "description": "This is the DixlaseInquiry.",
+    "type": "dixlase-plugin",
     "version": "1.0.0",
     "license": "GPL-3.0",
     "authors": [

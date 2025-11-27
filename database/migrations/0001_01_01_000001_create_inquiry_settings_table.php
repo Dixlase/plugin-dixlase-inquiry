@@ -31,7 +31,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dxl_plg_dixlase_inquiry_settings', function (Blueprint $table) {
+        Schema::create('plg_dixlase_inquiry_settings', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->text('value')->nullable();
@@ -44,6 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dxl_plg_dixlase_inquiry_settings');
+        Schema::dropIfExists('plg_dixlase_inquiry_settings');
     }
 };
