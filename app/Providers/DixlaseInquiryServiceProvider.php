@@ -25,7 +25,6 @@ namespace Plugins\DixlaseInquiry\App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use App\Traits\PluginLoaderTrait;
-use App\Helpers\PluginGitignoreHelper;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
@@ -45,8 +44,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // プラグインを.gitignore除外リストに自動追加
-        PluginGitignoreHelper::addPlugin('DixlaseInquiry');
+        // .git/info/excludeへの追加はplugin:installコマンドで自動実行されます
         
         // 動的ルート登録（別ページモード用）
         // 注: 静的ルート（routes/web.php, routes/admin.php）はPluginServiceProviderが自動読み込み
@@ -114,7 +112,6 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     public function uninstall(): void
     {
-        // プラグインを.gitignore除外リストから削除
-        PluginGitignoreHelper::removePlugin('DixlaseInquiry');
+        // .git/info/excludeからの削除はplugin:uninstallコマンドで自動実行されます
     }
 }

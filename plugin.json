@@ -1,0 +1,33 @@
+{
+    "name": "Dixlase Inquiry",
+    "package_name": "dixlase/dixlase-inquiry",
+    "slug": "dixlase-inquiry",
+    "version": "1.0.0",
+    "description": {
+        "ja": "お問い合わせフォーム機能を提供するプラグインです。",
+        "en": "This plugin provides inquiry form functionality."
+    },
+    "author": "exc-D inc.",
+    "email": "info@exc-d.com",
+    "url": "https://exc-d.com",
+    "license": "GPL-3.0",
+    "license_template": "license-gpl.txt",
+    "namespace": "Plugins\\DixlaseInquiry",
+    "type": "dixlase-plugin",
+    "category": "forms",
+    "tags": [
+        "inquiry",
+        "contact",
+        "form"
+    ],
+    "requires": {
+        "dixlase": ">=1.0.0",
+        "php": ">=8.0"
+    },
+    "provides": {
+        "admin_menu": true,
+        "front_routes": true,
+        "api_routes": false,
+        "settings_page": true
+    }
+}
