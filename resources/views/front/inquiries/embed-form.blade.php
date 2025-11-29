@@ -19,7 +19,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form">
+<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="inquiryEmbedForm()">
     @if(session('inquiry_success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ __('dixlase-inquiry::front.form.success_message') }}
@@ -35,7 +35,61 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </div>
         @endif
 
-        <form action="{{ route('inquiry.embed.send') }}" method="POST" class="space-y-4">
+        {{-- 確認画面 --}}
+        @if($settings->show_confirmation_page ?? true)
+        <div x-show="showConfirmation" x-cloak class="space-y-4">
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('dixlase-inquiry::front.confirmation.message') }}</p>
+            </div>
+            
+            <dl class="space-y-3">
+                @if($settings->show_subject ?? false)
+                <div x-show="formData.subject" class="border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.subject') }}</dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.subject"></dd>
+                </div>
+                @endif
+                <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.name') }}</dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white" x-text="fullName"></dd>
+                </div>
+                <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.email') }}</dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.email"></dd>
+                </div>
+                @if($settings->show_phone ?? true)
+                <div x-show="formData.phone" class="border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.phone') }}</dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.phone"></dd>
+                </div>
+                @endif
+                <div class="pb-2">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.message') }}</dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white whitespace-pre-wrap" x-text="formData.message"></dd>
+                </div>
+            </dl>
+            
+            <div class="flex gap-3 pt-4">
+                <button type="button" @click="showConfirmation = false"
+                    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    {{ __('dixlase-inquiry::front.buttons.back') }}
+                </button>
+                <button type="button" @click="submitForm()"
+                    class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    {{ __('dixlase-inquiry::front.buttons.send') }}
+                </button>
+            </div>
+        </div>
+        @endif
+
+        <form x-ref="inquiryForm" action="{{ route('inquiry.embed.send') }}" method="POST" class="space-y-4"
+            @if($settings->show_confirmation_page ?? true)
+            x-show="!showConfirmation" @submit.prevent="showConfirm()"
+            @endif
+        >
             @csrf
             <input type="hidden" name="redirect_url" value="{{ url()->current() }}#inquiry-form">
 
@@ -134,10 +188,69 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <button type="submit"
                     class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
+                    @if($settings->show_confirmation_page ?? true)
+                    <i class="fas fa-check mr-2"></i>
+                    {{ __('dixlase-inquiry::front.buttons.confirm') }}
+                    @else
                     <i class="fas fa-paper-plane mr-2"></i>
                     {{ __('dixlase-inquiry::front.form.submit') }}
+                    @endif
                 </button>
             </div>
         </form>
     @endif
 </div>
+
+@if($settings->show_confirmation_page ?? true)
+<script>
+function inquiryEmbedForm() {
+    return {
+        showConfirmation: false,
+        formData: {
+            subject: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            phone: '',
+            message: ''
+        },
+        nameOrderWestern: {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }},
+        get fullName() {
+            if (this.nameOrderWestern) {
+                return (this.formData.first_name + ' ' + this.formData.last_name).trim();
+            }
+            return (this.formData.last_name + ' ' + this.formData.first_name).trim();
+        },
+        showConfirm() {
+            const form = this.$refs.inquiryForm;
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            // フォームデータを収集
+            this.formData.subject = form.querySelector('[name="subject"]')?.value || '';
+            this.formData.first_name = form.querySelector('[name="first_name"]')?.value || '';
+            this.formData.last_name = form.querySelector('[name="last_name"]')?.value || '';
+            this.formData.email = form.querySelector('[name="email"]')?.value || '';
+            this.formData.phone = form.querySelector('[name="phone"]')?.value || '';
+            this.formData.message = form.querySelector('[name="message"]')?.value || '';
+            this.showConfirmation = true;
+            // スクロールして確認画面を表示
+            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+        submitForm() {
+            this.$refs.inquiryForm.submit();
+        }
+    }
+}
+</script>
+<style>
+[x-cloak] { display: none !important; }
+</style>
+@else
+<script>
+function inquiryEmbedForm() {
+    return {};
+}
+</script>
+@endif

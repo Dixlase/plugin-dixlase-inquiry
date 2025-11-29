@@ -24,7 +24,10 @@ namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Plugins\DixlaseInquiry\App\Http\Requests\FrontInquirySubmitRequest;
+use Plugins\DixlaseInquiry\App\Mail\InquiryAdminNotification;
+use Plugins\DixlaseInquiry\App\Mail\InquiryAutoReply;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
 
 class FrontInquiryController extends Controller
@@ -88,12 +91,70 @@ class FrontInquiryController extends Controller
             abort(404);
         }
         
-        // 送信処理
-        // TODO: メール送信実装
+        $validated = $request->all();
+        
+        try {
+            // 問い合わせデータを準備
+            $inquiryData = $this->prepareInquiryData($validated, $settings);
+            
+            // 管理者にメール送信
+            Mail::to($settings->admin_email)->send(new InquiryAdminNotification($inquiryData, $settings));
+            
+            // 自動返信が有効な場合
+            if ($settings->auto_reply_enabled && !empty($validated['email'])) {
+                Mail::to($validated['email'])->send(new InquiryAutoReply($inquiryData, $settings));
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Inquiry send failed: ' . $e->getMessage());
+            return back()->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])->withInput();
+        }
         
         return view('dixlase-inquiry::front.inquiries.complete', [
             'settings' => $settings,
         ]);
+    }
+    
+    /**
+     * 問い合わせデータを準備
+     */
+    private function prepareInquiryData(array $validated, $settings): array
+    {
+        // 名前を結合
+        $fullName = ($settings->name_order_western ?? false)
+            ? trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''))
+            : trim(($validated['last_name'] ?? '') . ' ' . ($validated['first_name'] ?? ''));
+        
+        return [
+            'name' => $fullName,
+            'email' => $validated['email'] ?? '',
+            'subject' => $validated['subject'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'postal_code' => $validated['postal_code'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'gender' => isset($validated['gender']) ? $this->getGenderLabel($validated['gender']) : null,
+            'message' => $validated['message'] ?? '',
+        ];
+    }
+    
+    /**
+     * 性別のラベルを取得
+     */
+    private function getGenderLabel(?string $gender): ?string
+    {
+        if (empty($gender)) {
+            return null;
+        }
+        
+        $labels = [
+            'male' => __('dixlase-inquiry::front.form.gender_male'),
+            'female' => __('dixlase-inquiry::front.form.gender_female'),
+            'non_binary' => __('dixlase-inquiry::front.form.gender_non_binary'),
+            'other' => __('dixlase-inquiry::front.form.gender_other'),
+            'prefer_not_to_say' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'),
+        ];
+        
+        return $labels[$gender] ?? $gender;
     }
 
     /**
@@ -191,43 +252,15 @@ class FrontInquiryController extends Controller
         $redirectUrl = $request->input('redirect_url', url('/'));
         
         try {
-            // 名前を結合
-            $fullName = ($settings->name_order_western ?? false)
-                ? $validated['first_name'] . ' ' . $validated['last_name']
-                : $validated['last_name'] . ' ' . $validated['first_name'];
-            
-            // メール本文を作成
-            $emailBody = "【お問い合わせ】\n\n";
-            if (!empty($validated['subject'])) {
-                $emailBody .= "題名: {$validated['subject']}\n";
-            }
-            $emailBody .= "お名前: {$fullName}\n";
-            $emailBody .= "メールアドレス: {$validated['email']}\n";
-            if (!empty($validated['phone'])) {
-                $emailBody .= "電話番号: {$validated['phone']}\n";
-            }
-            $emailBody .= "\n【お問い合わせ内容】\n{$validated['message']}\n";
+            // 問い合わせデータを準備
+            $inquiryData = $this->prepareInquiryData($validated, $settings);
             
             // 管理者にメール送信
-            \Mail::raw($emailBody, function($message) use ($settings, $validated) {
-                $message->to($settings->admin_email)
-                        ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
-                if (!empty($validated['email'])) {
-                    $message->replyTo($validated['email']);
-                }
-            });
+            Mail::to($settings->admin_email)->send(new InquiryAdminNotification($inquiryData, $settings));
             
             // 自動返信が有効な場合
-            if ($settings->auto_reply_enabled && !empty($settings->auto_reply_subject) && !empty($settings->auto_reply_body)) {
-                $replyBody = $settings->auto_reply_body;
-                $replyBody = str_replace('{{name}}', $fullName, $replyBody);
-                $replyBody = str_replace('{{email}}', $validated['email'], $replyBody);
-                $replyBody = str_replace('{{message}}', $validated['message'], $replyBody);
-                
-                \Mail::raw($replyBody, function($message) use ($settings, $validated) {
-                    $message->to($validated['email'])
-                            ->subject($settings->auto_reply_subject);
-                });
+            if ($settings->auto_reply_enabled && !empty($validated['email'])) {
+                Mail::to($validated['email'])->send(new InquiryAutoReply($inquiryData, $settings));
             }
             
             return redirect($redirectUrl)->with('inquiry_success', true);
