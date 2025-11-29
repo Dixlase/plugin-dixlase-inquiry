@@ -41,28 +41,43 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
             showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
             showAddress: {{ old('show_address', $settings->show_address ?? false) ? 'true' : 'false' }},
-            showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }}
+            showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }},
+            showGender: {{ old('show_gender', $settings->show_gender ?? false) ? 'true' : 'false' }}
         }">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
             
             <fieldset>
-                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.name_order') }}</legend>
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.format_style') }}</legend>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- 名前の順序 -->
+                <!-- 日本式・欧米式の選択 -->
                 <div class="lg:col-span-2">
                     @include('components::form.radio-group', [
                         'name' => 'name_order_western',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.name_order'),
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.format_style'),
                         'options' => [
-                            '0' => __('dixlase-inquiry::admin.settings.form_fields.name_order_japanese'),
-                            '1' => __('dixlase-inquiry::admin.settings.form_fields.name_order_western')
+                            '0' => __('dixlase-inquiry::admin.settings.form_fields.format_japanese'),
+                            '1' => __('dixlase-inquiry::admin.settings.form_fields.format_western')
                         ],
                         'value' => old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0',
-                        'help' => __('dixlase-inquiry::admin.settings.form_fields.name_order_help')
+                        'help' => __('dixlase-inquiry::admin.settings.form_fields.format_style_help')
                     ])
                 </div>
+            </div>
+            </fieldset>
+
+            <fieldset class="mt-6">
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.field_settings') }}</legend>
+
+                <!-- 注釈: 必須フィールドの説明 -->
+                <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ __('dixlase-inquiry::admin.settings.form_fields.required_fields_note') }}</span>
+                    </p>
+                </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 <!-- 名前フィールド（常に表示・必須） -->
                 <div>
@@ -100,7 +115,23 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-
+                <!-- 内容フィールド（常に表示・必須） -->
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_show_message_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_message'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => '_message_required_display',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.message_required'),
+                        'checked' => true,
+                        'disabled' => true
+                    ])
+                </div>
 
                 <!-- 題名フィールド -->
                 <div>
@@ -171,6 +202,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         'label' => __('dixlase-inquiry::admin.settings.form_fields.phone_required'),
                         'checked' => old('phone_required', $settings->phone_required ?? false),
                         'xBind' => 'showPhone'
+                    ])
+                </div>
+
+                <!-- 性別フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_gender" x-model="showGender" {{ old('show_gender', $settings->show_gender ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_gender') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'gender_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.gender_required'),
+                        'checked' => old('gender_required', $settings->gender_required ?? false),
+                        'xBind' => 'showGender'
                     ])
                 </div>
                 </div>

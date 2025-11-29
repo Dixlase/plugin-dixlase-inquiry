@@ -93,6 +93,8 @@ class InquirySetting extends Model
             'subject_required' => false,
             'show_postal_code' => true,
             'postal_code_required' => false,
+            'show_gender' => false,
+            'gender_required' => false,
             'auto_reply_enabled' => true,
             'auto_reply_from_email' => '',
             'auto_reply_subject' => 'お問い合わせを受け付けました',

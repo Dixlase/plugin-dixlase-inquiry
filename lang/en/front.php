@@ -52,6 +52,14 @@ return [
         'city_placeholder' => 'Los Angeles',
         'state_placeholder' => 'California',
         'country_placeholder' => 'United States',
+        // Gender field
+        'gender' => 'Gender',
+        'gender_select' => 'Please select',
+        'gender_male' => 'Male',
+        'gender_female' => 'Female',
+        'gender_non_binary' => 'Non-binary',
+        'gender_other' => 'Other',
+        'gender_prefer_not_to_say' => 'Prefer not to say',
     ],
 
     'placeholders' => [
@@ -103,6 +111,8 @@ return [
         'phone_required' => 'Phone number is required.',
         'phone_format_japanese' => 'Please enter a valid Japanese phone number (10-13 digits).',
         'phone_format_western' => 'Please enter a valid phone number (e.g., +1-234-567-8900).',
+        'gender_required' => 'Please select your gender.',
+        'gender_invalid' => 'Please select a valid gender option.',
         'recaptcha_required' => 'reCAPTCHA verification is required.',
     ],
 

@@ -193,6 +193,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </fieldset>
         @endif
 
+        <!-- 性別 -->
+        @if($settings->show_gender ?? false)
+        <fieldset>
+            <legend>{{ __('dixlase-inquiry::front.form.gender') }}</legend>
+            @include('components::form.select', [
+                'name' => 'gender',
+                'value' => old('gender'),
+                'required' => $settings->gender_required ?? false,
+                'options' => [
+                    '' => __('dixlase-inquiry::front.form.gender_select'),
+                    'male' => __('dixlase-inquiry::front.form.gender_male'),
+                    'female' => __('dixlase-inquiry::front.form.gender_female'),
+                    'non_binary' => __('dixlase-inquiry::front.form.gender_non_binary'),
+                    'other' => __('dixlase-inquiry::front.form.gender_other'),
+                    'prefer_not_to_say' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'),
+                ],
+            ])
+        </fieldset>
+        @endif
+
         <!-- 問い合わせ内容 -->
         <fieldset>
             <legend>{{ __('dixlase-inquiry::front.form.message') }}</legend>

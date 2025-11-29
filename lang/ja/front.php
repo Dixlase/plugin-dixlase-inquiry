@@ -52,6 +52,14 @@ return [
         'city_placeholder' => '渋谷区',
         'state_placeholder' => '東京都',
         'country_placeholder' => '日本',
+        // 性別フィールド
+        'gender' => '性別',
+        'gender_select' => '選択してください',
+        'gender_male' => '男性',
+        'gender_female' => '女性',
+        'gender_non_binary' => 'ノンバイナリー',
+        'gender_other' => 'その他',
+        'gender_prefer_not_to_say' => '回答しない',
     ],
 
     'placeholders' => [
@@ -103,6 +111,8 @@ return [
         'phone_required' => '電話番号は必須です。',
         'phone_format_japanese' => '電話番号は10〜13桁の数字（ハイフン可）で入力してください。',
         'phone_format_western' => '電話番号は有効な形式で入力してください（例: +1-234-567-8900）。',
+        'gender_required' => '性別を選択してください。',
+        'gender_invalid' => '有効な性別を選択してください。',
         'recaptcha_required' => 'reCAPTCHA認証が必要です。',
     ],
 
