@@ -25,7 +25,9 @@ namespace Plugins\DixlaseInquiry\App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use App\Traits\PluginLoaderTrait;
+use App\Helpers\PluginHelper;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Shortcodes\InquiryFormShortcode;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
@@ -73,10 +75,8 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     protected function registerShortcodes(): void
     {
-        if ($this->app->bound('shortcode')) {
-            $shortcode = $this->app['shortcode'];
-            $shortcode->add('inquiry', \Plugins\DixlaseInquiry\App\Shortcodes\InquiryFormShortcode::class);
-        }
+        // コアのPluginHelperを使用してショートコードを登録
+        PluginHelper::registerShortcode('inquiry', InquiryFormShortcode::class);
     }
     
     /**

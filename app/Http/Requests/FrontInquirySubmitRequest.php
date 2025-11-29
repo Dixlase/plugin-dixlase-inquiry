@@ -99,6 +99,14 @@ class FrontInquirySubmitRequest extends FormRequest
                 ? ['required', 'string', $phoneRule]
                 : ['nullable', 'string', $phoneRule];
         }
+
+        // 性別（設定により必須/任意）
+        if ($settings['show_gender']) {
+            $genderOptions = 'in:male,female,non_binary,other,prefer_not_to_say';
+            $rules['gender'] = $settings['gender_required'] 
+                ? ['required', 'string', $genderOptions]
+                : ['nullable', 'string', $genderOptions];
+        }
         
         // reCAPTCHA（設定により必須）
         if ($settings['use_recaptcha']) {
@@ -137,6 +145,8 @@ class FrontInquirySubmitRequest extends FormRequest
             'phone.regex' => $isWestern
                 ? __('dixlase-inquiry::front.validation.phone_format_western')
                 : __('dixlase-inquiry::front.validation.phone_format_japanese'),
+            'gender.required' => __('dixlase-inquiry::front.validation.gender_required'),
+            'gender.in' => __('dixlase-inquiry::front.validation.gender_invalid'),
             'g-recaptcha-response.required' => __('dixlase-inquiry::front.validation.recaptcha_required'),
         ];
     }
@@ -161,6 +171,7 @@ class FrontInquirySubmitRequest extends FormRequest
             'state' => __('dixlase-inquiry::front.form.state'),
             'country' => __('dixlase-inquiry::front.form.country'),
             'phone' => __('dixlase-inquiry::front.form.phone'),
+            'gender' => __('dixlase-inquiry::front.form.gender'),
             'g-recaptcha-response' => __('dixlase-inquiry::front.form.recaptcha'),
         ];
     }

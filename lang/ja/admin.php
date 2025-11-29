@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 /**
  * This file is part of DixlaseInquiry.
@@ -99,10 +99,18 @@ return [
             ],
             'form_fields' => [
                 'title' => 'フォーム項目設定',
+                'format_style' => '入力形式',
+                'format_japanese' => '日本式',
+                'format_western' => '欧米式',
+                'format_style_help' => '名前の順序（姓・名 / 名・姓）、郵便番号・電話番号の形式、住所の入力順序が切り替わります。',
+                'field_settings' => 'フィールド設定',
+                'required_fields_note' => '※ 名前・メールアドレス・内容は常に表示され、必須項目となります。',
                 'show_name' => '名前フィールドを表示',
                 'name_required' => '名前を必須にする',
                 'show_email' => 'メールアドレスフィールドを表示',
                 'email_required' => 'メールアドレスを必須にする',
+                'show_message' => '内容フィールドを表示',
+                'message_required' => '内容を必須にする',
                 'name_order' => '名前の表示順序',
                 'name_order_japanese' => '日本式（姓・名）',
                 'name_order_western' => '欧米式（名・姓）',
@@ -115,6 +123,8 @@ return [
                 'address_required' => '住所を必須にする',
                 'show_phone' => '電話番号フィールドを表示',
                 'phone_required' => '電話番号を必須にする',
+                'show_gender' => '性別フィールドを表示',
+                'gender_required' => '性別を必須にする',
             ],
             'display' => [
                 'title' => 'フォーム表示設定',
