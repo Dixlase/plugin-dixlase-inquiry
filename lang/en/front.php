@@ -60,6 +60,7 @@ return [
         'gender_non_binary' => 'Non-binary',
         'gender_other' => 'Other',
         'gender_prefer_not_to_say' => 'Prefer not to say',
+        'success_message' => 'Thank you for your inquiry. We will review your message and get back to you soon.',
     ],
 
     'placeholders' => [

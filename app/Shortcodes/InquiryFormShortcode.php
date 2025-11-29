@@ -38,14 +38,9 @@ class InquiryFormShortcode
         // 問い合わせ設定を取得
         $settings = InquirySetting::getSettings();
         
-        // シングルページモードでない場合は何も表示しない
-        if (!$settings->use_single_page) {
-            return '';
-        }
-        
-        // 問い合わせフォームビューをレンダリング
+        // 埋め込みフォームをレンダリング
         try {
-            return view('dixlase-inquiry::front.inquiries.form', [
+            return view('dixlase-inquiry::front.inquiries.embed-form', [
                 'settings' => $settings,
                 'attributes' => $attributes,
             ])->render();
