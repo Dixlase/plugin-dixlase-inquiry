@@ -230,7 +230,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @include('components::form.button', [
                 'type' => 'submit',
                 'variant' => 'primary',
-                'label' => __('dixlase-inquiry::front.form.submit'),
+                'label' => __('dixlase-inquiry::front.form.confirm'),
                 'icon' => 'fas fa-paper-plane',
             ])
         </div>

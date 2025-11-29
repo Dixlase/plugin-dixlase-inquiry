@@ -35,6 +35,7 @@ return [
         'message' => 'お問い合わせ内容',
         'recaptcha' => 'reCAPTCHA',
         'submit' => '送信する',
+        'confirm' => '確認する',
         'last_name_placeholder' => '山田',
         'first_name_placeholder' => '太郎',
         'email_placeholder' => 'example@example.com',
@@ -125,5 +126,16 @@ return [
 
     'mail' => [
         'new_inquiry_subject' => '新しいお問い合わせがありました',
+        'auto_reply_subject' => 'お問い合わせを受け付けました',
+        'admin' => [
+            'title' => '新しいお問い合わせ',
+            'intro' => '以下の内容でお問い合わせを受け付けました。',
+        ],
+        'auto_reply' => [
+            'title' => 'お問い合わせありがとうございます',
+            'greeting' => '様',
+            'intro' => 'この度は、お問い合わせいただきありがとうございます。以下の内容で承りました。内容を確認の上、担当者よりご連絡させていただきます。',
+            'footer' => '今後ともよろしくお願いいたします。',
+        ],
     ],
 ];

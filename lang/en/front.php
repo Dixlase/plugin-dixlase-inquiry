@@ -125,5 +125,16 @@ return [
 
     'mail' => [
         'new_inquiry_subject' => 'New Inquiry Received',
+        'auto_reply_subject' => 'Thank you for your inquiry',
+        'admin' => [
+            'title' => 'New Inquiry',
+            'intro' => 'You have received a new inquiry with the following details.',
+        ],
+        'auto_reply' => [
+            'title' => 'Thank you for your inquiry',
+            'greeting' => '',
+            'intro' => 'Thank you for contacting us. We have received your inquiry with the following details. Our team will review your message and get back to you soon.',
+            'footer' => 'We appreciate your interest and look forward to assisting you.',
+        ],
     ],
 ];
