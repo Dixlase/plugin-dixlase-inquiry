@@ -40,5 +40,7 @@ use Illuminate\Support\Facades\Route;
 // フロントエンド用のルートグループ（IPフィルタリング付き）
 Route::middleware(['front.ip'])
     ->group(function () {
-        // フロントエンドのルートをここに定義します
+        // 埋め込みフォーム用の送信ルート
+        Route::post('/inquiry/embed/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'embedSend'])
+            ->name('inquiry.embed.send');
     });

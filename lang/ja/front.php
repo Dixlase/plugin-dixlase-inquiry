@@ -60,6 +60,7 @@ return [
         'gender_non_binary' => 'ノンバイナリー',
         'gender_other' => 'その他',
         'gender_prefer_not_to_say' => '回答しない',
+        'success_message' => 'お問い合わせありがとうございました。内容を確認の上、担当者よりご連絡させていただきます。',
     ],
 
     'placeholders' => [

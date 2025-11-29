@@ -165,4 +165,78 @@ class FrontInquiryController extends Controller
         }
     }
 
+    /**
+     * 埋め込みフォームからの送信処理
+     */
+    public function embedSend(Request $request)
+    {
+        $settings = InquirySetting::getSettings();
+        
+        // バリデーション
+        $rules = [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string|max:5000',
+        ];
+        
+        if ($settings->show_subject ?? false) {
+            $rules['subject'] = ($settings->subject_required ?? false) ? 'required|string|max:255' : 'nullable|string|max:255';
+        }
+        if ($settings->show_phone ?? true) {
+            $rules['phone'] = ($settings->phone_required ?? false) ? 'required|string|max:50' : 'nullable|string|max:50';
+        }
+        
+        $validated = $request->validate($rules);
+        $redirectUrl = $request->input('redirect_url', url('/'));
+        
+        try {
+            // 名前を結合
+            $fullName = ($settings->name_order_western ?? false)
+                ? $validated['first_name'] . ' ' . $validated['last_name']
+                : $validated['last_name'] . ' ' . $validated['first_name'];
+            
+            // メール本文を作成
+            $emailBody = "【お問い合わせ】\n\n";
+            if (!empty($validated['subject'])) {
+                $emailBody .= "題名: {$validated['subject']}\n";
+            }
+            $emailBody .= "お名前: {$fullName}\n";
+            $emailBody .= "メールアドレス: {$validated['email']}\n";
+            if (!empty($validated['phone'])) {
+                $emailBody .= "電話番号: {$validated['phone']}\n";
+            }
+            $emailBody .= "\n【お問い合わせ内容】\n{$validated['message']}\n";
+            
+            // 管理者にメール送信
+            \Mail::raw($emailBody, function($message) use ($settings, $validated) {
+                $message->to($settings->admin_email)
+                        ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
+                if (!empty($validated['email'])) {
+                    $message->replyTo($validated['email']);
+                }
+            });
+            
+            // 自動返信が有効な場合
+            if ($settings->auto_reply_enabled && !empty($settings->auto_reply_subject) && !empty($settings->auto_reply_body)) {
+                $replyBody = $settings->auto_reply_body;
+                $replyBody = str_replace('{{name}}', $fullName, $replyBody);
+                $replyBody = str_replace('{{email}}', $validated['email'], $replyBody);
+                $replyBody = str_replace('{{message}}', $validated['message'], $replyBody);
+                
+                \Mail::raw($replyBody, function($message) use ($settings, $validated) {
+                    $message->to($validated['email'])
+                            ->subject($settings->auto_reply_subject);
+                });
+            }
+            
+            return redirect($redirectUrl)->with('inquiry_success', true);
+            
+        } catch (\Exception $e) {
+            \Log::error('Inquiry embed send failed: ' . $e->getMessage());
+            return redirect($redirectUrl)
+                ->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])
+                ->withInput();
+        }
+    }
 }
