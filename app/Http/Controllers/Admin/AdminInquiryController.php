@@ -46,13 +46,9 @@ class AdminInquiryController extends Controller
 
     public function index()
     {
-        $settings = InquirySetting::getSettings();
-        $this->viewParams['settings'] = $settings;
         // 問い合わせ一覧を表示
-        return view('dixlase-inquiry::admin.inquiries.index', $this->viewParams);
+        return view('dixlase-inquiry::admin.inquiry.index', $this->viewParams);
     }
-
-
 
     public function settings()
     {
@@ -79,7 +75,7 @@ class AdminInquiryController extends Controller
         $this->viewParams['captchaDriver'] = $captchaDriver;
         $this->viewParams['captchaAuthenticated'] = $captchaAuthenticated;
         
-        return view('dixlase-inquiry::admin.settings.inquiries.index', $this->viewParams);
+        return view('dixlase-inquiry::admin.inquiry.settings', $this->viewParams);
     }
     
     public function updateSettings(AdminInquirySettingsRequest $request)

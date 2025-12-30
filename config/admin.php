@@ -22,18 +22,24 @@
 
 return [
     // プラグイン設定画面のルート名
-    'settings_route' => 'admin.dixlase-inquiry::admin.settings.inquiry',
+    'settings_route' => 'admin.dixlase-inquiry::admin.inquiry.settings',
     
     'nav' => [
-        'settings' => [
-            'text' => 'common.settings', // 視項目のテキスト
-            'icon' => 'fas fa-fw fa-cog', // 視項目のアイコン
+        'inquiry' => [
+            'text' => 'dixlase-inquiry::admin.nav.inquiry',
+            'icon' => 'fas fa-fw fa-envelope',
             'can' => 'admin',
             'children' => [
-                'inquiries' => [
-                    'text' => 'dixlase-inquiry::admin.nav.settings.inquiry',
-                    'route' => 'admin.dixlase-inquiry::admin.settings.inquiry',
-                    'icon' => 'fas fa-fw fa-envelope', // 問い合わせ設定
+                'inquiry_list' => [
+                    'text' => 'dixlase-inquiry::admin.nav.inquiry_list',
+                    'route' => 'admin.dixlase-inquiry::admin.inquiry.index',
+                    'icon' => 'fas fa-fw fa-list',
+                    'can' => 'admin',
+                ],
+                'inquiry_settings' => [
+                    'text' => 'dixlase-inquiry::admin.nav.inquiry_settings',
+                    'route' => 'admin.dixlase-inquiry::admin.inquiry.settings',
+                    'icon' => 'fas fa-fw fa-cog',
                     'can' => 'admin',
                 ],
             ],

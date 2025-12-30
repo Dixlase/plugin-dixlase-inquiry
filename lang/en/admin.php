@@ -27,9 +27,14 @@ return [
     ],
     
     'nav' => [
-        'settings' => [
-            'inquiry' => 'Inquiry Settings',
-        ],
+        'inquiry' => 'Inquiry',
+        'inquiry_list' => 'Inquiry List',
+        'inquiry_settings' => 'Inquiry Settings',
+    ],
+    
+    'inquiry' => [
+        'title' => 'Inquiry List',
+        'list_coming_soon' => 'Inquiry list feature is coming soon.',
     ],
 
     'form' => [
