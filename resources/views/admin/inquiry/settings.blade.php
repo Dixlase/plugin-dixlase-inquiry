@@ -33,7 +33,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     @endif
 
-    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST">
+    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST" x-data="{
+            nameOrderWestern: '{{ old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0' }}',
+            showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
+            subjectRequired: {{ old('subject_required', $settings->subject_required ?? false) ? 'true' : 'false' }},
+            showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
+            postalCodeRequired: {{ old('postal_code_required', $settings->postal_code_required ?? false) ? 'true' : 'false' }},
+            showAddress: {{ old('show_address', $settings->show_address ?? false) ? 'true' : 'false' }},
+            addressRequired: {{ old('address_required', $settings->address_required ?? false) ? 'true' : 'false' }},
+            showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }},
+            phoneRequired: {{ old('phone_required', $settings->phone_required ?? false) ? 'true' : 'false' }},
+            showGender: {{ old('show_gender', $settings->show_gender ?? false) ? 'true' : 'false' }},
+            genderRequired: {{ old('gender_required', $settings->gender_required ?? false) ? 'true' : 'false' }},
+            useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
+            inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}'
+        }">
         @csrf
 
         <!-- フォームプレビュー -->
@@ -43,16 +57,162 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </h2>
              
             <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
-                @inquiry
+                @include('dixlase-inquiry::admin.inquiry.partials.form-preview')
             </div>
+        </section>
+
+        <!-- 1. フォーム項目設定 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
+            
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.format_style') }}</legend>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- 日本式・欧米式の選択 -->
+                <div class="lg:col-span-2">
+                    <x-form.radio-card-group
+                        name="name_order_western"
+                        :options="[
+                            [
+                                'value' => '0',
+                                'label' => __('dixlase-inquiry::admin.settings.form_fields.format_japanese'),
+                                'description' => __('dixlase-inquiry::admin.settings.form_fields.format_japanese_desc'),
+                                'icon' => 'fas fa-flag',
+                            ],
+                            [
+                                'value' => '1',
+                                'label' => __('dixlase-inquiry::admin.settings.form_fields.format_western'),
+                                'description' => __('dixlase-inquiry::admin.settings.form_fields.format_western_desc'),
+                                'icon' => 'fas fa-globe',
+                            ],
+                        ]"
+                        :value="old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0'"
+                        xModel="nameOrderWestern"
+                        :columns="2"
+                        color="primary"
+                    />
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        {{ __('dixlase-inquiry::admin.settings.form_fields.format_style_help') }}
+                    </p>
+                </div>
+            </div>
+            </fieldset>
+
+            <fieldset class="mt-6">
+                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.field_settings') }}</legend>
+
+                <!-- 注釈: 必須フィールドの説明 -->
+                <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ __('dixlase-inquiry::admin.settings.form_fields.required_fields_note') }}</span>
+                    </p>
+                </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- 題名フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_subject" x-model="showSubject" {{ old('show_subject', $settings->show_subject ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_subject') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'subject_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.subject_required'),
+                        'checked' => old('subject_required', $settings->subject_required ?? false),
+                        'xBind' => 'showSubject',
+                        'xModel' => 'subjectRequired'
+                    ])
+                </div>
+
+                <!-- 郵便番号フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_postal_code" x-model="showPostalCode" {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_postal_code') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'postal_code_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_code_required'),
+                        'checked' => old('postal_code_required', $settings->postal_code_required ?? false),
+                        'xBind' => 'showPostalCode',
+                        'xModel' => 'postalCodeRequired'
+                    ])
+                </div>
+
+                <!-- 住所フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_address" x-model="showAddress" {{ old('show_address', $settings->show_address ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_address') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'address_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.address_required'),
+                        'checked' => old('address_required', $settings->address_required ?? false),
+                        'xBind' => 'showAddress',
+                        'xModel' => 'addressRequired'
+                    ])
+                </div>
+
+                <!-- 電話番号フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_phone" x-model="showPhone" {{ old('show_phone', $settings->show_phone ?? true) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_phone') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'phone_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.phone_required'),
+                        'checked' => old('phone_required', $settings->phone_required ?? false),
+                        'xBind' => 'showPhone',
+                        'xModel' => 'phoneRequired'
+                    ])
+                </div>
+
+                <!-- 性別フィールド -->
+                <div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="show_gender" x-model="showGender" {{ old('show_gender', $settings->show_gender ?? false) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_gender') }}</span>
+                    </label>
+                </div>
+                <div>
+                    @include('components::form.toggle', [
+                        'name' => 'gender_required',
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.gender_required'),
+                        'checked' => old('gender_required', $settings->gender_required ?? false),
+                        'xBind' => 'showGender',
+                        'xModel' => 'genderRequired'
+                    ])
+                </div>
+                </div>
+            </fieldset>
         </section>
 
 
         <!-- 2. フォーム表示設定 -->
-        <section class="mb-8" x-data="{ 
-            useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
-            inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}'
-        }">
+        <section class="mb-8">
             <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.display.title') }}</h2>
             
             <fieldset>
@@ -173,195 +333,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </section>
 
         
-        <!-- 1. フォーム項目設定 -->
-        <section class="mb-8" x-data="{
-            showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
-            showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
-            showAddress: {{ old('show_address', $settings->show_address ?? false) ? 'true' : 'false' }},
-            showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }},
-            showGender: {{ old('show_gender', $settings->show_gender ?? false) ? 'true' : 'false' }}
-        }">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.form_fields.title') }}</h2>
-            
-            <fieldset>
-                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.format_style') }}</legend>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- 日本式・欧米式の選択 -->
-                <div class="lg:col-span-2">
-                    @include('components::form.radio-group', [
-                        'name' => 'name_order_western',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.format_style'),
-                        'options' => [
-                            '0' => __('dixlase-inquiry::admin.settings.form_fields.format_japanese'),
-                            '1' => __('dixlase-inquiry::admin.settings.form_fields.format_western')
-                        ],
-                        'value' => old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0',
-                        'help' => __('dixlase-inquiry::admin.settings.form_fields.format_style_help')
-                    ])
-                </div>
-            </div>
-            </fieldset>
-
-            <fieldset class="mt-6">
-                <legend>{{ __('dixlase-inquiry::admin.settings.form_fields.field_settings') }}</legend>
-
-                <!-- 注釈: 必須フィールドの説明 -->
-                <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                        <span class="font-medium">{{ __('dixlase-inquiry::admin.settings.form_fields.required_fields_note') }}</span>
-                    </p>
-                </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                <!-- 名前フィールド（常に表示・必須） -->
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_show_name_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_name'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_name_required_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.name_required'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-
-                <!-- メールアドレスフィールド（常に表示・必須） -->
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_show_email_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_email'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_email_required_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.email_required'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-
-                <!-- 内容フィールド（常に表示・必須） -->
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_show_message_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.show_message'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => '_message_required_display',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.message_required'),
-                        'checked' => true,
-                        'disabled' => true
-                    ])
-                </div>
-
-                <!-- 題名フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_subject" x-model="showSubject" {{ old('show_subject', $settings->show_subject ?? false) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_subject') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'subject_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.subject_required'),
-                        'checked' => old('subject_required', $settings->subject_required ?? false),
-                        'xBind' => 'showSubject'
-                    ])
-                </div>
-
-                <!-- 郵便番号フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_postal_code" x-model="showPostalCode" {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_postal_code') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'postal_code_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_code_required'),
-                        'checked' => old('postal_code_required', $settings->postal_code_required ?? false),
-                        'xBind' => 'showPostalCode'
-                    ])
-                </div>
-
-                <!-- 住所フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_address" x-model="showAddress" {{ old('show_address', $settings->show_address ?? false) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_address') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'address_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.address_required'),
-                        'checked' => old('address_required', $settings->address_required ?? false),
-                        'xBind' => 'showAddress'
-                    ])
-                </div>
-
-                <!-- 電話番号フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_phone" x-model="showPhone" {{ old('show_phone', $settings->show_phone ?? true) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_phone') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'phone_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.phone_required'),
-                        'checked' => old('phone_required', $settings->phone_required ?? false),
-                        'xBind' => 'showPhone'
-                    ])
-                </div>
-
-                <!-- 性別フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_gender" x-model="showGender" {{ old('show_gender', $settings->show_gender ?? false) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_gender') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'gender_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.gender_required'),
-                        'checked' => old('gender_required', $settings->gender_required ?? false),
-                        'xBind' => 'showGender'
-                    ])
-                </div>
-                </div>
-            </fieldset>
-        </section>
+        
 
         
 
