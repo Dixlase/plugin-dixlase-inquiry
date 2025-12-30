@@ -6,9 +6,36 @@ DixlaseInquiryプラグインは、問い合わせフォームをテーマやペ
 
 ## 埋め込み方法
 
-### 方法1: ヘルパー関数で埋め込み（推奨）
+### 方法1: Bladeディレクティブで埋め込み（推奨）
 
-`dls_` プレフィックス付きのヘルパー関数を使用する方法です。最もシンプルで推奨される方法です。
+`@inquiry` Bladeディレクティブを使用する方法です。Laravel開発者にとって最も自然で推奨される方法です。
+
+```blade
+{{-- プラグインが有効な場合のみ表示 --}}
+@if(function_exists('dls_inquiry_enabled') && dls_inquiry_enabled())
+<section class="inquiry-section py-16 bg-gray-100 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+                {{ __('dixlase-inquiry::front.form.heading') }}
+            </h2>
+            @inquiry
+        </div>
+    </div>
+</section>
+@endif
+```
+
+#### ポイント
+
+- **Laravel標準**: Bladeディレクティブの記法で統一
+- **シンプル**: `@inquiry` の1行でフォームを表示
+- **IDEサポート**: シンタックスハイライトが効く
+- **安全**: プラグインが無効な場合でもエラーにならない
+
+### 方法2: ヘルパー関数で埋め込み
+
+`dls_` プレフィックス付きのヘルパー関数を使用する方法です。
 
 ```blade
 {{-- プラグインが有効な場合のみ表示 --}}
@@ -88,7 +115,7 @@ DixlaseInquiryプラグインは、問い合わせフォームをテーマやペ
 - **設定の取得**: `InquirySetting::getSettings()` で管理画面の設定を取得
 - **ビューの読み込み**: `@include('dixlase-inquiry::front.inquiries.embed-form', ['settings' => $inquirySettings])`
 
-### 方法2: ショートコードで埋め込み
+### 方法4: ショートコードで埋め込み
 
 ページプラグイン（DixlasePages）のコンテンツ内でショートコードを使用する方法です。
 
@@ -102,7 +129,20 @@ DixlaseInquiryプラグインは、問い合わせフォームをテーマやペ
 2. コンテンツエディタに `[inquiry]` と入力
 3. ページを公開
 
-ショートコードは `shortcode_parse()` 関数で処理されます。
+#### ポイント
+
+- **データベース保存コンテンツ**: ページ作成プラグインなどで動的に保存されたコンテンツ内で使用可能
+- **非技術者向け**: WordPressユーザーにも馴染みやすい記法
+- **実行時処理**: `shortcode_parse()` 関数で実行時に処理される
+
+## 使い分けガイド
+
+| 方法 | 使用場所 | 対象ユーザー | 推奨度 |
+|------|---------|-------------|--------|
+| `@inquiry` | Bladeテンプレート（テーマ） | Laravel開発者 | ⭐⭐⭐ |
+| `dls_inquiry_form()` | Bladeテンプレート（テーマ） | PHP開発者 | ⭐⭐ |
+| `@include(...)` | Bladeテンプレート（テーマ） | 上級開発者 | ⭐ |
+| `[inquiry]` | ページコンテンツ（DB保存） | サイト管理者 | ⭐⭐⭐ |
 
 ## 埋め込みフォームの機能
 

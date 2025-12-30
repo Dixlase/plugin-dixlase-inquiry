@@ -35,6 +35,143 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST">
         @csrf
+
+        <!-- フォームプレビュー -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4">
+                {{ __('dixlase-inquiry::admin.settings.display.form_preview') }}
+            </h2>
+             
+            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
+                @inquiry
+            </div>
+        </section>
+
+
+        <!-- 2. フォーム表示設定 -->
+        <section class="mb-8" x-data="{ 
+            useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
+            inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}'
+        }">
+            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.display.title') }}</h2>
+            
+            <fieldset>
+                <legend>{{ __('dixlase-inquiry::admin.settings.display.form_type') }}</legend>
+            
+            <div class="grid grid-cols-1 gap-6">
+                @include('components::form.radio-group', [
+                    'name' => 'use_single_page',
+                    'label' => __('dixlase-inquiry::admin.settings.display.use_single_page'),
+                    'options' => [
+                        '1' => __('dixlase-inquiry::admin.settings.display.single_page'),
+                        '0' => __('dixlase-inquiry::admin.settings.display.separate_pages')
+                    ],
+                    'value' => old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0',
+                    'help' => __('dixlase-inquiry::admin.settings.display.single_page_help'),
+                    'xModel' => 'useSinglePage'
+                ])
+
+                <!-- シングルページ選択時: ショートコード表示 -->
+                <div x-show="useSinglePage == '1'" x-cloak>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        {{ __('dixlase-inquiry::admin.settings.display.shortcode_label') }}
+                    </label>
+                    
+                    <!-- 使用方法の説明 -->
+                    <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mt-0.5 mr-2"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-blue-800 dark:text-blue-200 font-medium mb-1">
+                                    {{ __('dixlase-inquiry::admin.settings.display.usage_instruction_title') }}
+                                </p>
+                                <p class="text-xs text-blue-700 dark:text-blue-300">
+                                    {{ __('dixlase-inquiry::admin.settings.display.usage_instruction_text') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bladeディレクティブ（推奨） -->
+                    <div class="mb-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                {{ __('dixlase-inquiry::admin.settings.display.blade_directive') }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md mb-2">
+                            <code class="text-sm text-gray-800 dark:text-gray-200">{{ '@' }}inquiry</code>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">
+                            {{ __('dixlase-inquiry::admin.settings.display.blade_directive_help') }}
+                        </p>
+                    </div>
+                    
+                    <!-- ショートコード -->
+                    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            {{ __('dixlase-inquiry::admin.settings.display.shortcode') }}
+                        </p>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md mb-2">
+                            <code class="text-sm text-gray-800 dark:text-gray-200">[inquiry]</code>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">
+                            {{ __('dixlase-inquiry::admin.settings.display.shortcode_help') }}
+                        </p>
+                    </div>
+                    
+                    
+                </div>
+
+                <!-- 別ページ選択時: URL編集フィールド -->
+                <div x-show="useSinglePage == '0'" x-cloak>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('dixlase-inquiry::admin.settings.display.inquiry_url') }}
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-600 dark:text-gray-400">{{ url('/') }}/</span>
+                        <div class="flex-1">
+                            <input type="text"
+                                   name="inquiry_url_slug"
+                                   x-model="inquiryUrlSlug"
+                                   placeholder="inquiry"
+                                   class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        {{ __('dixlase-inquiry::admin.settings.display.inquiry_url_slug_help') }}
+                    </p>
+                    
+                    <!-- プレビューボタン -->
+                    <div class="mt-4">
+                        <a :href="'{{ url('/') }}/' + inquiryUrlSlug" 
+                           target="_blank"
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm transition-colors duration-150">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            {{ __('common.preview') }}
+                        </a>
+                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            {{ __('dixlase-inquiry::admin.settings.display.preview_page_help') }}
+                        </p>
+                    </div>
+                </div>
+
+                @include('components::form.toggle', [
+                    'name' => 'show_confirmation_page',
+                    'label' => __('dixlase-inquiry::admin.settings.display.show_confirmation'),
+                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true)
+                ])
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.display.show_confirmation_help') }}
+                </p>
+            </div>
+            </fieldset>
+        </section>
+
         
         <!-- 1. フォーム項目設定 -->
         <section class="mb-8" x-data="{
@@ -226,89 +363,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </fieldset>
         </section>
 
-        <!-- 2. フォーム表示設定 -->
-        <section class="mb-8" x-data="{ 
-            useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
-            inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}'
-        }">
-            <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin.settings.display.title') }}</h2>
-            
-            <fieldset>
-                <legend>{{ __('dixlase-inquiry::admin.settings.display.form_type') }}</legend>
-            
-            <div class="grid grid-cols-1 gap-6">
-                @include('components::form.radio-group', [
-                    'name' => 'use_single_page',
-                    'label' => __('dixlase-inquiry::admin.settings.display.use_single_page'),
-                    'options' => [
-                        '1' => __('dixlase-inquiry::admin.settings.display.single_page'),
-                        '0' => __('dixlase-inquiry::admin.settings.display.separate_pages')
-                    ],
-                    'value' => old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0',
-                    'help' => __('dixlase-inquiry::admin.settings.display.single_page_help'),
-                    'xModel' => 'useSinglePage'
-                ])
-
-                <!-- シングルページ選択時: ショートコード表示 -->
-                <div x-show="useSinglePage == '1'" x-cloak>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {{ __('dixlase-inquiry::admin.settings.display.shortcode_label') }}
-                    </label>
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
-                        <code class="text-sm text-gray-800 dark:text-gray-200">[inquiry]</code>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('dixlase-inquiry::admin.settings.display.shortcode_help') }}
-                    </p>
-                </div>
-
-                <!-- 別ページ選択時: URL編集フィールド -->
-                <div x-show="useSinglePage == '0'" x-cloak>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        {{ __('dixlase-inquiry::admin.settings.display.inquiry_url') }}
-                    </label>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-600 dark:text-gray-400">{{ url('/') }}/</span>
-                        <div class="flex-1">
-                            <input type="text"
-                                   name="inquiry_url_slug"
-                                   x-model="inquiryUrlSlug"
-                                   placeholder="inquiry"
-                                   class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
-                        </div>
-                    </div>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('dixlase-inquiry::admin.settings.display.inquiry_url_slug_help') }}
-                    </p>
-                    
-                    <!-- プレビューボタン -->
-                    <div class="mt-4">
-                        <a :href="'{{ url('/') }}/' + inquiryUrlSlug" 
-                           target="_blank"
-                           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm transition-colors duration-150">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                            {{ __('common.preview') }}
-                        </a>
-                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                            {{ __('dixlase-inquiry::admin.settings.display.preview_page_help') }}
-                        </p>
-                    </div>
-                </div>
-
-                @include('components::form.toggle', [
-                    'name' => 'show_confirmation_page',
-                    'label' => __('dixlase-inquiry::admin.settings.display.show_confirmation'),
-                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true)
-                ])
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    {{ __('dixlase-inquiry::admin.settings.display.show_confirmation_help') }}
-                </p>
-            </div>
-            </fieldset>
-        </section>
+        
 
         <!-- 3. 完了ページ設定 -->
         <section class="mb-8">

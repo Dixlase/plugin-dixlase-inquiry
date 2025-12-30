@@ -24,6 +24,7 @@ namespace Plugins\DixlaseInquiry\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Blade;
 use App\Traits\PluginLoaderTrait;
 use App\Helpers\PluginHelper;
 use Plugins\DixlaseInquiry\App\Models\InquirySetting;
@@ -58,6 +59,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // ショートコード登録
         $this->registerShortcodes();
         
+        // Bladeディレクティブ登録
+        $this->registerBladeDirectives();
+        
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
         
@@ -80,6 +84,17 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     {
         // コアのPluginHelperを使用してショートコードを登録
         PluginHelper::registerShortcode('inquiry', InquiryFormShortcode::class);
+    }
+    
+    /**
+     * Bladeディレクティブ登録
+     */
+    protected function registerBladeDirectives(): void
+    {
+        // @inquiry ディレクティブを登録
+        Blade::directive('inquiry', function ($expression) {
+            return "<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\InquiryFormShortcode::class)->render(); ?>";
+        });
     }
     
     /**
