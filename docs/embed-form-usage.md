@@ -6,9 +6,52 @@ DixlaseInquiryプラグインは、問い合わせフォームをテーマやペ
 
 ## 埋め込み方法
 
-### 方法1: Bladeテンプレートで直接埋め込み
+### 方法1: ヘルパー関数で埋め込み（推奨）
 
-テーマのBladeテンプレートから直接フォームを埋め込む方法です。
+`dls_` プレフィックス付きのヘルパー関数を使用する方法です。最もシンプルで推奨される方法です。
+
+```blade
+{{-- プラグインが有効な場合のみ表示 --}}
+@if(function_exists('dls_inquiry_enabled') && dls_inquiry_enabled())
+<section class="inquiry-section py-16 bg-gray-100 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+                {{ __('dixlase-inquiry::front.form.heading') }}
+            </h2>
+            {!! dls_inquiry_form() !!}
+        </div>
+    </div>
+</section>
+@endif
+```
+
+#### 利用可能なヘルパー関数
+
+| 関数 | 説明 | 戻り値 |
+|------|------|--------|
+| `dls_inquiry_form(array $options = [])` | 問い合わせフォームをレンダリング | `string\|null` |
+| `dls_inquiry_settings()` | 問い合わせ設定を取得 | `InquirySetting\|null` |
+| `dls_inquiry_enabled()` | プラグインが有効かどうか確認 | `bool` |
+
+#### dls_inquiry_form() のオプション
+
+```blade
+{!! dls_inquiry_form([
+    'class' => 'custom-form-class',
+    'id' => 'my-inquiry-form',
+]) !!}
+```
+
+#### ポイント
+
+- **シンプル**: 1行でフォームを表示
+- **安全**: プラグインが無効な場合は自動的に `null` を返す
+- **エラーハンドリング**: 内部で例外処理済み
+
+### 方法2: Bladeテンプレートで直接埋め込み
+
+テーマのBladeテンプレートから直接フォームを埋め込む方法です。より細かい制御が必要な場合に使用します。
 
 ```blade
 {{-- プラグインの有効性チェック --}}

@@ -37,6 +37,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Load helper functions
+        require_once __DIR__ . '/../Helpers/InquiryHelpers.php';
+        
         // Merge admin navigation
         $this->mergeAdminNavigation('DixlaseInquiry', __DIR__ . '/../../config/admin.php');
     }

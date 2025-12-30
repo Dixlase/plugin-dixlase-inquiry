@@ -33,7 +33,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     @endif
 
-    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.settings.inquiry.update') }}" method="POST">
+    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST">
         @csrf
         
         <!-- 1. フォーム項目設定 -->
@@ -435,7 +435,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div class="mb-4">
                     @include('components.message', [
                         'type' => 'warning',
-                        'message' => __('dixlase-inquiry::admin.settings.captcha_test_required', ['url' => route('admin.settings.security')])
+                        'message' => __('dixlase-inquiry::admin.settings.captcha_test_required', ['url' => route('admin.settings.security.captcha')])
                     ])
                 </div>
             @endif

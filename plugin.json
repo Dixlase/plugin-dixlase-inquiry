@@ -22,12 +22,49 @@
     ],
     "requires": {
         "dixlase": ">=1.0.0",
-        "php": ">=8.0"
+        "php": ">=8.2"
     },
     "provides": {
         "admin_menu": true,
         "front_routes": true,
         "api_routes": false,
-        "settings_page": true
+        "settings_page": true,
+        "shortcodes": true
+    },
+    "permissions": {
+        "database": {
+            "own_tables": true,
+            "core_tables": []
+        },
+        "storage": {
+            "own_directory": true,
+            "public_uploads": false,
+            "temp_files": true
+        },
+        "settings": {
+            "read_core": true,
+            "write_own": true
+        },
+        "members": {
+            "read": false,
+            "write": false,
+            "create": false,
+            "delete": false
+        },
+        "mail": {
+            "send": true,
+            "bulk_send": false
+        },
+        "content": {
+            "read_other_plugins": [],
+            "write_other_plugins": []
+        },
+        "system": {
+            "register_shortcodes": true,
+            "register_middleware": false,
+            "register_commands": false,
+            "register_blade_directives": false,
+            "modify_routes": false
+        }
     }
 }
