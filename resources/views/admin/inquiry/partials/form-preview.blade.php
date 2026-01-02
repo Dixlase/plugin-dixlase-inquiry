@@ -26,27 +26,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <x-form.required-badge />
         </legend>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- 日本式: 姓が先 --}}
             <div x-show="nameOrderWestern == '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.last_name') }}
+                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.last_name_label_ja') }})</span>
                 </label>
                 <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
             </div>
             <div x-show="nameOrderWestern == '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.first_name') }}
+                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.first_name_label_ja') }})</span>
                 </label>
                 <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
             </div>
+            {{-- 欧米式: 名が先 --}}
             <div x-show="nameOrderWestern == '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.first_name') }}
+                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.first_name_label_en') }})</span>
                 </label>
                 <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
             </div>
             <div x-show="nameOrderWestern == '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.last_name') }}
+                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.last_name_label_en') }})</span>
                 </label>
                 <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
             </div>
@@ -111,6 +117,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </label>
                     <select disabled class="input-common my-2 w-full opacity-60">
                         <option>{{ __('common.please_select') }}</option>
+                        @foreach(config('regions.prefectures') as $code => $prefecture)
+                            <option value="{{ $code }}">{{ __('regions.prefectures.' . $code) }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div>
@@ -132,8 +141,36 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}" class="input-common my-2 w-full opacity-60">
                 </div>
             </div>
-            <div x-show="nameOrderWestern == '1'">
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.address_placeholder') }}" class="input-common my-2 w-full opacity-60">
+            <div x-show="nameOrderWestern == '1'" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {{ __('dixlase-inquiry::front.form.country') }}
+                    </label>
+                    <select disabled class="input-common my-2 w-full opacity-60">
+                        <option>{{ __('common.please_select') }}</option>
+                        @foreach(config('regions.countries') as $code => $country)
+                            <option value="{{ $code }}">{{ __('regions.countries.' . $code) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {{ __('dixlase-inquiry::front.form.state_province') }}
+                    </label>
+                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.state_province_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {{ __('dixlase-inquiry::front.form.city') }}
+                    </label>
+                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder_en') }}" class="input-common my-2 w-full opacity-60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {{ __('dixlase-inquiry::front.form.address_line') }}
+                    </label>
+                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder_en') }}" class="input-common my-2 w-full opacity-60">
+                </div>
             </div>
         </fieldset>
     </div>

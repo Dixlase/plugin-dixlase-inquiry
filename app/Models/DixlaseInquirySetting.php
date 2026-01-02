@@ -24,7 +24,7 @@ namespace Plugins\DixlaseInquiry\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InquirySetting extends Model
+class DixlaseInquirySetting extends Model
 {
     protected $table = 'plg_dixlase_inquiry_settings';
 

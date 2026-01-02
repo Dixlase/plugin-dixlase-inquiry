@@ -21,7 +21,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController;
+use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,9 +45,9 @@ use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\AdminInquiryController;
 Route::prefix('inquiry')
     ->name('dixlase-inquiry::admin.inquiry.')
     ->group(function () {
-        Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
-        Route::get('/settings', [AdminInquiryController::class, 'settings'])->name('settings');
-        Route::post('/settings', [AdminInquiryController::class, 'updateSettings'])->name('settings.update');
-        Route::get('/{id}', [AdminInquiryController::class, 'show'])->name('show');
-        Route::delete('/{id}', [AdminInquiryController::class, 'destroy'])->name('destroy');
+        Route::get('/', [DixlaseInquiryAdminController::class, 'index'])->name('index');
+        Route::get('/settings', [DixlaseInquiryAdminController::class, 'settings'])->name('settings');
+        Route::post('/settings', [DixlaseInquiryAdminController::class, 'updateSettings'])->name('settings.update');
+        Route::get('/{id}', [DixlaseInquiryAdminController::class, 'show'])->name('show');
+        Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy');
     });

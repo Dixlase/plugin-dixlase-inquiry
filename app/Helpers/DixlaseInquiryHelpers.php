@@ -20,7 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 if (!function_exists('dls_inquiry_form')) {
     /**
@@ -34,7 +34,7 @@ if (!function_exists('dls_inquiry_form')) {
     function dls_inquiry_form(array $options = []): ?string
     {
         try {
-            $settings = InquirySetting::getSettings();
+            $settings = DixlaseInquirySetting::getSettings();
             
             if (!$settings || empty($settings->admin_email)) {
                 return null;
@@ -55,12 +55,12 @@ if (!function_exists('dls_inquiry_settings')) {
     /**
      * 問い合わせ設定を取得する
      * 
-     * @return \Plugins\DixlaseInquiry\App\Models\InquirySetting|null
+     * @return \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting|null
      */
-    function dls_inquiry_settings(): ?InquirySetting
+    function dls_inquiry_settings(): ?DixlaseInquirySetting
     {
         try {
-            return InquirySetting::getSettings();
+            return DixlaseInquirySetting::getSettings();
         } catch (\Exception $e) {
             return null;
         }
@@ -76,7 +76,7 @@ if (!function_exists('dls_inquiry_enabled')) {
     function dls_inquiry_enabled(): bool
     {
         try {
-            $settings = InquirySetting::getSettings();
+            $settings = DixlaseInquirySetting::getSettings();
             return $settings && !empty($settings->admin_email);
         } catch (\Exception $e) {
             return false;

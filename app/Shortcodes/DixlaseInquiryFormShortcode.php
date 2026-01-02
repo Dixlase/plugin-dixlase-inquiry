@@ -22,9 +22,9 @@
 
 namespace Plugins\DixlaseInquiry\App\Shortcodes;
 
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
-class InquiryFormShortcode
+class DixlaseInquiryFormShortcode
 {
     /**
      * ショートコードをレンダリング
@@ -36,7 +36,7 @@ class InquiryFormShortcode
     public function render($attributes = [], $content = null)
     {
         // 問い合わせ設定を取得
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // 埋め込みフォームをレンダリング
         try {

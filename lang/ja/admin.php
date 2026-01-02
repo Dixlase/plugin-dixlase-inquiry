@@ -124,6 +124,8 @@ return [
                 'name_order_help' => '英語版では自動的に欧米式（名・姓）の順序になります。',
                 'show_subject' => '題名フィールドを表示',
                 'subject_required' => '題名を必須にする',
+                'show_postal_address' => '郵便番号・住所フィールドを表示',
+                'postal_address_required' => '郵便番号・住所を必須にする',
                 'show_postal_code' => '郵便番号フィールドを表示',
                 'postal_code_required' => '郵便番号を必須にする',
                 'show_address' => '住所フィールドを表示',
