@@ -23,9 +23,9 @@
 namespace Plugins\DixlaseInquiry\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
-class FrontInquirySubmitRequest extends FormRequest
+class DixlaseInquirySubmitRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -41,7 +41,7 @@ class FrontInquirySubmitRequest extends FormRequest
      */
     public function rules(): array
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         $isWestern = (bool) ($settings['name_order_western'] ?? false);
         
         $rules = [
@@ -121,7 +121,7 @@ class FrontInquirySubmitRequest extends FormRequest
      */
     public function messages(): array
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         $isWestern = (bool) ($settings['name_order_western'] ?? false);
 
         return [

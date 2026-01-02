@@ -24,7 +24,7 @@ namespace Plugins\DixlaseInquiry\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AdminInquirySettingsRequest extends FormRequest
+class DixlaseInquirySettingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

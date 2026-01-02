@@ -28,11 +28,11 @@ use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
 use App\Models\BaseSetting;
 use App\Models\SecuritySetting;
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
-use Plugins\DixlaseInquiry\App\Http\Requests\AdminInquirySettingsRequest;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySettingsRequest;
 
 
-class AdminInquiryController extends Controller
+class DixlaseInquiryAdminController extends Controller
 {
 
     use AdminInterfaceTrait;
@@ -52,7 +52,7 @@ class AdminInquiryController extends Controller
 
     public function settings()
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // メールテスト状態を取得（DB優先、セッションは一時的な状態のみ）
         $sessionTestResults = session('mail_test_results', []);
@@ -78,11 +78,11 @@ class AdminInquiryController extends Controller
         return view('dixlase-inquiry::admin.inquiry.settings', $this->viewParams);
     }
     
-    public function updateSettings(AdminInquirySettingsRequest $request)
+    public function updateSettings(DixlaseInquirySettingsRequest $request)
     {
         $validated = $request->validated();
         
-        InquirySetting::updateSettings($validated);
+        DixlaseInquirySetting::updateSettings($validated);
         
         return redirect()->back()->with('success', __('dixlase-inquiry::admin.messages.settings_updated'));
     }

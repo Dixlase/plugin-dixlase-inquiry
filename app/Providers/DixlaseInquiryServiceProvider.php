@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Blade;
 use App\Traits\PluginLoaderTrait;
 use App\Helpers\PluginHelper;
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
-use Plugins\DixlaseInquiry\App\Shortcodes\InquiryFormShortcode;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Shortcodes\DixlaseInquiryFormShortcode;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
@@ -39,7 +39,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Load helper functions
-        require_once __DIR__ . '/../Helpers/InquiryHelpers.php';
+        require_once __DIR__ . '/../Helpers/DixlaseInquiryHelpers.php';
         
         // Merge admin navigation
         $this->mergeAdminNavigation('DixlaseInquiry', __DIR__ . '/../../config/admin.php');
@@ -83,7 +83,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     protected function registerShortcodes(): void
     {
         // コアのPluginHelperを使用してショートコードを登録
-        PluginHelper::registerShortcode('inquiry', InquiryFormShortcode::class);
+        PluginHelper::registerShortcode('inquiry', DixlaseInquiryFormShortcode::class);
     }
     
     /**
@@ -93,7 +93,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     {
         // @inquiry ディレクティブを登録
         Blade::directive('inquiry', function ($expression) {
-            return "<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\InquiryFormShortcode::class)->render(); ?>";
+            return "<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\DixlaseInquiryFormShortcode::class)->render(); ?>";
         });
     }
     
@@ -103,7 +103,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     protected function registerDynamicRoutes(): void
     {
         try {
-            $settings = InquirySetting::getSettings();
+            $settings = DixlaseInquirySetting::getSettings();
             
             // 別ページモードの場合のみルート登録
             if (!$settings->use_single_page) {
@@ -111,11 +111,11 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
                 
                 Route::middleware(['web', 'front.ip'])
                     ->group(function () use ($slug) {
-                        Route::get($slug, [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'index'])
+                        Route::get($slug, [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'index'])
                             ->name('inquiry.index');
-                        Route::post($slug . '/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'confirm'])
+                        Route::post($slug . '/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'confirm'])
                             ->name('inquiry.confirm');
-                        Route::post($slug . '/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'send'])
+                        Route::post($slug . '/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'send'])
                             ->name('inquiry.send');
                     });
             }

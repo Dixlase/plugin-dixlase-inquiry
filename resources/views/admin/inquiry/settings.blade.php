@@ -39,8 +39,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             subjectRequired: {{ old('subject_required', $settings->subject_required ?? false) ? 'true' : 'false' }},
             showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
             postalCodeRequired: {{ old('postal_code_required', $settings->postal_code_required ?? false) ? 'true' : 'false' }},
-            showAddress: {{ old('show_address', $settings->show_address ?? false) ? 'true' : 'false' }},
-            addressRequired: {{ old('address_required', $settings->address_required ?? false) ? 'true' : 'false' }},
+            get showAddress() { return this.showPostalCode; },
+            get addressRequired() { return this.postalCodeRequired; },
             showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }},
             phoneRequired: {{ old('phone_required', $settings->phone_required ?? false) ? 'true' : 'false' }},
             showGender: {{ old('show_gender', $settings->show_gender ?? false) ? 'true' : 'false' }},
@@ -131,42 +131,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ])
                 </div>
 
-                <!-- 郵便番号フィールド -->
+                <!-- 郵便番号・住所フィールド -->
                 <div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="show_postal_code" x-model="showPostalCode" {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'checked' : '' }} class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
                         <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_postal_code') }}</span>
+                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_postal_address') }}</span>
                     </label>
+                    <input type="hidden" name="show_address" :value="showPostalCode ? '1' : '0'">
                 </div>
                 <div>
                     @include('components::form.toggle', [
                         'name' => 'postal_code_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_code_required'),
+                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_address_required'),
                         'checked' => old('postal_code_required', $settings->postal_code_required ?? false),
                         'xBind' => 'showPostalCode',
                         'xModel' => 'postalCodeRequired'
                     ])
-                </div>
-
-                <!-- 住所フィールド -->
-                <div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_address" x-model="showAddress" {{ old('show_address', $settings->show_address ?? false) ? 'checked' : '' }} class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin.settings.form_fields.show_address') }}</span>
-                    </label>
-                </div>
-                <div>
-                    @include('components::form.toggle', [
-                        'name' => 'address_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.address_required'),
-                        'checked' => old('address_required', $settings->address_required ?? false),
-                        'xBind' => 'showAddress',
-                        'xModel' => 'addressRequired'
-                    ])
+                    <input type="hidden" name="address_required" :value="postalCodeRequired ? '1' : '0'">
                 </div>
 
                 <!-- 電話番号フィールド -->

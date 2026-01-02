@@ -114,6 +114,8 @@ return [
                 'name_order_help' => 'English version automatically uses Western style (First, Last) order.',
                 'show_subject' => 'Show Subject Field',
                 'subject_required' => 'Make Subject Required',
+                'show_postal_address' => 'Show Postal Code & Address Fields',
+                'postal_address_required' => 'Make Postal Code & Address Required',
                 'show_postal_code' => 'Show Postal Code Field',
                 'postal_code_required' => 'Make Postal Code Required',
                 'show_address' => 'Show Address Field',

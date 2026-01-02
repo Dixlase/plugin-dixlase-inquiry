@@ -25,12 +25,12 @@ namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Plugins\DixlaseInquiry\App\Http\Requests\FrontInquirySubmitRequest;
-use Plugins\DixlaseInquiry\App\Mail\InquiryAdminNotification;
-use Plugins\DixlaseInquiry\App\Mail\InquiryAutoReply;
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySubmitRequest;
+use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
+use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
-class FrontInquiryController extends Controller
+class DixlaseInquiryFrontController extends Controller
 {
     public function __construct()
     {
@@ -41,7 +41,7 @@ class FrontInquiryController extends Controller
      */
     public function index()
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
@@ -58,7 +58,7 @@ class FrontInquiryController extends Controller
      */
     public function confirm(Request $request)
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
@@ -84,7 +84,7 @@ class FrontInquiryController extends Controller
      */
     public function send(Request $request)
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
@@ -98,11 +98,11 @@ class FrontInquiryController extends Controller
             $inquiryData = $this->prepareInquiryData($validated, $settings);
             
             // 管理者にメール送信
-            Mail::to($settings->admin_email)->send(new InquiryAdminNotification($inquiryData, $settings));
+            Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
             
             // 自動返信が有効な場合
             if ($settings->auto_reply_enabled && !empty($validated['email'])) {
-                Mail::to($validated['email'])->send(new InquiryAutoReply($inquiryData, $settings));
+                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
             }
             
         } catch (\Exception $e) {
@@ -162,7 +162,7 @@ class FrontInquiryController extends Controller
      */
     public function form()
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         if (!$settings || empty($settings->admin_email)) {
             return view('dixlase-inquiry::front.inquiries.error', [
@@ -173,9 +173,9 @@ class FrontInquiryController extends Controller
         return view('dixlase-inquiry::front.inquiries.form', compact('settings'));
     }
     
-    public function submit(FrontInquirySubmitRequest $request)
+    public function submit(DixlaseInquirySubmitRequest $request)
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         if (!$settings || empty($settings['admin_email'])) {
             return response()->json([
@@ -231,7 +231,7 @@ class FrontInquiryController extends Controller
      */
     public function embedSend(Request $request)
     {
-        $settings = InquirySetting::getSettings();
+        $settings = DixlaseInquirySetting::getSettings();
         
         // バリデーション
         $rules = [
@@ -256,11 +256,11 @@ class FrontInquiryController extends Controller
             $inquiryData = $this->prepareInquiryData($validated, $settings);
             
             // 管理者にメール送信
-            Mail::to($settings->admin_email)->send(new InquiryAdminNotification($inquiryData, $settings));
+            Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
             
             // 自動返信が有効な場合
             if ($settings->auto_reply_enabled && !empty($validated['email'])) {
-                Mail::to($validated['email'])->send(new InquiryAutoReply($inquiryData, $settings));
+                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
             }
             
             return redirect($redirectUrl)->with('inquiry_success', true);

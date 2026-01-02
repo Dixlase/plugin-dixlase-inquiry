@@ -24,7 +24,7 @@ namespace Plugins\DixlaseInquiry\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Inquiry extends Model
+class DixlaseInquiry extends Model
 {
 
 }

@@ -28,7 +28,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class InquiryAutoReply extends Mailable
+class DixlaseInquiryAdminNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -57,7 +57,8 @@ class InquiryAutoReply extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->settings->auto_reply_subject ?? __('dixlase-inquiry::front.mail.auto_reply_subject'),
+            subject: __('dixlase-inquiry::front.mail.new_inquiry_subject'),
+            replyTo: $this->inquiryData['email'] ?? null,
         );
     }
 
@@ -67,7 +68,7 @@ class InquiryAutoReply extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'dixlase-inquiry::emails.inquiry-auto-reply',
+            markdown: 'dixlase-inquiry::emails.inquiry-admin',
             with: [
                 'inquiryData' => $this->inquiryData,
                 'settings' => $this->settings,

@@ -41,6 +41,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['front.ip'])
     ->group(function () {
         // 埋め込みフォーム用の送信ルート
-        Route::post('/inquiry/embed/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\FrontInquiryController::class, 'embedSend'])
+        Route::post('/inquiry/embed/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'embedSend'])
             ->name('inquiry.embed.send');
     });
