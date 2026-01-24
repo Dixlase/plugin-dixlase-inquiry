@@ -19,7 +19,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="inquiryEmbedForm()">
+<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="window.inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})">
     @if(session('inquiry_success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ __('dixlase-inquiry::front.form.success_message') }}
@@ -201,56 +201,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     @endif
 </div>
 
-@if($settings->show_confirmation_page ?? true)
-<script>
-function inquiryEmbedForm() {
-    return {
-        showConfirmation: false,
-        formData: {
-            subject: '',
-            first_name: '',
-            last_name: '',
-            email: '',
-            phone: '',
-            message: ''
-        },
-        nameOrderWestern: {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }},
-        get fullName() {
-            if (this.nameOrderWestern) {
-                return (this.formData.first_name + ' ' + this.formData.last_name).trim();
-            }
-            return (this.formData.last_name + ' ' + this.formData.first_name).trim();
-        },
-        showConfirm() {
-            const form = this.$refs.inquiryForm;
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            // フォームデータを収集
-            this.formData.subject = form.querySelector('[name="subject"]')?.value || '';
-            this.formData.first_name = form.querySelector('[name="first_name"]')?.value || '';
-            this.formData.last_name = form.querySelector('[name="last_name"]')?.value || '';
-            this.formData.email = form.querySelector('[name="email"]')?.value || '';
-            this.formData.phone = form.querySelector('[name="phone"]')?.value || '';
-            this.formData.message = form.querySelector('[name="message"]')?.value || '';
-            this.showConfirmation = true;
-            // スクロールして確認画面を表示
-            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        },
-        submitForm() {
-            this.$refs.inquiryForm.submit();
-        }
-    }
-}
-</script>
-<style>
-[x-cloak] { display: none !important; }
-</style>
-@else
-<script>
-function inquiryEmbedForm() {
-    return {};
-}
-</script>
-@endif
+{{-- スタイルとスクリプトは外部ファイル化済み --}}
+{{-- SCSS: resources/src/css/components/embed-form.scss --}}
+{{-- JS: resources/src/js/components/embed-form.js --}}
