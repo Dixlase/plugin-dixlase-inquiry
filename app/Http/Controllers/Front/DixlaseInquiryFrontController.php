@@ -29,6 +29,7 @@ use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySubmitRequest;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Http\Requests\Front\DixlaseInquiryEmbedSendRequest;
 
 class DixlaseInquiryFrontController extends Controller
 {
@@ -229,26 +230,11 @@ class DixlaseInquiryFrontController extends Controller
     /**
      * 埋め込みフォームからの送信処理
      */
-    public function embedSend(Request $request)
+    public function embedSend(DixlaseInquiryEmbedSendRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
         
-        // バリデーション
-        $rules = [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string|max:5000',
-        ];
-        
-        if ($settings->show_subject ?? false) {
-            $rules['subject'] = ($settings->subject_required ?? false) ? 'required|string|max:255' : 'nullable|string|max:255';
-        }
-        if ($settings->show_phone ?? true) {
-            $rules['phone'] = ($settings->phone_required ?? false) ? 'required|string|max:50' : 'nullable|string|max:50';
-        }
-        
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
         $redirectUrl = $request->input('redirect_url', url('/'));
         
         try {

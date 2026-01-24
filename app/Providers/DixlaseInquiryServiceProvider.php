@@ -121,7 +121,6 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
             }
         } catch (\Exception $e) {
             // データベースがまだ存在しない場合などのエラーを無視
-            \Log::debug('Failed to register dynamic inquiry routes: ' . $e->getMessage());
         }
     }
     
