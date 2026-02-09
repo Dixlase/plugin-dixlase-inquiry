@@ -21,8 +21,24 @@
  */
 
 return [
-    // プラグイン設定画面のルート名
-    'settings_route' => 'dixlase-inquiry::inquiry.settings',
-    
-    // 注: ナビゲーション設定は config/admin/navigation.php に移動
+    // 問い合わせ管理
+    'inquiry' => [
+        'text' => 'dixlase-inquiry::admin.nav.inquiry',
+        'icon' => 'fas fa-fw fa-envelope',
+        'can' => 'admin',
+        'children' => [
+            'index' => [
+                'text' => 'dixlase-inquiry::admin.nav.inquiry_list',
+                'route' => 'dixlase-inquiry::inquiry.index',
+                'icon' => 'fas fa-fw fa-list',
+                'can' => 'admin',
+            ],
+            'settings' => [
+                'text' => 'dixlase-inquiry::admin.nav.inquiry_settings',
+                'route' => 'dixlase-inquiry::inquiry.settings',
+                'icon' => 'fas fa-fw fa-cog',
+                'can' => 'admin',
+            ],
+        ],
+    ],
 ];
