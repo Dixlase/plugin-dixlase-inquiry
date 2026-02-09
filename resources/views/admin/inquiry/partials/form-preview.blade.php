@@ -23,7 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <fieldset>
         <legend>
             {{ __('dixlase-inquiry::front.form.name') }}
-            <x-form.required-badge />
+            <x-form-required-badge />
         </legend>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{-- 日本式: 姓が先 --}}
@@ -63,7 +63,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <fieldset>
         <legend>
             {{ __('dixlase-inquiry::front.form.email') }}
-            <x-form.required-badge />
+            <x-form-required-badge />
         </legend>
         <input type="email" disabled placeholder="{{ __('dixlase-inquiry::front.form.email_placeholder') }}" class="input-common my-2 w-full opacity-60">
     </fieldset>
@@ -74,7 +74,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <legend>
                 {{ __('dixlase-inquiry::front.form.subject') }}
                 <span x-show="subjectRequired">
-                    <x-form.required-badge />
+                    <x-form-required-badge />
                 </span>
             </legend>
             <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.subject_placeholder') }}" class="input-common my-2 w-full opacity-60">
@@ -87,7 +87,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <legend>
                 {{ __('dixlase-inquiry::front.form.postal_code') }}
                 <span x-show="postalCodeRequired">
-                    <x-form.required-badge />
+                    <x-form-required-badge />
                 </span>
             </legend>
             <div x-show="nameOrderWestern == '0'" class="flex items-center gap-2">
@@ -107,7 +107,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <legend>
                 {{ __('dixlase-inquiry::front.form.address') }}
                 <span x-show="addressRequired">
-                    <x-form.required-badge />
+                    <x-form-required-badge />
                 </span>
             </legend>
             <div x-show="nameOrderWestern == '0'" class="space-y-4">
@@ -181,7 +181,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <legend>
                 {{ __('dixlase-inquiry::front.form.phone') }}
                 <span x-show="phoneRequired">
-                    <x-form.required-badge />
+                    <x-form-required-badge />
                 </span>
             </legend>
             <div x-show="nameOrderWestern == '0'" class="flex items-center gap-2">
@@ -203,7 +203,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <legend>
                 {{ __('dixlase-inquiry::front.form.gender') }}
                 <span x-show="genderRequired">
-                    <x-form.required-badge />
+                    <x-form-required-badge />
                 </span>
             </legend>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -235,7 +235,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <fieldset>
         <legend>
             {{ __('dixlase-inquiry::front.form.message') }}
-            <x-form.required-badge />
+            <x-form-required-badge />
         </legend>
         <textarea disabled rows="6" placeholder="{{ __('dixlase-inquiry::front.form.message_placeholder') }}" class="input-common my-2 w-full opacity-60"></textarea>
     </fieldset>
