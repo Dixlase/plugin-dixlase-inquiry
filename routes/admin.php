@@ -37,13 +37,13 @@ use Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminControl
 | - log.admin.activity: 管理画面操作ログ
 |
 | ルートプレフィックス: /admin（動的に取得）
-| ルート名: プラグイン側で完全に制御（例: dixlase-inquiry::inquiry.index）
+| ルート名: プラグイン側で完全に制御（例: dixlase-inquiry::admin.inquiry.index）
 |
 */
 
 // 問い合わせ管理
 Route::prefix('inquiry')
-    ->name('dixlase-inquiry::inquiry.')
+    ->name('dixlase-inquiry::admin.inquiry.')
     ->group(function () {
         Route::get('/', [DixlaseInquiryAdminController::class, 'index'])->name('index');
         Route::get('/settings', [DixlaseInquiryAdminController::class, 'settings'])->name('settings');

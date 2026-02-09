@@ -29,13 +29,13 @@ return [
         'children' => [
             'index' => [
                 'text' => 'dixlase-inquiry::admin.nav.inquiry_list',
-                'route' => 'dixlase-inquiry::inquiry.index',
+                'route' => 'dixlase-inquiry::admin.inquiry.index',
                 'icon' => 'fas fa-fw fa-list',
                 'can' => 'admin',
             ],
             'settings' => [
                 'text' => 'dixlase-inquiry::admin.nav.inquiry_settings',
-                'route' => 'dixlase-inquiry::inquiry.settings',
+                'route' => 'dixlase-inquiry::admin.inquiry.settings',
                 'icon' => 'fas fa-fw fa-cog',
                 'can' => 'admin',
             ],

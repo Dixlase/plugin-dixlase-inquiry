@@ -22,7 +22,7 @@
 
 return [
     // プラグイン設定画面のルート名
-    'settings_route' => 'dixlase-inquiry::inquiry.settings',
+    'settings_route' => 'dixlase-inquiry::admin.inquiry.settings',
     
     // 注: ナビゲーション設定は config/admin/navigation.php に移動
 ];
