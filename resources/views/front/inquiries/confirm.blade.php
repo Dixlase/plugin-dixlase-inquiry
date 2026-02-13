@@ -137,20 +137,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         <!-- ボタン -->
         <div class="flex gap-2 mt-6">
-            @include('components::form.button', [
-                'type' => 'submit',
-                'variant' => 'primary',
-                'label' => __('dixlase-inquiry::front.buttons.send'),
-                'icon' => 'fas fa-paper-plane',
-            ])
-            
-            @include('components::form.button', [
-                'type' => 'button',
-                'variant' => 'secondary',
-                'label' => __('dixlase-inquiry::front.buttons.back'),
-                'icon' => 'fas fa-arrow-left',
-                'onclick' => 'history.back()',
-            ])
+            <x-form-button
+                type="submit"
+                variant="primary"
+                :label="__('dixlase-inquiry::front.buttons.send')"
+                icon="fas fa-paper-plane"
+            />
+
+            <x-form-button
+                type="button"
+                variant="secondary"
+                :label="__('dixlase-inquiry::front.buttons.back')"
+                icon="fas fa-arrow-left"
+                onclick="history.back()"
+            />
         </div>
                         </div>
                     </form>

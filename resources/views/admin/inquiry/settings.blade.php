@@ -26,14 +26,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <!-- メールサーバー設定の確認メッセージ -->
     @if(!($mailConnectionTested && $mailSendTested && $mailReceiveTested))
         <div class="mb-6">
-            @include('components.message', [
-                'type' => 'warning',
-                'message' => __('dixlase-inquiry::admin.settings.mail_test_required', ['url' => route('admin.settings.base')])
-            ])
+            <x-ui-message
+                type="warning"
+                :message="__('dixlase-inquiry::admin.settings.mail_test_required', ['url' => route('admin.settings.base')])"
+            />
         </div>
     @endif
 
-    <form id="inquiry-settings-form" action="{{ route('admin.dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST" x-data="{
+    <form id="inquiry-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.update') }}" method="POST" x-data="{
             nameOrderWestern: '{{ old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0' }}',
             showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
             subjectRequired: {{ old('subject_required', $settings->subject_required ?? false) ? 'true' : 'false' }},
@@ -122,13 +122,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </label>
                 </div>
                 <div>
-                    @include('components::form.toggle', [
-                        'name' => 'subject_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.subject_required'),
-                        'checked' => old('subject_required', $settings->subject_required ?? false),
-                        'xBind' => 'showSubject',
-                        'xModel' => 'subjectRequired'
-                    ])
+                    <x-form-toggle
+                        name="subject_required"
+                        :label="__('dixlase-inquiry::admin.settings.form_fields.subject_required')"
+                        :checked="old('subject_required', $settings->subject_required ?? false)"
+                        xBind="showSubject"
+                        xModel="subjectRequired"
+                    />
                 </div>
 
                 <!-- 郵便番号・住所フィールド -->
@@ -142,13 +142,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <input type="hidden" name="show_address" :value="showPostalCode ? '1' : '0'">
                 </div>
                 <div>
-                    @include('components::form.toggle', [
-                        'name' => 'postal_code_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.postal_address_required'),
-                        'checked' => old('postal_code_required', $settings->postal_code_required ?? false),
-                        'xBind' => 'showPostalCode',
-                        'xModel' => 'postalCodeRequired'
-                    ])
+                    <x-form-toggle
+                        name="postal_code_required"
+                        :label="__('dixlase-inquiry::admin.settings.form_fields.postal_address_required')"
+                        :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
+                        xBind="showPostalCode"
+                        xModel="postalCodeRequired"
+                    />
                     <input type="hidden" name="address_required" :value="postalCodeRequired ? '1' : '0'">
                 </div>
 
@@ -162,13 +162,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </label>
                 </div>
                 <div>
-                    @include('components::form.toggle', [
-                        'name' => 'phone_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.phone_required'),
-                        'checked' => old('phone_required', $settings->phone_required ?? false),
-                        'xBind' => 'showPhone',
-                        'xModel' => 'phoneRequired'
-                    ])
+                    <x-form-toggle
+                        name="phone_required"
+                        :label="__('dixlase-inquiry::admin.settings.form_fields.phone_required')"
+                        :checked="old('phone_required', $settings->phone_required ?? false)"
+                        xBind="showPhone"
+                        xModel="phoneRequired"
+                    />
                 </div>
 
                 <!-- 性別フィールド -->
@@ -181,13 +181,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </label>
                 </div>
                 <div>
-                    @include('components::form.toggle', [
-                        'name' => 'gender_required',
-                        'label' => __('dixlase-inquiry::admin.settings.form_fields.gender_required'),
-                        'checked' => old('gender_required', $settings->gender_required ?? false),
-                        'xBind' => 'showGender',
-                        'xModel' => 'genderRequired'
-                    ])
+                    <x-form-toggle
+                        name="gender_required"
+                        :label="__('dixlase-inquiry::admin.settings.form_fields.gender_required')"
+                        :checked="old('gender_required', $settings->gender_required ?? false)"
+                        xBind="showGender"
+                        xModel="genderRequired"
+                    />
                 </div>
                 </div>
             </fieldset>
@@ -202,17 +202,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <legend>{{ __('dixlase-inquiry::admin.settings.display.form_type') }}</legend>
             
             <div class="grid grid-cols-1 gap-6">
-                @include('components::form.radio-group', [
-                    'name' => 'use_single_page',
-                    'label' => __('dixlase-inquiry::admin.settings.display.use_single_page'),
-                    'options' => [
+                <x-form-radio-group
+                    name="use_single_page"
+                    :options="[
                         '1' => __('dixlase-inquiry::admin.settings.display.single_page'),
                         '0' => __('dixlase-inquiry::admin.settings.display.separate_pages')
-                    ],
-                    'value' => old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0',
-                    'help' => __('dixlase-inquiry::admin.settings.display.single_page_help'),
-                    'xModel' => 'useSinglePage'
-                ])
+                    ]"
+                    :value="old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0'"
+                    xModel="useSinglePage"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.display.single_page_help') }}
+                </p>
 
                 <!-- シングルページ選択時: ショートコード表示 -->
                 <div x-show="useSinglePage == '1'" x-cloak>
@@ -303,11 +304,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </div>
                 </div>
 
-                @include('components::form.toggle', [
-                    'name' => 'show_confirmation_page',
-                    'label' => __('dixlase-inquiry::admin.settings.display.show_confirmation'),
-                    'checked' => old('show_confirmation_page', $settings->show_confirmation_page ?? true)
-                ])
+                <x-form-toggle
+                    name="show_confirmation_page"
+                    :label="__('dixlase-inquiry::admin.settings.display.show_confirmation')"
+                    :checked="old('show_confirmation_page', $settings->show_confirmation_page ?? true)"
+                />
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     {{ __('dixlase-inquiry::admin.settings.display.show_confirmation_help') }}
                 </p>
@@ -326,23 +327,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.completion.title_text') }}</legend>
-                @include('components::form.text', [
-                    'name' => 'completion_title',
-                    'label' => __('dixlase-inquiry::admin.settings.completion.title_text'),
-                    'value' => old('completion_title', $settings->completion_title ?? '送信完了'),
-                    'help' => __('dixlase-inquiry::admin.settings.completion.title_help')
-                ])
+                <x-form-text
+                    name="completion_title"
+                    :value="old('completion_title', $settings->completion_title ?? '送信完了')"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.completion.title_help') }}
+                </p>
             </fieldset>
 
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.completion.message') }}</legend>
-                @include('components::form.textarea', [
-                    'name' => 'completion_message',
-                    'label' => __('dixlase-inquiry::admin.settings.completion.message'),
-                    'value' => old('completion_message', $settings->completion_message ?? 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。'),
-                    'rows' => 4,
-                    'help' => __('dixlase-inquiry::admin.settings.completion.message_help')
-                ])
+                <x-form-textarea
+                    name="completion_message"
+                    :value="old('completion_message', $settings->completion_message ?? 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。')"
+                    :rows="4"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.completion.message_help') }}
+                </p>
             </fieldset>
         </section>
 
@@ -352,33 +355,34 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.admin_email') }}</legend>
-                @include('components::form.text', [
-                    'name' => 'admin_email',
-                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.admin_email'),
-                    'value' => old('admin_email', $settings->admin_email ?? ''),
-                    'required' => true,
-                    'help' => __('dixlase-inquiry::admin.settings.admin_notification.admin_email_help')
-                ])
+                <x-form-text
+                    name="admin_email"
+                    :value="old('admin_email', $settings->admin_email ?? '')"
+                    :required="true"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.admin_notification.admin_email_help') }}
+                </p>
             </fieldset>
 
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.subject') }}</legend>
-                @include('components::form.text', [
-                    'name' => 'subject',
-                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.subject'),
-                    'value' => old('subject', $settings->subject ?? 'お問い合わせありがとうございます'),
-                ])
+                <x-form-text
+                    name="subject"
+                    :value="old('subject', $settings->subject ?? 'お問い合わせありがとうございます')"
+                />
             </fieldset>
 
             <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin.settings.admin_notification.body') }}</legend>
-                @include('components::form.textarea', [
-                    'name' => 'body',
-                    'label' => __('dixlase-inquiry::admin.settings.admin_notification.body'),
-                    'value' => old('body', $settings->body ?? ''),
-                    'rows' => 8,
-                    'help' => __('dixlase-inquiry::admin.settings.admin_notification.body_help')
-                ])
+                <x-form-textarea
+                    name="body"
+                    :value="old('body', $settings->body ?? '')"
+                    :rows="8"
+                />
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin.settings.admin_notification.body_help') }}
+                </p>
             </fieldset>
         </section>
 
@@ -404,32 +408,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <div x-show="autoReplyEnabled" x-cloak class="space-y-6">
                             <fieldset>
                                 <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.from_email') }}</legend>
-                                @include('components::form.text', [
-                                    'name' => 'auto_reply_from_email',
-                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.from_email'),
-                                    'value' => old('auto_reply_from_email', $settings->auto_reply_from_email ?? ''),
-                                    'help' => __('dixlase-inquiry::admin.settings.auto_reply.from_email_help')
-                                ])
+                                <x-form-text
+                                    name="auto_reply_from_email"
+                                    :value="old('auto_reply_from_email', $settings->auto_reply_from_email ?? '')"
+                                />
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin.settings.auto_reply.from_email_help') }}
+                                </p>
                             </fieldset>
 
                             <fieldset>
                                 <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.subject') }}</legend>
-                                @include('components::form.text', [
-                                    'name' => 'auto_reply_subject',
-                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.subject'),
-                                    'value' => old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました'),
-                                ])
+                                <x-form-text
+                                    name="auto_reply_subject"
+                                    :value="old('auto_reply_subject', $settings->auto_reply_subject ?? 'お問い合わせを受け付けました')"
+                                />
                             </fieldset>
 
                             <fieldset>
                                 <legend>{{ __('dixlase-inquiry::admin.settings.auto_reply.body') }}</legend>
-                                @include('components::form.textarea', [
-                                    'name' => 'auto_reply_body',
-                                    'label' => __('dixlase-inquiry::admin.settings.auto_reply.body'),
-                                    'value' => old('auto_reply_body', $settings->auto_reply_body ?? ''),
-                                    'rows' => 8,
-                                    'help' => __('dixlase-inquiry::admin.settings.auto_reply.body_help')
-                                ])
+                                <x-form-textarea
+                                    name="auto_reply_body"
+                                    :value="old('auto_reply_body', $settings->auto_reply_body ?? '')"
+                                    :rows="8"
+                                />
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin.settings.auto_reply.body_help') }}
+                                </p>
                             </fieldset>
                         </div>
                 </div>
@@ -443,10 +448,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <!-- CAPTCHA設定の確認メッセージ -->
             @if(!($captchaEnabled && !empty($captchaDriver) && $captchaAuthenticated))
                 <div class="mb-4">
-                    @include('components.message', [
-                        'type' => 'warning',
-                        'message' => __('dixlase-inquiry::admin.settings.captcha_test_required', ['url' => route('admin.settings.security.captcha')])
-                    ])
+                    <x-ui-message
+                        type="warning"
+                        :message="__('dixlase-inquiry::admin.settings.captcha_test_required', ['url' => route('admin.settings.security.captcha')])"
+                    />
                 </div>
             @endif
             
@@ -454,11 +459,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <legend>{{ __('dixlase-inquiry::admin.settings.security.use_recaptcha') }}</legend>
                 
                 <div class="grid grid-cols-1 gap-6">
-                    @include('components::form.toggle', [
-                        'name' => 'use_recaptcha',
-                        'label' => __('dixlase-inquiry::admin.settings.security.use_recaptcha'),
-                        'checked' => old('use_recaptcha', $settings->use_recaptcha ?? false)
-                    ])
+                    <x-form-toggle
+                        name="use_recaptcha"
+                        :label="__('dixlase-inquiry::admin.settings.security.use_recaptcha')"
+                        :checked="old('use_recaptcha', $settings->use_recaptcha ?? false)"
+                    />
                     
                     <!-- ヘルプテキスト -->
                     <div class="text-sm text-gray-600 dark:text-gray-400">
@@ -472,14 +477,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @endsection
 
 @section('save')
-    @include('components.save', [
-        'id_confirmation' => 'confirmInquirySettingsModal',
-        'label' => __('common.save'),
-        'title' => __('dixlase-inquiry::admin.settings.confirm_title'),
-        'message' => __('dixlase-inquiry::admin.settings.confirm_message'),
-        'confirm_label' => __('common.save'),
-        'cancel_label' => __('common.cancel'),
-        'form' => 'inquiry-settings-form',
-    ])
+    <x-admin.save-button
+        id_confirmation="confirmInquirySettingsModal"
+        :label="__('common.save')"
+        :title="__('dixlase-inquiry::admin.settings.confirm_title')"
+        :message="__('dixlase-inquiry::admin.settings.confirm_message')"
+        :confirm_label="__('common.save')"
+        :cancel_label="__('common.cancel')"
+        form="inquiry-settings-form"
+    />
 @endsection
 
