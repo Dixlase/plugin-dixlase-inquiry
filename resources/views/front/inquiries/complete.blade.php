@@ -99,13 +99,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     <!-- トップページへ戻るボタン -->
     <div class="mt-8">
-        @include('components::form.button', [
-            'type' => 'link',
-            'href' => route('welcome'),
-            'variant' => 'primary',
-            'label' => __('dixlase-inquiry::front.complete.back_to_home'),
-            'icon' => 'fas fa-home',
-        ])
+        <x-form-button
+            type="link"
+            :href="route('welcome')"
+            variant="primary"
+            :label="__('dixlase-inquiry::front.complete.back_to_home')"
+            icon="fas fa-home"
+        />
     </div>
                 </div>
             </article>
