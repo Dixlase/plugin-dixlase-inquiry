@@ -26,12 +26,6 @@ return [
         'description' => 'Adds comprehensive contact form functionality to your website. Features customizable form fields, auto-reply, admin notifications, reCAPTCHA support, and more.',
     ],
     
-    'nav' => [
-        'inquiry' => 'Inquiry',
-        'inquiry_list' => 'Inquiry List',
-        'inquiry_settings' => 'Inquiry Settings',
-    ],
-    
     'inquiry' => [
         'title' => 'Inquiry List',
         'list_coming_soon' => 'Inquiry list feature is coming soon.',

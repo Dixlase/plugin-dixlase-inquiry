@@ -26,12 +26,6 @@ return [
         'description' => 'ウェブサイトにお問い合わせフォーム機能を追加します。カスタマイズ可能なフォーム項目、自動返信、管理者通知、reCAPTCHA対応など包括的な機能を提供します。',
     ],
     
-    'nav' => [
-        'inquiry' => 'お問い合わせ',
-        'inquiry_list' => 'お問い合わせ一覧',
-        'inquiry_settings' => 'お問い合わせ設定',
-    ],
-    
     'inquiry' => [
         'title' => 'お問い合わせ一覧',
         'list_coming_soon' => 'お問い合わせ一覧機能は近日公開予定です。',
