@@ -23,18 +23,18 @@
 return [
     // 問い合わせ管理
     'inquiry' => [
-        'text' => 'dixlase-inquiry::admin.nav.inquiry',
+        'text' => 'dixlase-inquiry::admin/navigation.inquiry',
         'icon' => 'fas fa-fw fa-envelope',
         'can' => 'admin',
         'children' => [
             'index' => [
-                'text' => 'dixlase-inquiry::admin.nav.inquiry_list',
+                'text' => 'dixlase-inquiry::admin/navigation.inquiry_list',
                 'route' => 'dixlase-inquiry::admin.inquiry.index',
                 'icon' => 'fas fa-fw fa-list',
                 'can' => 'admin',
             ],
             'settings' => [
-                'text' => 'dixlase-inquiry::admin.nav.inquiry_settings',
+                'text' => 'dixlase-inquiry::admin/navigation.inquiry_settings',
                 'route' => 'dixlase-inquiry::admin.inquiry.settings',
                 'icon' => 'fas fa-fw fa-cog',
                 'can' => 'admin',
