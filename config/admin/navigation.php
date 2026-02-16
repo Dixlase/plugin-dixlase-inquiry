@@ -35,9 +35,52 @@ return [
             ],
             'settings' => [
                 'text' => 'dixlase-inquiry::admin/navigation.inquiry_settings',
-                'route' => 'dixlase-inquiry::admin.inquiry.settings',
                 'icon' => 'fas fa-fw fa-cog',
                 'can' => 'admin',
+                'children' => [
+                    'index' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.index',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.index',
+                        'icon' => 'fas fa-fw fa-list-alt',
+                        'can' => 'admin',
+                    ],
+                    'form-preview' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_preview',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.form-preview',
+                        'icon' => 'fas fa-fw fa-eye',
+                        'can' => 'admin',
+                    ],
+                    'form-basic' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_basic',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.form-basic',
+                        'icon' => 'fas fa-fw fa-sliders-h',
+                        'can' => 'admin',
+                    ],
+                    'form-display' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_display',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.form-display',
+                        'icon' => 'fas fa-fw fa-desktop',
+                        'can' => 'admin',
+                    ],
+                    'completion' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.completion',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.completion',
+                        'icon' => 'fas fa-fw fa-check-circle',
+                        'can' => 'admin',
+                    ],
+                    'admin-notification' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.admin_notification',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.admin-notification',
+                        'icon' => 'fas fa-fw fa-bell',
+                        'can' => 'admin',
+                    ],
+                    'auto-reply' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.auto_reply',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.auto-reply',
+                        'icon' => 'fas fa-fw fa-reply-all',
+                        'can' => 'admin',
+                    ],
+                ],
             ],
         ],
     ],

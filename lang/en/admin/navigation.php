@@ -15,5 +15,14 @@
 return [
     'inquiry' => 'Inquiry',
     'inquiry_list' => 'Inquiry List',
-    'inquiry_settings' => 'Inquiry Settings',
+    'inquiry_settings' => 'Settings',
+    'settings_nav' => [
+        'index' => 'Overview',
+        'form_preview' => 'Form Preview',
+        'form_basic' => 'Form Basic',
+        'form_display' => 'Form Display',
+        'completion' => 'Completion Page',
+        'admin_notification' => 'Admin Notification',
+        'auto_reply' => 'Auto-Reply',
+    ],
 ];
