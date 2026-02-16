@@ -15,5 +15,14 @@
 return [
     'inquiry' => 'お問い合わせ',
     'inquiry_list' => 'お問い合わせ一覧',
-    'inquiry_settings' => 'お問い合わせ設定',
+    'inquiry_settings' => '設定',
+    'settings_nav' => [
+        'index' => '概要',
+        'form_preview' => 'フォームプレビュー',
+        'form_basic' => 'フォーム基本設定',
+        'form_display' => 'フォーム表示設定',
+        'completion' => '完了ページ設定',
+        'admin_notification' => '管理者通知設定',
+        'auto_reply' => '自動返信設定',
+    ],
 ];

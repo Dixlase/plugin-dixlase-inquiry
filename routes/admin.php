@@ -46,8 +46,22 @@ Route::prefix('inquiry')
     ->name('dixlase-inquiry::admin.inquiry.')
     ->group(function () {
         Route::get('/', [DixlaseInquiryAdminController::class, 'index'])->name('index');
-        Route::get('/settings', [DixlaseInquiryAdminController::class, 'settings'])->name('settings');
-        Route::post('/settings', [DixlaseInquiryAdminController::class, 'updateSettings'])->name('settings.update');
-        Route::get('/{id}', [DixlaseInquiryAdminController::class, 'show'])->name('show');
-        Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}', [DixlaseInquiryAdminController::class, 'show'])->name('show')->where('id', '[0-9]+');
+        Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
+
+        // 設定サブメニュー
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [DixlaseInquiryAdminController::class, 'settingsIndex'])->name('index');
+            Route::get('/form-preview', [DixlaseInquiryAdminController::class, 'settingsFormPreview'])->name('form-preview');
+            Route::get('/form-basic', [DixlaseInquiryAdminController::class, 'settingsFormBasic'])->name('form-basic');
+            Route::post('/form-basic', [DixlaseInquiryAdminController::class, 'updateFormBasic'])->name('form-basic.update');
+            Route::get('/form-display', [DixlaseInquiryAdminController::class, 'settingsFormDisplay'])->name('form-display');
+            Route::post('/form-display', [DixlaseInquiryAdminController::class, 'updateFormDisplay'])->name('form-display.update');
+            Route::get('/completion', [DixlaseInquiryAdminController::class, 'settingsCompletion'])->name('completion');
+            Route::post('/completion', [DixlaseInquiryAdminController::class, 'updateCompletion'])->name('completion.update');
+            Route::get('/admin-notification', [DixlaseInquiryAdminController::class, 'settingsAdminNotification'])->name('admin-notification');
+            Route::post('/admin-notification', [DixlaseInquiryAdminController::class, 'updateAdminNotification'])->name('admin-notification.update');
+            Route::get('/auto-reply', [DixlaseInquiryAdminController::class, 'settingsAutoReply'])->name('auto-reply');
+            Route::post('/auto-reply', [DixlaseInquiryAdminController::class, 'updateAutoReply'])->name('auto-reply.update');
+        });
     });

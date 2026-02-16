@@ -22,69 +22,183 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use App\Models\BaseSetting;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
-use App\Models\BaseSetting;
-use App\Models\SecuritySetting;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller;
+use Illuminate\View\View;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificationRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormDisplayRequest;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
-use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySettingsRequest;
-
 
 class DixlaseInquiryAdminController extends Controller
 {
-
     use AdminInterfaceTrait;
     use AdminLoggedInTrait;
-    
+
     public function __construct()
     {
         $this->initialize();
         $this->initializeAfterLogin();
     }
 
-    public function index()
+    /**
+     * 問い合わせ一覧
+     */
+    public function index(): View
     {
-        // 問い合わせ一覧を表示
         return view('dixlase-inquiry::admin.inquiry.index', $this->viewParams);
     }
 
-    public function settings()
+    /**
+     * 設定 - 概要ページ
+     */
+    public function settingsIndex(): View
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
-        // メールテスト状態を取得（DB優先、セッションは一時的な状態のみ）
+
+        return view('dixlase-inquiry::admin.inquiry.settings.index', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - フォームプレビュー
+     */
+    public function settingsFormPreview(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        return view('dixlase-inquiry::admin.inquiry.settings.form-preview', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - フォーム基本設定
+     */
+    public function settingsFormBasic(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        return view('dixlase-inquiry::admin.inquiry.settings.form-basic', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - フォーム基本設定の更新
+     */
+    public function updateFormBasic(DixlaseInquiryFormBasicRequest $request): RedirectResponse
+    {
+        DixlaseInquirySetting::updateSettings($request->validated());
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-basic')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/form-basic.settings_updated'));
+    }
+
+    /**
+     * 設定 - フォーム表示設定
+     */
+    public function settingsFormDisplay(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        return view('dixlase-inquiry::admin.inquiry.settings.form-display', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - フォーム表示設定の更新
+     */
+    public function updateFormDisplay(DixlaseInquiryFormDisplayRequest $request): RedirectResponse
+    {
+        DixlaseInquirySetting::updateSettings($request->validated());
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-display')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/form-display.settings_updated'));
+    }
+
+    /**
+     * 設定 - 完了ページ設定
+     */
+    public function settingsCompletion(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        return view('dixlase-inquiry::admin.inquiry.settings.completion', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - 完了ページ設定の更新
+     */
+    public function updateCompletion(DixlaseInquiryCompletionRequest $request): RedirectResponse
+    {
+        DixlaseInquirySetting::updateSettings($request->validated());
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.completion')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/completion.settings_updated'));
+    }
+
+    /**
+     * 設定 - 管理者通知設定
+     */
+    public function settingsAdminNotification(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        // メールテスト状態を取得
         $sessionTestResults = session('mail_test_results', []);
-        
         $mailConnectionTested = (bool) ($sessionTestResults['mail_connection_tested'] ?? BaseSetting::getValue('mail_connection_tested', false));
         $mailSendTested = (bool) ($sessionTestResults['mail_send_tested'] ?? BaseSetting::getValue('mail_send_tested', false));
         $mailReceiveTested = (bool) ($sessionTestResults['mail_receive_tested'] ?? BaseSetting::getValue('mail_receive_tested', false));
-        
-        // CAPTCHA設定状況を確認
-        $captchaEnabled = filter_var(SecuritySetting::get('captcha_enabled', false), FILTER_VALIDATE_BOOLEAN);
-        $captchaDriver = SecuritySetting::get('captcha_driver', '');
-        $captchaTestResult = session('captcha_test_result', SecuritySetting::get('captcha_test_result', false));
-        $captchaAuthenticated = filter_var($captchaTestResult, FILTER_VALIDATE_BOOLEAN);
-        
-        $this->viewParams['settings'] = $settings;
-        $this->viewParams['mailConnectionTested'] = $mailConnectionTested;
-        $this->viewParams['mailSendTested'] = $mailSendTested;
-        $this->viewParams['mailReceiveTested'] = $mailReceiveTested;
-        $this->viewParams['captchaEnabled'] = $captchaEnabled;
-        $this->viewParams['captchaDriver'] = $captchaDriver;
-        $this->viewParams['captchaAuthenticated'] = $captchaAuthenticated;
-        
-        return view('dixlase-inquiry::admin.inquiry.settings', $this->viewParams);
-    }
-    
-    public function updateSettings(DixlaseInquirySettingsRequest $request)
-    {
-        $validated = $request->validated();
-        
-        DixlaseInquirySetting::updateSettings($validated);
-        
-        return redirect()->back()->with('success', __('dixlase-inquiry::admin.messages.settings_updated'));
+
+        return view('dixlase-inquiry::admin.inquiry.settings.admin-notification', array_merge($this->viewParams, [
+            'settings' => $settings,
+            'mailConnectionTested' => $mailConnectionTested,
+            'mailSendTested' => $mailSendTested,
+            'mailReceiveTested' => $mailReceiveTested,
+        ]));
     }
 
+    /**
+     * 設定 - 管理者通知設定の更新
+     */
+    public function updateAdminNotification(DixlaseInquiryAdminNotificationRequest $request): RedirectResponse
+    {
+        DixlaseInquirySetting::updateSettings($request->validated());
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.admin-notification')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/admin-notification.settings_updated'));
+    }
+
+    /**
+     * 設定 - 自動返信設定
+     */
+    public function settingsAutoReply(): View
+    {
+        $settings = DixlaseInquirySetting::getSettings();
+
+        return view('dixlase-inquiry::admin.inquiry.settings.auto-reply', array_merge($this->viewParams, [
+            'settings' => $settings,
+        ]));
+    }
+
+    /**
+     * 設定 - 自動返信設定の更新
+     */
+    public function updateAutoReply(DixlaseInquiryAutoReplyRequest $request): RedirectResponse
+    {
+        DixlaseInquirySetting::updateSettings($request->validated());
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.auto-reply')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/auto-reply.settings_updated'));
+    }
 }

@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 /**
  * This file is part of Dixlase Inquiry.
@@ -25,12 +25,12 @@ return [
         'name' => 'Dixlase お問い合わせフォーム',
         'description' => 'ウェブサイトにお問い合わせフォーム機能を追加します。カスタマイズ可能なフォーム項目、自動返信、管理者通知、reCAPTCHA対応など包括的な機能を提供します。',
     ],
-    
+
     'inquiry' => [
         'title' => 'お問い合わせ一覧',
         'list_coming_soon' => 'お問い合わせ一覧機能は近日公開予定です。',
     ],
-    
+
     'form' => [
         'title' => 'お問い合わせ',
         'fields' => [
@@ -59,14 +59,17 @@ return [
             'send' => '送信する',
         ],
     ],
+
     'confirmation' => [
         'title' => '入力内容の確認',
         'message' => '以下の内容でお間違いありませんか？',
     ],
+
     'complete' => [
         'title' => '送信完了',
         'message' => 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。',
     ],
+
     'validation' => [
         'required' => ':attributeは必須項目です。',
         'email' => ':attributeは有効なメールアドレスを入力してください。',
@@ -86,109 +89,6 @@ return [
         'phone_required' => '電話番号は必須です。',
         'recaptcha_required' => 'reCAPTCHA認証が必要です。',
     ],
-    'settings' => [
-            'inquiry' => [
-                'heading' => 'お問い合わせ設定',
-            ],
-            'title' => '問い合わせフォーム設定',
-            'basic' => [
-                'title' => '基本設定',
-                'admin_email' => '送信先メールアドレス',
-                'admin_email_help' => '問い合わせ内容が送信されるメールアドレスを入力してください。',
-            ],
-            'form_fields' => [
-                'title' => 'フォーム項目設定',
-                'format_style' => '入力形式',
-                'format_japanese' => '日本式',
-                'format_japanese_desc' => '姓・名の順、郵便番号・電話番号は分割入力、住所は都道府県から入力',
-                'format_western' => '欧米式',
-                'format_western_desc' => '名・姓の順、郵便番号・電話番号は1フィールド、住所は1フィールド',
-                'format_style_help' => '名前の順序（姓・名 / 名・姓）、郵便番号・電話番号の形式、住所の入力順序が切り替わります。',
-                'field_settings' => 'フィールド設定',
-                'required_fields_note' => '※ 名前・メールアドレス・内容は常に表示され、必須項目となります。',
-                'show_name' => '名前フィールドを表示',
-                'name_required' => '名前を必須にする',
-                'show_email' => 'メールアドレスフィールドを表示',
-                'email_required' => 'メールアドレスを必須にする',
-                'show_message' => '内容フィールドを表示',
-                'message_required' => '内容を必須にする',
-                'name_order' => '名前の表示順序',
-                'name_order_japanese' => '日本式（姓・名）',
-                'name_order_western' => '欧米式（名・姓）',
-                'name_order_help' => '英語版では自動的に欧米式（名・姓）の順序になります。',
-                'show_subject' => '題名フィールドを表示',
-                'subject_required' => '題名を必須にする',
-                'show_postal_address' => '郵便番号・住所フィールドを表示',
-                'postal_address_required' => '郵便番号・住所を必須にする',
-                'show_postal_code' => '郵便番号フィールドを表示',
-                'postal_code_required' => '郵便番号を必須にする',
-                'show_address' => '住所フィールドを表示',
-                'address_required' => '住所を必須にする',
-                'show_phone' => '電話番号フィールドを表示',
-                'phone_required' => '電話番号を必須にする',
-                'show_gender' => '性別フィールドを表示',
-                'gender_required' => '性別を必須にする',
-            ],
-            'display' => [
-                'title' => 'フォーム表示設定',
-                'form_type' => 'フォーム表示方式',
-                'use_single_page' => 'フォーム表示方式',
-                'single_page' => 'シングルページ（動的に確認画面・完了画面を表示）',
-                'separate_pages' => '別ページ（入力画面・確認画面・完了画面を別々のページで表示）',
-                'single_page_help' => 'シングルページ方式では、1つのページ内で入力から完了まで処理されます。',
-                'shortcode_label' => '埋め込み方法',
-                'usage_instruction_title' => '使用方法',
-                'usage_instruction_text' => '以下のコードをテーマのBladeテンプレートまたはページ作成プラグインのコンテンツ内に貼り付けてください。下のプレビューで実際の表示を確認できます。',
-                'blade_directive' => 'Bladeディレクティブ（推奨）',
-                'blade_directive_help' => 'テーマのBladeテンプレート内で使用します。Laravel開発者に最適です。',
-                'shortcode' => 'ショートコード',
-                'shortcode_help' => 'ページ作成プラグインのコンテンツ内で使用します。非技術者でも簡単に使えます。',
-                'form_preview' => 'フォームプレビュー',
-                'inquiry_url' => '問い合わせページURL',
-                'inquiry_url_slug' => 'URLスラッグ',
-                'inquiry_url_slug_help' => '問い合わせページのURLを設定します（例: inquiry → /inquiry）。半角英数字とハイフンのみ使用可能です。',
-                'preview_page_help' => '新しいタブで問い合わせページを開きます。設定を保存する前にプレビューできます。',
-                'show_confirmation' => '確認画面を表示する',
-                'show_confirmation_help' => 'チェックを外すと、入力後すぐに送信されます。',
-            ],
-            'auto_reply' => [
-                'title' => '自動返信設定',
-                'enabled' => '自動返信を有効にする',
-                'from_email' => '自動返信の送信元メールアドレス',
-                'from_email_help' => '空の場合は、システムのデフォルト送信元アドレスが使用されます。',
-                'subject' => '自動返信の件名',
-                'body' => '自動返信の本文',
-                'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
-                'default_subject' => 'お問い合わせありがとうございます',
-                'default_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
-            ],
-            'admin_notification' => [
-                'title' => '管理者通知設定',
-                'admin_email' => '送信先メールアドレス',
-                'admin_email_help' => '問い合わせ内容が送信されるメールアドレスを入力してください。',
-                'subject' => '管理者通知の件名',
-                'body' => '管理者通知の本文',
-                'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
-                'default_subject' => 'お問い合わせを受け付けました',
-                'default_body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
-            ],
-            'completion' => [
-                'title' => '完了ページ設定',
-                'title_text' => '完了ページの見出し',
-                'title_help' => '問い合わせ送信完了時に表示される見出しテキスト',
-                'message' => '完了ページのメッセージ',
-                'message_help' => '問い合わせ送信完了時に表示されるメッセージ。HTMLタグが使用できます。',
-            ],
-            'security' => [
-                'title' => 'セキュリティ設定',
-                'use_recaptcha' => 'CAPTCHAを使用する',
-                'recaptcha_help' => 'スパム対策としてCAPTCHAを有効にします。事前にセキュリティ設定でCAPTCHAの設定が必要です。',
-            ],
-            'confirm_title' => '問い合わせ設定の保存',
-            'confirm_message' => '問い合わせ設定を保存してもよろしいですか？',
-            'mail_test_required' => '問い合わせフォーム機能を使用するには、<a href=":url" class="text-blue-600 hover:text-blue-800 underline">基本設定</a>でメールサーバー設定とメールテストをすべて完了してください。メールサーバーが設定されていない場合、問い合わせフォームは正常に動作しません。',
-            'captcha_test_required' => 'CAPTCHA機能を使用するには、<a href=":url" class="text-blue-600 hover:text-blue-800 underline">セキュリティ設定</a>でCAPTCHA設定と認証テストをすべて完了してください。CAPTCHA設定が未完了の場合、CAPTCHA機能は正常に動作しません。',
-        ],
 
     'messages' => [
         'settings_updated' => '設定が正常に更新されました。',
