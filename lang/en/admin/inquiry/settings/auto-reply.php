@@ -23,6 +23,9 @@ return [
     'body' => 'Auto-Reply Message Body',
     'body_help' => 'Available variables: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
 
+    'default_subject' => 'Thank you for your inquiry',
+    'default_body' => "Thank you for contacting us.\n\nWe have received your inquiry with the following details.\nOur team will review your message and get back to you soon.\n\nName: {{name}}\nEmail: {{email}}\nSubject: {{subject}}\n\nMessage:\n{{message}}\n\nWe appreciate your interest and look forward to assisting you.",
+
     'confirm_title' => 'Save Auto-Reply Settings',
     'confirm_message' => 'Are you sure you want to save the auto-reply settings?',
     'settings_updated' => 'Auto-reply settings have been updated.',

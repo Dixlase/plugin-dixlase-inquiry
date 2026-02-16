@@ -24,6 +24,9 @@ return [
 
     'mail_test_required' => '問い合わせフォーム機能を使用するには、<a href=":url" class="text-blue-600 hover:text-blue-800 underline">基本設定</a>でメールサーバー設定とメールテストをすべて完了してください。メールサーバーが設定されていない場合、問い合わせフォームは正常に動作しません。',
 
+    'default_subject' => 'お問い合わせがありました',
+    'default_body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
+
     'confirm_title' => '管理者通知設定の保存',
     'confirm_message' => '管理者通知設定を保存してもよろしいですか？',
     'settings_updated' => '管理者通知設定が更新されました。',

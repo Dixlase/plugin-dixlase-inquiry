@@ -1,0 +1,166 @@
+<?php
+
+namespace Plugins\DixlaseInquiry\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+
+class TranslationFileTest extends TestCase
+{
+    /** @var string */
+    private string $langPath;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->langPath = __DIR__ . '/../../lang';
+    }
+
+    /**
+     * admin-notification翻訳にdefault_subjectとdefault_bodyが含まれる
+     */
+    public function test_admin_notification_has_default_texts(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/admin-notification.php";
+            $this->assertArrayHasKey('default_subject', $translations, "Missing default_subject in {$locale}");
+            $this->assertArrayHasKey('default_body', $translations, "Missing default_body in {$locale}");
+            $this->assertNotEmpty($translations['default_subject']);
+            $this->assertNotEmpty($translations['default_body']);
+        }
+    }
+
+    /**
+     * auto-reply翻訳にdefault_subjectとdefault_bodyが含まれる
+     */
+    public function test_auto_reply_has_default_texts(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/auto-reply.php";
+            $this->assertArrayHasKey('default_subject', $translations, "Missing default_subject in {$locale}");
+            $this->assertArrayHasKey('default_body', $translations, "Missing default_body in {$locale}");
+            $this->assertNotEmpty($translations['default_subject']);
+            $this->assertNotEmpty($translations['default_body']);
+        }
+    }
+
+    /**
+     * index翻訳に埋め込み方法セクションのキーが含まれる
+     */
+    public function test_index_has_embedding_method_keys(): void
+    {
+        $embeddingKeys = [
+            'embedding_methods',
+            'usage_instruction_title',
+            'usage_instruction_text',
+            'blade_directive',
+            'blade_directive_help',
+            'shortcode',
+            'shortcode_help',
+        ];
+
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/index.php";
+            foreach ($embeddingKeys as $key) {
+                $this->assertArrayHasKey($key, $translations, "Missing {$key} in {$locale}/index.php");
+            }
+        }
+    }
+
+    /**
+     * index翻訳に警告メッセージのキーが含まれる
+     */
+    public function test_index_has_warning_message_keys(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/index.php";
+            $this->assertArrayHasKey('warning_admin_email', $translations, "Missing warning_admin_email in {$locale}");
+            $this->assertArrayHasKey('warning_auto_reply_email', $translations, "Missing warning_auto_reply_email in {$locale}");
+        }
+    }
+
+    /**
+     * index翻訳からform_display関連のnavキーが削除されている
+     */
+    public function test_index_does_not_have_form_display_nav(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/index.php";
+            $this->assertArrayNotHasKey('form_display', $translations['nav'] ?? []);
+        }
+    }
+
+    /**
+     * form-basic翻訳にform-displayから統合されたキーが含まれる
+     */
+    public function test_form_basic_has_merged_display_keys(): void
+    {
+        $displayKeys = [
+            'form_type',
+            'single_page',
+            'separate_pages',
+            'inquiry_url',
+            'inquiry_url_slug_help',
+            'form_locale',
+            'form_locale_help',
+        ];
+
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/settings/form-basic.php";
+            foreach ($displayKeys as $key) {
+                $this->assertArrayHasKey($key, $translations, "Missing {$key} in {$locale}/form-basic.php");
+            }
+        }
+    }
+
+    /**
+     * 削除されたform-preview翻訳ファイルが存在しない
+     */
+    public function test_form_preview_translation_files_deleted(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $this->assertFileDoesNotExist(
+                "{$this->langPath}/{$locale}/admin/inquiry/settings/form-preview.php"
+            );
+        }
+    }
+
+    /**
+     * 削除されたform-display翻訳ファイルが存在しない
+     */
+    public function test_form_display_translation_files_deleted(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $this->assertFileDoesNotExist(
+                "{$this->langPath}/{$locale}/admin/inquiry/settings/form-display.php"
+            );
+        }
+    }
+
+    /**
+     * ナビゲーション翻訳からform_previewとform_displayが削除されている
+     */
+    public function test_navigation_does_not_have_removed_keys(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/navigation.php";
+            $this->assertArrayNotHasKey('form_preview', $translations['settings_nav'] ?? []);
+            $this->assertArrayNotHasKey('form_display', $translations['settings_nav'] ?? []);
+        }
+    }
+
+    /**
+     * フロント翻訳がjaとenの両方で正しい構造を持つ
+     */
+    public function test_front_translations_have_correct_structure(): void
+    {
+        $requiredFormKeys = ['name', 'email', 'message', 'submit', 'first_name', 'last_name'];
+
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/front.php";
+            $this->assertArrayHasKey('form', $translations, "Missing 'form' key in {$locale}/front.php");
+            foreach ($requiredFormKeys as $key) {
+                $this->assertArrayHasKey($key, $translations['form'], "Missing form.{$key} in {$locale}/front.php");
+            }
+        }
+    }
+}

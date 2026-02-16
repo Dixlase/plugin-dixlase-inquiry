@@ -22,9 +22,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @section('content')
 <div class="mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
 
-        {{-- フォーム基本設定 --}}
+    {{-- 警告メッセージ --}}
+    @if(empty($settings->admin_email))
+        <x-ui-message type="warning" icon="fas fa-exclamation-triangle">
+            {!! __('dixlase-inquiry::admin/inquiry/settings/index.warning_admin_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.admin-notification')]) !!}
+        </x-ui-message>
+    @endif
+
+    @if($settings->auto_reply_enabled && empty($settings->auto_reply_from_email))
+        <x-ui-message type="warning" icon="fas fa-exclamation-triangle">
+            {!! __('dixlase-inquiry::admin/inquiry/settings/index.warning_auto_reply_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.auto-reply')]) !!}
+        </x-ui-message>
+    @endif
+
+    
+
+    {{-- 設定カード一覧 --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 mb-8">
+
+        {{-- フォーム設定 --}}
         <a href="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic') }}" class="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center">
@@ -36,29 +53,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="text-sm text-gray-600 dark:text-gray-400">
                 <p>{{ __('dixlase-inquiry::admin/inquiry/settings/index.cards.form_basic_desc') }}</p>
                 <p class="text-xs mt-2">
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.form_locale') }}:
+                    {{ strtoupper($settings->form_locale ?? 'ja') }}
+                    /
                     {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.name_format') }}:
                     {{ $settings->name_order_western ? __('dixlase-inquiry::admin/inquiry/settings/index.status.western') : __('dixlase-inquiry::admin/inquiry/settings/index.status.japanese') }}
-                </p>
-            </div>
-        </a>
-
-        {{-- フォーム表示設定 --}}
-        <a href="{{ route('dixlase-inquiry::admin.inquiry.settings.form-display') }}" class="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center">
-                    <i class="fas fa-desktop text-green-500 text-xl mr-3"></i>
-                    <h3 class="font-semibold text-gray-900 dark:text-white">{{ __('dixlase-inquiry::admin/inquiry/settings/index.nav.form_display') }}</h3>
-                </div>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400">
-                <p>{{ __('dixlase-inquiry::admin/inquiry/settings/index.cards.form_display_desc') }}</p>
-                <p class="text-xs mt-2">
+                    /
                     {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.display_method') }}:
                     {{ $settings->use_single_page ? __('dixlase-inquiry::admin/inquiry/settings/index.status.single_page') : __('dixlase-inquiry::admin/inquiry/settings/index.status.separate_pages') }}
-                    /
-                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.confirmation') }}:
-                    {{ $settings->show_confirmation_page ? __('dixlase-inquiry::admin/inquiry/settings/index.status.enabled') : __('dixlase-inquiry::admin/inquiry/settings/index.status.disabled') }}
                 </p>
             </div>
         </a>
@@ -112,7 +114,57 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </p>
             </div>
         </a>
-
     </div>
+
+    {{-- 埋め込み方法 --}}
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/index.embedding_methods') }}</h2>
+
+        <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div class="flex items-start">
+                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mt-0.5 mr-2"></i>
+                <div class="flex-1">
+                    <p class="text-sm text-blue-800 dark:text-blue-200 font-medium mb-1">
+                        {{ __('dixlase-inquiry::admin/inquiry/settings/index.usage_instruction_title') }}
+                    </p>
+                    <p class="text-xs text-blue-700 dark:text-blue-300">
+                        {{ __('dixlase-inquiry::admin/inquiry/settings/index.usage_instruction_text') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- Bladeディレクティブ（推奨） --}}
+            <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-star text-yellow-500 mr-2"></i>
+                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::admin/inquiry/settings/index.blade_directive') }}
+                    </p>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md mb-2">
+                    <code class="text-sm text-gray-800 dark:text-gray-200">{{ '@' }}inquiry</code>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.blade_directive_help') }}
+                </p>
+            </div>
+
+            {{-- ショートコード --}}
+            <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.shortcode') }}
+                </p>
+                <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md mb-2">
+                    <code class="text-sm text-gray-800 dark:text-gray-200">[inquiry]</code>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400">
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.shortcode_help') }}
+                </p>
+            </div>
+        </div>
+    </section>
+    
 </div>
 @endsection

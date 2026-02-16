@@ -22,39 +22,39 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     {{-- 名前フィールド（常に表示・必須） --}}
     <fieldset>
         <legend>
-            {{ __('dixlase-inquiry::front.form.name') }}
+            <span x-text="getLabel('name')"></span>
             <x-form-required-badge />
         </legend>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{-- 日本式: 姓が先 --}}
             <div x-show="nameOrderWestern == '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.last_name') }}
-                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.last_name_label_ja') }})</span>
+                    <span x-text="getLabel('last_name')"></span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('last_name_label_ja')"></span>)</span>
                 </label>
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
             <div x-show="nameOrderWestern == '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.first_name') }}
-                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.first_name_label_ja') }})</span>
+                    <span x-text="getLabel('first_name')"></span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('first_name_label_ja')"></span>)</span>
                 </label>
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
             {{-- 欧米式: 名が先 --}}
             <div x-show="nameOrderWestern == '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.first_name') }}
-                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.first_name_label_en') }})</span>
+                    <span x-text="getLabel('first_name')"></span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('first_name_label_en')"></span>)</span>
                 </label>
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
             <div x-show="nameOrderWestern == '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.last_name') }}
-                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ __('dixlase-inquiry::front.form.last_name_label_en') }})</span>
+                    <span x-text="getLabel('last_name')"></span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('last_name_label_en')"></span>)</span>
                 </label>
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
         </div>
     </fieldset>
@@ -62,22 +62,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     {{-- メールアドレスフィールド（常に表示・必須） --}}
     <fieldset>
         <legend>
-            {{ __('dixlase-inquiry::front.form.email') }}
+            <span x-text="getLabel('email')"></span>
             <x-form-required-badge />
         </legend>
-        <input type="email" disabled placeholder="{{ __('dixlase-inquiry::front.form.email_placeholder') }}" class="input-common my-2 w-full opacity-60">
+        <input type="email" disabled class="input-common my-2 w-full opacity-60">
     </fieldset>
 
     {{-- 題名フィールド --}}
     <div x-show="showSubject">
         <fieldset>
             <legend>
-                {{ __('dixlase-inquiry::front.form.subject') }}
+                <span x-text="getLabel('subject')"></span>
                 <span x-show="subjectRequired">
                     <x-form-required-badge />
                 </span>
             </legend>
-            <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.subject_placeholder') }}" class="input-common my-2 w-full opacity-60">
+            <input type="text" disabled class="input-common my-2 w-full opacity-60">
         </fieldset>
     </div>
 
@@ -85,7 +85,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div x-show="showPostalCode">
         <fieldset>
             <legend>
-                {{ __('dixlase-inquiry::front.form.postal_code') }}
+                <span x-text="getLabel('postal_code')"></span>
                 <span x-show="postalCodeRequired">
                     <x-form-required-badge />
                 </span>
@@ -96,7 +96,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <input type="text" disabled maxlength="4" placeholder="4567" class="input-common my-2 w-24 opacity-60">
             </div>
             <div x-show="nameOrderWestern == '1'">
-                <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.postal_code_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
         </fieldset>
     </div>
@@ -105,7 +105,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div x-show="showAddress">
         <fieldset>
             <legend>
-                {{ __('dixlase-inquiry::front.form.address') }}
+                <span x-text="getLabel('address')"></span>
                 <span x-show="addressRequired">
                     <x-form-required-badge />
                 </span>
@@ -113,63 +113,57 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div x-show="nameOrderWestern == '0'" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.prefecture') }}
+                        <span x-text="getLabel('prefecture')"></span>
                     </label>
                     <select disabled class="input-common my-2 w-full opacity-60">
                         <option>{{ __('common.please_select') }}</option>
-                        @foreach(config('regions.prefectures') as $code => $prefecture)
-                            <option value="{{ $code }}">{{ __('regions.prefectures.' . $code) }}</option>
-                        @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.city') }}
+                        <span x-text="getLabel('city')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.address_line') }}
+                        <span x-text="getLabel('address_line')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.building') }}
+                        <span x-text="getLabel('building')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
             </div>
             <div x-show="nameOrderWestern == '1'" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.country') }}
+                        <span x-text="getLabel('country')"></span>
                     </label>
                     <select disabled class="input-common my-2 w-full opacity-60">
                         <option>{{ __('common.please_select') }}</option>
-                        @foreach(config('regions.countries') as $code => $country)
-                            <option value="{{ $code }}">{{ __('regions.countries.' . $code) }}</option>
-                        @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.state_province') }}
+                        <span x-text="getLabel('state_province')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.state_province_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.city') }}
+                        <span x-text="getLabel('city')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder_en') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ __('dixlase-inquiry::front.form.address_line') }}
+                        <span x-text="getLabel('address_line')"></span>
                     </label>
-                    <input type="text" disabled placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder_en') }}" class="input-common my-2 w-full opacity-60">
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
             </div>
         </fieldset>
@@ -179,7 +173,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div x-show="showPhone">
         <fieldset>
             <legend>
-                {{ __('dixlase-inquiry::front.form.phone') }}
+                <span x-text="getLabel('phone')"></span>
                 <span x-show="phoneRequired">
                     <x-form-required-badge />
                 </span>
@@ -192,7 +186,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <input type="tel" disabled maxlength="4" placeholder="5678" class="input-common my-2 w-20 opacity-60">
             </div>
             <div x-show="nameOrderWestern == '1'">
-                <input type="tel" disabled placeholder="{{ __('dixlase-inquiry::front.form.phone_placeholder') }}" class="input-common my-2 w-full opacity-60">
+                <input type="tel" disabled class="input-common my-2 w-full opacity-60">
             </div>
         </fieldset>
     </div>
@@ -201,7 +195,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div x-show="showGender">
         <fieldset>
             <legend>
-                {{ __('dixlase-inquiry::front.form.gender') }}
+                <span x-text="getLabel('gender')"></span>
                 <span x-show="genderRequired">
                     <x-form-required-badge />
                 </span>
@@ -210,17 +204,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
                     <i class="fas fa-mars text-blue-500 mr-2"></i>
-                    <span class="text-sm">{{ __('dixlase-inquiry::front.form.gender_male') }}</span>
+                    <span class="text-sm" x-text="getLabel('gender_male')"></span>
                 </label>
                 <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
                     <i class="fas fa-venus text-pink-500 mr-2"></i>
-                    <span class="text-sm">{{ __('dixlase-inquiry::front.form.gender_female') }}</span>
+                    <span class="text-sm" x-text="getLabel('gender_female')"></span>
                 </label>
                 <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
                     <i class="fas fa-genderless text-purple-500 mr-2"></i>
-                    <span class="text-sm">{{ __('dixlase-inquiry::front.form.gender_other') }}</span>
+                    <span class="text-sm" x-text="getLabel('gender_other')"></span>
                 </label>
                 <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
@@ -234,16 +228,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     {{-- お問い合わせ内容フィールド（常に表示・必須） --}}
     <fieldset>
         <legend>
-            {{ __('dixlase-inquiry::front.form.message') }}
+            <span x-text="getLabel('message')"></span>
             <x-form-required-badge />
         </legend>
-        <textarea disabled rows="6" placeholder="{{ __('dixlase-inquiry::front.form.message_placeholder') }}" class="input-common my-2 w-full opacity-60"></textarea>
+        <textarea disabled rows="6" class="input-common my-2 w-full opacity-60"></textarea>
     </fieldset>
 
     {{-- 送信ボタン --}}
     <div class="flex justify-center mt-6">
         <button type="button" disabled class="btn-primary px-8 py-3 opacity-60 cursor-not-allowed">
-            {{ __('dixlase-inquiry::front.form.submit') }}
+            <span x-text="getLabel('submit')"></span>
         </button>
     </div>
 </div>

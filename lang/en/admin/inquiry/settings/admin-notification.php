@@ -24,6 +24,9 @@ return [
 
     'mail_test_required' => 'To use the contact form functionality, please complete mail server settings and mail tests in the <a href=":url" class="text-blue-600 hover:text-blue-800 underline">base settings</a>. The contact form will not function properly without proper mail server configuration.',
 
+    'default_subject' => 'Inquiry Received',
+    'default_body' => "You have received a new inquiry.\n\nName: {{name}}\nEmail: {{email}}\nSubject: {{subject}}\nPostal Code: {{postal_code}}\nAddress: {{address}}\nPhone: {{phone}}\n\nMessage:\n{{message}}",
+
     'confirm_title' => 'Save Admin Notification Settings',
     'confirm_message' => 'Are you sure you want to save the admin notification settings?',
     'settings_updated' => 'Admin notification settings have been updated.',

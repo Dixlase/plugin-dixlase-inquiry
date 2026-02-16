@@ -44,22 +44,10 @@ return [
                         'icon' => 'fas fa-fw fa-list-alt',
                         'can' => 'admin',
                     ],
-                    'form-preview' => [
-                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_preview',
-                        'route' => 'dixlase-inquiry::admin.inquiry.settings.form-preview',
-                        'icon' => 'fas fa-fw fa-eye',
-                        'can' => 'admin',
-                    ],
                     'form-basic' => [
                         'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_basic',
                         'route' => 'dixlase-inquiry::admin.inquiry.settings.form-basic',
                         'icon' => 'fas fa-fw fa-sliders-h',
-                        'can' => 'admin',
-                    ],
-                    'form-display' => [
-                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.form_display',
-                        'route' => 'dixlase-inquiry::admin.inquiry.settings.form-display',
-                        'icon' => 'fas fa-fw fa-desktop',
                         'can' => 'admin',
                     ],
                     'completion' => [

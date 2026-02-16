@@ -14,19 +14,17 @@
 
 return [
     'heading' => 'お問い合わせ設定',
-    'description' => 'お問い合わせフォームの各種設定を管理します。カテゴリを選択して設定を変更してください。',
+    'description' => 'お問い合わせフォームの各種設定の概要です。埋め込み方法やステータスを一目で確認できます。',
 
     'nav' => [
-        'form_basic' => 'フォーム基本設定',
-        'form_display' => 'フォーム表示設定',
+        'form_basic' => 'フォーム設定',
         'completion' => '完了ページ設定',
         'admin_notification' => '管理者通知設定',
         'auto_reply' => '自動返信設定',
     ],
 
     'cards' => [
-        'form_basic_desc' => '名前形式、フィールドの表示・必須設定を管理します。',
-        'form_display_desc' => '表示方式（シングル/別ページ）、URLスラッグ、確認画面の設定。',
+        'form_basic_desc' => '言語、表示方式、名前形式、フィールドの表示・必須設定を管理します。',
         'completion_desc' => 'フォーム送信後に表示される見出しとメッセージ。',
         'admin_notification_desc' => '管理者通知のメールアドレス、件名、本文。',
         'auto_reply_desc' => '自動返信の有効/無効、送信元、件名、本文。',
@@ -44,5 +42,19 @@ return [
         'disabled' => '無効',
         'admin_email' => '送信先',
         'auto_reply' => '自動返信',
+        'form_locale' => 'フォーム言語',
     ],
+
+    // 埋め込み方法（form-previewから移動）
+    'embedding_methods' => '埋め込み方法',
+    'usage_instruction_title' => '使用方法',
+    'usage_instruction_text' => '以下のコードをテーマのBladeテンプレートまたはページ作成プラグインのコンテンツ内に貼り付けてください。',
+    'blade_directive' => 'Bladeディレクティブ（推奨）',
+    'blade_directive_help' => 'テーマのBladeテンプレート内で使用します。Laravel開発者に最適です。',
+    'shortcode' => 'ショートコード',
+    'shortcode_help' => 'ページ作成プラグインのコンテンツ内で使用します。非技術者でも簡単に使えます。',
+
+    // 警告メッセージ
+    'warning_admin_email' => '管理者通知メールアドレスが未設定です。<a href=":url" class="font-medium underline">管理者通知設定</a>で設定してください。',
+    'warning_auto_reply_email' => '自動返信が有効ですが、送信元メールアドレスが未設定です。<a href=":url" class="font-medium underline">自動返信設定</a>で設定してください。',
 ];

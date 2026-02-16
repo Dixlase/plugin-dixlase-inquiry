@@ -13,9 +13,25 @@
  */
 
 return [
-    'heading' => 'Form Basic Settings',
-    'description' => 'Configure name format, field visibility, and required settings for the inquiry form.',
+    'heading' => 'Form Settings',
+    'description' => 'Configure language, display method, name format, field visibility, and required settings.',
 
+    // 言語設定
+    'form_locale' => 'Form Language',
+    'form_locale_help' => 'Select the language for the inquiry form displayed to visitors.',
+
+    // フォーム表示方式（form-displayから移動）
+    'form_type' => 'Form Display Method',
+    'single_page' => 'Single Page',
+    'single_page_desc' => 'Input, confirmation, and completion processed dynamically on one page',
+    'separate_pages' => 'Separate Pages',
+    'separate_pages_desc' => 'Input, confirmation, and completion on separate pages with unique URLs',
+    'single_page_help' => 'Single page method processes everything from input to completion on one page.',
+    'inquiry_url' => 'Inquiry Page URL',
+    'inquiry_url_slug_help' => 'Set the URL for the inquiry page (e.g., inquiry -> /inquiry). Only lowercase letters, numbers, and hyphens are allowed.',
+    'preview_page_help' => 'Opens the inquiry page in a new tab. You can preview before saving the settings.',
+
+    // 入力形式
     'format_style' => 'Input Format',
     'format_japanese' => 'Japanese Style',
     'format_japanese_desc' => 'Last/First name order, split postal code/phone, prefecture-based address',
@@ -23,6 +39,7 @@ return [
     'format_western_desc' => 'First/Last name order, single field postal code/phone, single field address',
     'format_style_help' => 'Switches name order (Last/First vs First/Last), postal code/phone number formats, and address input order.',
 
+    // フィールド設定
     'field_settings' => 'Field Settings',
     'required_fields_note' => '* Name, Email, and Message are always displayed and required.',
     'show_subject' => 'Show Subject Field',
@@ -36,7 +53,10 @@ return [
     'show_confirmation' => 'Show Confirmation Screen',
     'show_confirmation_help' => 'If unchecked, the form will be submitted immediately after input.',
 
-    'confirm_title' => 'Save Form Basic Settings',
-    'confirm_message' => 'Are you sure you want to save the form basic settings?',
-    'settings_updated' => 'Form basic settings have been updated.',
+    // プレビュー
+    'form_preview' => 'Form Preview',
+
+    'confirm_title' => 'Save Form Settings',
+    'confirm_message' => 'Are you sure you want to save the form settings?',
+    'settings_updated' => 'Form settings have been updated.',
 ];

@@ -52,11 +52,8 @@ Route::prefix('inquiry')
         // 設定サブメニュー
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [DixlaseInquiryAdminController::class, 'settingsIndex'])->name('index');
-            Route::get('/form-preview', [DixlaseInquiryAdminController::class, 'settingsFormPreview'])->name('form-preview');
             Route::get('/form-basic', [DixlaseInquiryAdminController::class, 'settingsFormBasic'])->name('form-basic');
             Route::post('/form-basic', [DixlaseInquiryAdminController::class, 'updateFormBasic'])->name('form-basic.update');
-            Route::get('/form-display', [DixlaseInquiryAdminController::class, 'settingsFormDisplay'])->name('form-display');
-            Route::post('/form-display', [DixlaseInquiryAdminController::class, 'updateFormDisplay'])->name('form-display.update');
             Route::get('/completion', [DixlaseInquiryAdminController::class, 'settingsCompletion'])->name('completion');
             Route::post('/completion', [DixlaseInquiryAdminController::class, 'updateCompletion'])->name('completion.update');
             Route::get('/admin-notification', [DixlaseInquiryAdminController::class, 'settingsAdminNotification'])->name('admin-notification');

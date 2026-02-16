@@ -24,12 +24,12 @@ namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Plugins\DixlaseInquiry\App\Models\InquirySetting;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class InquirySettingsSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * シーダー実行
      */
     public function run(): void
     {
@@ -55,7 +55,6 @@ class InquirySettingsSeeder extends Seeder
             'auto_reply_body' => $texts['auto_reply_body'],
 
             // フォーム表示設定
-            'use_recaptcha' => '0',
             'show_phone' => '1',
             'phone_required' => '0',
             'show_address' => '0',
@@ -68,10 +67,11 @@ class InquirySettingsSeeder extends Seeder
             'show_confirmation_page' => '1',
             'inquiry_url_slug' => 'inquiry',
             'name_order_western' => $locale === 'en' ? '1' : '0',
+            'form_locale' => $locale,
         ];
 
         foreach ($defaults as $name => $value) {
-            InquirySetting::updateOrCreate(
+            DixlaseInquirySetting::updateOrCreate(
                 ['name' => $name],
                 ['value' => $value]
             );
@@ -93,23 +93,27 @@ class InquirySettingsSeeder extends Seeder
      */
     protected function getLocalizedTexts(string $locale): array
     {
-        // プラグインの言語ファイルパス
         $langPath = dirname(__DIR__, 2) . '/lang';
 
-        // 指定言語のファイルを読み込み、なければ英語をフォールバック
-        $file = "{$langPath}/{$locale}/admin.php";
-        if (!file_exists($file)) {
-            $file = "{$langPath}/en/admin.php";
+        // 管理者通知の翻訳ファイル読み込み
+        $adminNotificationFile = "{$langPath}/{$locale}/admin/inquiry/settings/admin-notification.php";
+        if (!file_exists($adminNotificationFile)) {
+            $adminNotificationFile = "{$langPath}/en/admin/inquiry/settings/admin-notification.php";
         }
+        $adminNotification = require $adminNotificationFile;
 
-        $translations = require $file;
-        $settings = $translations['settings'] ?? [];
+        // 自動返信の翻訳ファイル読み込み
+        $autoReplyFile = "{$langPath}/{$locale}/admin/inquiry/settings/auto-reply.php";
+        if (!file_exists($autoReplyFile)) {
+            $autoReplyFile = "{$langPath}/en/admin/inquiry/settings/auto-reply.php";
+        }
+        $autoReply = require $autoReplyFile;
 
         return [
-            'subject' => $settings['admin_notification']['default_subject'] ?? 'Inquiry Received',
-            'body' => $settings['admin_notification']['default_body'] ?? '',
-            'auto_reply_subject' => $settings['auto_reply']['default_subject'] ?? 'Thank you for your inquiry',
-            'auto_reply_body' => $settings['auto_reply']['default_body'] ?? '',
+            'subject' => $adminNotification['default_subject'] ?? 'Inquiry Received',
+            'body' => $adminNotification['default_body'] ?? '',
+            'auto_reply_subject' => $autoReply['default_subject'] ?? 'Thank you for your inquiry',
+            'auto_reply_body' => $autoReply['default_body'] ?? '',
         ];
     }
 }
