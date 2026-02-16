@@ -69,11 +69,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </fieldset>
 
     {{-- 題名フィールド --}}
-    <div x-show="showSubject">
+    <div x-show="showSubject === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('subject')"></span>
-                <span x-show="subjectRequired">
+                <span x-show="subjectRequired === '1'">
                     <x-form-required-badge />
                 </span>
             </legend>
@@ -82,11 +82,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </div>
 
     {{-- 郵便番号フィールド --}}
-    <div x-show="showPostalCode">
+    <div x-show="showPostalCode === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('postal_code')"></span>
-                <span x-show="postalCodeRequired">
+                <span x-show="postalCodeRequired === '1'">
                     <x-form-required-badge />
                 </span>
             </legend>
@@ -102,11 +102,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </div>
 
     {{-- 住所フィールド --}}
-    <div x-show="showAddress">
+    <div x-show="showAddress === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('address')"></span>
-                <span x-show="addressRequired">
+                <span x-show="addressRequired === '1'">
                     <x-form-required-badge />
                 </span>
             </legend>
@@ -170,11 +170,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </div>
 
     {{-- 電話番号フィールド --}}
-    <div x-show="showPhone">
+    <div x-show="showPhone === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('phone')"></span>
-                <span x-show="phoneRequired">
+                <span x-show="phoneRequired === '1'">
                     <x-form-required-badge />
                 </span>
             </legend>
@@ -192,11 +192,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </div>
 
     {{-- 性別フィールド --}}
-    <div x-show="showGender">
+    <div x-show="showGender === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('gender')"></span>
-                <span x-show="genderRequired">
+                <span x-show="genderRequired === '1'">
                     <x-form-required-badge />
                 </span>
             </legend>

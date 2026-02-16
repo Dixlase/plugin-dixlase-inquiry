@@ -16,12 +16,17 @@ return [
     'heading' => 'フォーム設定',
     'description' => '言語、表示方式、名前形式、フィールドの表示・必須設定を管理します。',
 
+    // セクション見出し
+    'section_form_settings' => 'フォーム設定',
+    'section_field_settings' => 'フィールド設定',
+    'section_display_settings' => 'フォーム表示設定',
+
     // 言語設定
     'form_locale' => 'フォーム言語',
     'form_locale_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。',
 
     // フォーム表示方式（form-displayから移動）
-    'form_type' => 'フォーム表示方式',
+    'form_type' => 'フォーム表示設定',
     'single_page' => 'シングルページ',
     'single_page_desc' => '入力・確認・完了を1つのページで動的に処理',
     'separate_pages' => '別ページ',
@@ -42,19 +47,20 @@ return [
     // フィールド設定
     'field_settings' => 'フィールド設定',
     'required_fields_note' => '※ 名前・メールアドレス・内容は常に表示され、必須項目となります。',
-    'show_subject' => '題名フィールドを表示',
-    'subject_required' => '題名を必須にする',
-    'show_postal_address' => '郵便番号・住所フィールドを表示',
-    'postal_address_required' => '郵便番号・住所を必須にする',
-    'show_phone' => '電話番号フィールドを表示',
-    'phone_required' => '電話番号を必須にする',
-    'show_gender' => '性別フィールドを表示',
-    'gender_required' => '性別を必須にする',
+    'show_subject' => '題名',
+    'subject_required' => '必須',
+    'show_postal_address' => '郵便番号・住所',
+    'postal_address_required' => '必須',
+    'show_phone' => '電話番号',
+    'phone_required' => '必須',
+    'show_gender' => '性別',
+    'gender_required' => '必須',
     'show_confirmation' => '確認画面を表示する',
     'show_confirmation_help' => 'チェックを外すと、入力後すぐに送信されます。',
 
     // プレビュー
     'form_preview' => 'フォームプレビュー',
+    'open_form_page' => 'フォームページを開く',
 
     'confirm_title' => 'フォーム設定の保存',
     'confirm_message' => 'フォーム設定を保存してもよろしいですか？',

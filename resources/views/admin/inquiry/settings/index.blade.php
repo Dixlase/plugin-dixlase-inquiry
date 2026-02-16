@@ -25,18 +25,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     {{-- 警告メッセージ --}}
     @if(empty($settings->admin_email))
-        <x-ui-message type="warning" icon="fas fa-exclamation-triangle">
-            {!! __('dixlase-inquiry::admin/inquiry/settings/index.warning_admin_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.admin-notification')]) !!}
-        </x-ui-message>
+        <x-ui-message
+            type="warning"
+            icon="fas fa-exclamation-triangle"
+            :message="__('dixlase-inquiry::admin/inquiry/settings/index.warning_admin_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.admin-notification')])"
+        />
     @endif
 
     @if($settings->auto_reply_enabled && empty($settings->auto_reply_from_email))
-        <x-ui-message type="warning" icon="fas fa-exclamation-triangle">
-            {!! __('dixlase-inquiry::admin/inquiry/settings/index.warning_auto_reply_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.auto-reply')]) !!}
-        </x-ui-message>
+        <x-ui-message
+            type="warning"
+            icon="fas fa-exclamation-triangle"
+            :message="__('dixlase-inquiry::admin/inquiry/settings/index.warning_auto_reply_email', ['url' => route('dixlase-inquiry::admin.inquiry.settings.auto-reply')])"
+        />
     @endif
 
-    
+
 
     {{-- 設定カード一覧 --}}
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 mb-8">
