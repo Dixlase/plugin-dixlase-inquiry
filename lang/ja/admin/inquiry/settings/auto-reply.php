@@ -23,6 +23,9 @@ return [
     'body' => '自動返信の本文',
     'body_help' => '使用可能な変数: {{name}}, {{email}}, {{subject}}, {{postal_code}}, {{address}}, {{phone}}, {{message}}',
 
+    'default_subject' => 'お問い合わせを受け付けました',
+    'default_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",
+
     'confirm_title' => '自動返信設定の保存',
     'confirm_message' => '自動返信設定を保存してもよろしいですか？',
     'settings_updated' => '自動返信設定が更新されました。',

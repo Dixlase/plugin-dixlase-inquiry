@@ -12,6 +12,9 @@
     "url": "https://exc-d.com",
     "license": "GPL-3.0",
     "license_template": "license-gpl.txt",
+    "providers": [
+        "Plugins\\DixlaseInquiry\\App\\Providers\\DixlaseInquiryServiceProvider"
+    ],
     "namespace": "Plugins\\DixlaseInquiry",
     "type": "dixlase-plugin",
     "category": "forms",

@@ -32,7 +32,6 @@ use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificati
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
-use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormDisplayRequest;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class DixlaseInquiryAdminController extends Controller
@@ -67,31 +66,28 @@ class DixlaseInquiryAdminController extends Controller
     }
 
     /**
-     * 設定 - フォームプレビュー
-     */
-    public function settingsFormPreview(): View
-    {
-        $settings = DixlaseInquirySetting::getSettings();
-
-        return view('dixlase-inquiry::admin.inquiry.settings.form-preview', array_merge($this->viewParams, [
-            'settings' => $settings,
-        ]));
-    }
-
-    /**
-     * 設定 - フォーム基本設定
+     * 設定 - フォーム設定（基本+表示+言語統合）
      */
     public function settingsFormBasic(): View
     {
         $settings = DixlaseInquirySetting::getSettings();
 
+        // 全ロケールのフロント翻訳をJSに渡す
+        $locales = config('dixlase-inquiry.locales', ['ja', 'en']);
+        $formTranslations = [];
+        foreach ($locales as $locale) {
+            $formTranslations[$locale] = trans('dixlase-inquiry::front.form', [], $locale);
+        }
+
         return view('dixlase-inquiry::admin.inquiry.settings.form-basic', array_merge($this->viewParams, [
             'settings' => $settings,
+            'locales' => $locales,
+            'formTranslations' => $formTranslations,
         ]));
     }
 
     /**
-     * 設定 - フォーム基本設定の更新
+     * 設定 - フォーム設定の更新
      */
     public function updateFormBasic(DixlaseInquiryFormBasicRequest $request): RedirectResponse
     {
@@ -99,29 +95,6 @@ class DixlaseInquiryAdminController extends Controller
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-basic')
             ->with('success', __('dixlase-inquiry::admin/inquiry/settings/form-basic.settings_updated'));
-    }
-
-    /**
-     * 設定 - フォーム表示設定
-     */
-    public function settingsFormDisplay(): View
-    {
-        $settings = DixlaseInquirySetting::getSettings();
-
-        return view('dixlase-inquiry::admin.inquiry.settings.form-display', array_merge($this->viewParams, [
-            'settings' => $settings,
-        ]));
-    }
-
-    /**
-     * 設定 - フォーム表示設定の更新
-     */
-    public function updateFormDisplay(DixlaseInquiryFormDisplayRequest $request): RedirectResponse
-    {
-        DixlaseInquirySetting::updateSettings($request->validated());
-
-        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-display')
-            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/form-display.settings_updated'));
     }
 
     /**

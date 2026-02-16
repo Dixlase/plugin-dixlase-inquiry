@@ -13,14 +13,8 @@
  */
 
 return [
-    'inquiry' => 'Inquiry',
-    'inquiry_list' => 'Inquiry List',
-    'inquiry_settings' => 'Settings',
-    'settings_nav' => [
-        'index' => 'Overview',
-        'form_basic' => 'Form Settings',
-        'completion' => 'Completion Page',
-        'admin_notification' => 'Admin Notification',
-        'auto_reply' => 'Auto-Reply',
-    ],
+    /**
+     * フォームで選択可能なロケール一覧
+     */
+    'locales' => ['ja', 'en'],
 ];

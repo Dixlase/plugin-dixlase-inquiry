@@ -13,9 +13,25 @@
  */
 
 return [
-    'heading' => 'フォーム基本設定',
-    'description' => 'お問い合わせフォームの名前形式、フィールドの表示・必須設定を管理します。',
+    'heading' => 'フォーム設定',
+    'description' => '言語、表示方式、名前形式、フィールドの表示・必須設定を管理します。',
 
+    // 言語設定
+    'form_locale' => 'フォーム言語',
+    'form_locale_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。',
+
+    // フォーム表示方式（form-displayから移動）
+    'form_type' => 'フォーム表示方式',
+    'single_page' => 'シングルページ',
+    'single_page_desc' => '入力・確認・完了を1つのページで動的に処理',
+    'separate_pages' => '別ページ',
+    'separate_pages_desc' => '入力・確認・完了を別々のURLのページで表示',
+    'single_page_help' => 'シングルページ方式では、1つのページ内で入力から完了まで処理されます。',
+    'inquiry_url' => '問い合わせページURL',
+    'inquiry_url_slug_help' => '問い合わせページのURLを設定します（例: inquiry → /inquiry）。半角英数字とハイフンのみ使用可能です。',
+    'preview_page_help' => '新しいタブで問い合わせページを開きます。設定を保存する前にプレビューできます。',
+
+    // 入力形式
     'format_style' => '入力形式',
     'format_japanese' => '日本式',
     'format_japanese_desc' => '姓・名の順、郵便番号・電話番号は分割入力、住所は都道府県から入力',
@@ -23,6 +39,7 @@ return [
     'format_western_desc' => '名・姓の順、郵便番号・電話番号は1フィールド、住所は1フィールド',
     'format_style_help' => '名前の順序（姓・名 / 名・姓）、郵便番号・電話番号の形式、住所の入力順序が切り替わります。',
 
+    // フィールド設定
     'field_settings' => 'フィールド設定',
     'required_fields_note' => '※ 名前・メールアドレス・内容は常に表示され、必須項目となります。',
     'show_subject' => '題名フィールドを表示',
@@ -36,7 +53,10 @@ return [
     'show_confirmation' => '確認画面を表示する',
     'show_confirmation_help' => 'チェックを外すと、入力後すぐに送信されます。',
 
-    'confirm_title' => 'フォーム基本設定の保存',
-    'confirm_message' => 'フォーム基本設定を保存してもよろしいですか？',
-    'settings_updated' => 'フォーム基本設定が更新されました。',
+    // プレビュー
+    'form_preview' => 'フォームプレビュー',
+
+    'confirm_title' => 'フォーム設定の保存',
+    'confirm_message' => 'フォーム設定を保存してもよろしいですか？',
+    'settings_updated' => 'フォーム設定が更新されました。',
 ];

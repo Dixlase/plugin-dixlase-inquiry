@@ -84,7 +84,6 @@ class DixlaseInquirySetting extends Model
             'admin_email' => '',
             'subject' => 'お問い合わせありがとうございます',
             'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
-            'use_recaptcha' => false,
             'show_phone' => true,
             'phone_required' => false,
             'show_address' => true,
@@ -103,6 +102,7 @@ class DixlaseInquirySetting extends Model
             'show_confirmation_page' => true,
             'inquiry_url_slug' => 'inquiry',
             'name_order_western' => false,
+            'form_locale' => 'ja',
         ];
     }
 

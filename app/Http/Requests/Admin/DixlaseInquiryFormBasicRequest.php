@@ -42,6 +42,9 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'form_locale' => 'required|string|in:' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
+            'use_single_page' => 'boolean',
+            'inquiry_url_slug' => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
             'name_order_western' => 'boolean',
             'show_subject' => 'boolean',
             'subject_required' => 'boolean',
@@ -62,6 +65,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $booleanFields = [
+            'use_single_page',
             'name_order_western',
             'show_subject',
             'subject_required',
@@ -84,5 +88,18 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
         $data['address_required'] = $data['postal_code_required'];
 
         $this->merge($data);
+    }
+
+    /**
+     * エラーメッセージのカスタマイズ
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'inquiry_url_slug.required' => __('dixlase-inquiry::admin.validation.inquiry_url_slug_required'),
+            'inquiry_url_slug.regex' => __('dixlase-inquiry::admin.validation.inquiry_url_slug_format'),
+        ];
     }
 }

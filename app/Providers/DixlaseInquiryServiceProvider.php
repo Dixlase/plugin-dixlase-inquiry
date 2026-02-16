@@ -41,6 +41,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // Load helper functions
         require_once __DIR__ . '/../Helpers/DixlaseInquiryHelpers.php';
         
+        // プラグイン設定ファイルの登録
+        $this->mergeConfigFrom(__DIR__ . '/../../config/inquiry.php', 'dixlase-inquiry');
+
         // Merge admin navigation
         $this->mergeAdminNavigation('DixlaseInquiry', __DIR__ . '/../../config/admin.php');
     }
