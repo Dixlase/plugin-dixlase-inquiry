@@ -24,28 +24,29 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 <div class="mx-auto">
     <form id="form-basic-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.update') }}" method="POST" x-data="{
         selectedLocale: '{{ old('form_locale', $settings->form_locale ?? 'ja') }}',
-        useSinglePage: {{ old('use_single_page', $settings->use_single_page ?? true) ? 'true' : 'false' }},
+        useSinglePage: '{{ old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0' }}',
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
         nameOrderWestern: '{{ old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0' }}',
-        showSubject: {{ old('show_subject', $settings->show_subject ?? false) ? 'true' : 'false' }},
-        subjectRequired: {{ old('subject_required', $settings->subject_required ?? false) ? 'true' : 'false' }},
-        showPostalCode: {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'true' : 'false' }},
-        postalCodeRequired: {{ old('postal_code_required', $settings->postal_code_required ?? false) ? 'true' : 'false' }},
+        showSubject: '{{ old('show_subject', $settings->show_subject ?? false) ? '1' : '0' }}',
+        subjectRequired: '{{ old('subject_required', $settings->subject_required ?? false) ? '1' : '0' }}',
+        showPostalCode: '{{ old('show_postal_code', $settings->show_postal_code ?? false) ? '1' : '0' }}',
+        postalCodeRequired: '{{ old('postal_code_required', $settings->postal_code_required ?? false) ? '1' : '0' }}',
         get showAddress() { return this.showPostalCode; },
         get addressRequired() { return this.postalCodeRequired; },
-        showPhone: {{ old('show_phone', $settings->show_phone ?? true) ? 'true' : 'false' }},
-        phoneRequired: {{ old('phone_required', $settings->phone_required ?? false) ? 'true' : 'false' }},
-        showGender: {{ old('show_gender', $settings->show_gender ?? false) ? 'true' : 'false' }},
-        genderRequired: {{ old('gender_required', $settings->gender_required ?? false) ? 'true' : 'false' }},
+        showPhone: '{{ old('show_phone', $settings->show_phone ?? true) ? '1' : '0' }}',
+        phoneRequired: '{{ old('phone_required', $settings->phone_required ?? false) ? '1' : '0' }}',
+        showGender: '{{ old('show_gender', $settings->show_gender ?? false) ? '1' : '0' }}',
+        genderRequired: '{{ old('gender_required', $settings->gender_required ?? false) ? '1' : '0' }}',
         labels: {{ Js::from($formTranslations) }},
         getLabel(key) { return this.labels[this.selectedLocale]?.[key] ?? key; },
     }">
         @csrf
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {{-- 左カラム: 設定フォーム --}}
             <div>
-                
+                {{-- フォーム設定セクション --}}
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_form_settings') }}</h2>
                 <section class="mb-8">
                     {{-- 言語セレクタ --}}
                     <fieldset>
@@ -112,7 +113,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </fieldset>
                 </section>
 
-                {{-- フィールド設定 --}}
+                {{-- フィールド設定セクション --}}
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_field_settings') }}</h2>
                 <section class="mb-8">
                     <fieldset>
                         <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.field_settings') }}</legend>
@@ -126,78 +128,78 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {{-- 題名フィールド --}}
                             <div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="show_subject" x-model="showSubject" {{ old('show_subject', $settings->show_subject ?? false) ? 'checked' : '' }} class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                                    <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_subject') }}</span>
-                                </label>
+                                <x-form-toggle
+                                    name="show_subject"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_subject')"
+                                    :checked="old('show_subject', $settings->show_subject ?? false)"
+                                    xModel="showSubject"
+                                />
                             </div>
                             <div>
                                 <x-form-toggle
                                     name="subject_required"
                                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.subject_required')"
                                     :checked="old('subject_required', $settings->subject_required ?? false)"
-                                    xBind="showSubject"
+                                    xBind="(showSubject === '1')"
                                     xModel="subjectRequired"
                                 />
                             </div>
 
                             {{-- 郵便番号・住所フィールド --}}
                             <div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="show_postal_code" x-model="showPostalCode" {{ old('show_postal_code', $settings->show_postal_code ?? false) ? 'checked' : '' }} class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                                    <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_postal_address') }}</span>
-                                </label>
-                                <input type="hidden" name="show_address" :value="showPostalCode ? '1' : '0'">
+                                <x-form-toggle
+                                    name="show_postal_code"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_postal_address')"
+                                    :checked="old('show_postal_code', $settings->show_postal_code ?? false)"
+                                    xModel="showPostalCode"
+                                />
+                                <input type="hidden" name="show_address" :value="showPostalCode">
                             </div>
                             <div>
                                 <x-form-toggle
                                     name="postal_code_required"
                                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.postal_address_required')"
                                     :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
-                                    xBind="showPostalCode"
+                                    xBind="(showPostalCode === '1')"
                                     xModel="postalCodeRequired"
                                 />
-                                <input type="hidden" name="address_required" :value="postalCodeRequired ? '1' : '0'">
+                                <input type="hidden" name="address_required" :value="postalCodeRequired">
                             </div>
 
                             {{-- 電話番号フィールド --}}
                             <div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="show_phone" x-model="showPhone" {{ old('show_phone', $settings->show_phone ?? true) ? 'checked' : '' }} class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                                    <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_phone') }}</span>
-                                </label>
+                                <x-form-toggle
+                                    name="show_phone"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_phone')"
+                                    :checked="old('show_phone', $settings->show_phone ?? true)"
+                                    xModel="showPhone"
+                                />
                             </div>
                             <div>
                                 <x-form-toggle
                                     name="phone_required"
                                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.phone_required')"
                                     :checked="old('phone_required', $settings->phone_required ?? false)"
-                                    xBind="showPhone"
+                                    xBind="(showPhone === '1')"
                                     xModel="phoneRequired"
                                 />
                             </div>
 
                             {{-- 性別フィールド --}}
                             <div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="show_gender" x-model="showGender" {{ old('show_gender', $settings->show_gender ?? false) ? 'checked' : '' }} class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                                    <span class="ml-3 text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender') }}</span>
-                                </label>
+                                <x-form-toggle
+                                    name="show_gender"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender')"
+                                    :checked="old('show_gender', $settings->show_gender ?? false)"
+                                    xModel="showGender"
+                                />
                             </div>
                             <div>
                                 <x-form-toggle
                                     name="gender_required"
                                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.gender_required')"
                                     :checked="old('gender_required', $settings->gender_required ?? false)"
-                                    xBind="showGender"
+                                    xBind="(showGender === '1')"
                                     xModel="genderRequired"
                                 />
                             </div>
@@ -205,7 +207,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </fieldset>
                 </section>
 
-                {{-- フォーム表示方式 --}}
+                {{-- フォーム表示設定セクション --}}
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_display_settings') }}</h2>
                 <section class="mb-8">
                     <fieldset>
                         <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_type') }}</legend>
@@ -233,7 +236,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         />
 
                         {{-- 別ページ選択時: URL編集フィールド --}}
-                        <div x-show="!useSinglePage" x-cloak class="mt-4">
+                        <div x-show="useSinglePage === '0'" x-cloak class="mt-4">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url') }}
                             </label>
@@ -250,26 +253,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                 {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url_slug_help') }}
                             </p>
-
-                            {{-- プレビューボタン --}}
-                            <div class="mt-4">
-                                <a :href="'{{ url('/') }}/' + inquiryUrlSlug"
-                                   target="_blank"
-                                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm transition-colors duration-150">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    {{ __('common.preview') }}
-                                </a>
-                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_page_help') }}
-                                </p>
-                            </div>
                         </div>
 
                         {{-- シングルページ選択時: hidden field --}}
-                        <div x-show="useSinglePage" x-cloak>
+                        <div x-show="useSinglePage === '1'" x-cloak>
                             <input type="hidden" name="inquiry_url_slug" :value="inquiryUrlSlug">
                         </div>
                     </fieldset>
@@ -290,7 +277,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
             {{-- 右カラム: リアルタイムプレビュー --}}
             <div class="xl:sticky xl:top-4 xl:self-start">
-                <h2 class="text-xl font-semibold mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_preview') }}</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_preview') }}</h2>
+                    <a :href="'{{ url('/') }}/' + inquiryUrlSlug"
+                       target="_blank"
+                       class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.open_form_page') }}
+                    </a>
+                </div>
                 <div class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
                     @include('dixlase-inquiry::admin.inquiry.partials.form-preview')
                 </div>

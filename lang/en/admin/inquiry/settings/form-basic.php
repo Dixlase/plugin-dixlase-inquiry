@@ -16,12 +16,17 @@ return [
     'heading' => 'Form Settings',
     'description' => 'Configure language, display method, name format, field visibility, and required settings.',
 
+    // セクション見出し
+    'section_form_settings' => 'Form Settings',
+    'section_field_settings' => 'Field Settings',
+    'section_display_settings' => 'Display Settings',
+
     // 言語設定
     'form_locale' => 'Form Language',
     'form_locale_help' => 'Select the language for the inquiry form displayed to visitors.',
 
     // フォーム表示方式（form-displayから移動）
-    'form_type' => 'Form Display Method',
+    'form_type' => 'Display Settings',
     'single_page' => 'Single Page',
     'single_page_desc' => 'Input, confirmation, and completion processed dynamically on one page',
     'separate_pages' => 'Separate Pages',
@@ -42,19 +47,20 @@ return [
     // フィールド設定
     'field_settings' => 'Field Settings',
     'required_fields_note' => '* Name, Email, and Message are always displayed and required.',
-    'show_subject' => 'Show Subject Field',
-    'subject_required' => 'Make Subject Required',
-    'show_postal_address' => 'Show Postal Code & Address Fields',
-    'postal_address_required' => 'Make Postal Code & Address Required',
-    'show_phone' => 'Show Phone Number Field',
-    'phone_required' => 'Make Phone Number Required',
-    'show_gender' => 'Show Gender Field',
-    'gender_required' => 'Make Gender Required',
+    'show_subject' => 'Subject',
+    'subject_required' => 'Required',
+    'show_postal_address' => 'Postal Code & Address',
+    'postal_address_required' => 'Required',
+    'show_phone' => 'Phone Number',
+    'phone_required' => 'Required',
+    'show_gender' => 'Gender',
+    'gender_required' => 'Required',
     'show_confirmation' => 'Show Confirmation Screen',
     'show_confirmation_help' => 'If unchecked, the form will be submitted immediately after input.',
 
     // プレビュー
     'form_preview' => 'Form Preview',
+    'open_form_page' => 'Open Form Page',
 
     'confirm_title' => 'Save Form Settings',
     'confirm_message' => 'Are you sure you want to save the form settings?',
