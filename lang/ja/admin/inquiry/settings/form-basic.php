@@ -62,6 +62,26 @@ return [
     'form_preview' => 'フォームプレビュー',
     'open_form_page' => 'フォームページを開く',
 
+    // プライバシー同意設定
+    'section_privacy' => 'プライバシー同意',
+    'privacy_settings' => 'プライバシー同意設定',
+    'privacy_consent_enabled' => 'プライバシー同意チェックを有効にする',
+    'privacy_consent_enabled_help' => '有効にすると、ユーザーはフォーム送信前にプライバシーポリシーへの同意が必要になります。',
+    'privacy_policy_url' => 'プライバシーポリシーURL',
+    'privacy_policy_url_help' => 'プライバシーポリシーページのURLを入力してください。法務プラグインがインストールされている場合、URLは自動取得されます。',
+    'privacy_consent_text' => '同意文テキスト',
+    'privacy_consent_text_placeholder' => 'プライバシーポリシーに同意します',
+    'privacy_consent_text_help' => '同意チェックボックスのカスタムテキスト。空欄の場合はデフォルトのテキストが使用されます。',
+
+    // 送信間隔制限設定
+    'section_throttle' => '送信間隔制限',
+    'throttle_settings' => '送信間隔制限設定',
+    'throttle_enabled' => '送信間隔制限を有効にする',
+    'throttle_enabled_help' => '同一IPアドレスからの一定時間内の送信回数を制限します。',
+    'throttle_max_attempts' => '最大送信回数',
+    'throttle_decay_minutes' => '制限期間（分）',
+    'throttle_help' => '例: 同一IPアドレスから5分以内に最大3回まで送信を許可します。',
+
     'confirm_title' => 'フォーム設定の保存',
     'confirm_message' => 'フォーム設定を保存してもよろしいですか？',
     'settings_updated' => 'フォーム設定が更新されました。',

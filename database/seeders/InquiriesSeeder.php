@@ -21,16 +21,19 @@
  */
 
 namespace Plugins\DixlaseInquiry\Database\Seeders;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 
 class InquiriesSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * サンプル問い合わせデータを生成
      */
     public function run(): void
     {
-        //
+        DixlaseInquiry::factory()->count(5)->statusNew()->create();
+        DixlaseInquiry::factory()->count(3)->inProgress()->create();
+        DixlaseInquiry::factory()->count(2)->completed()->create();
     }
 }

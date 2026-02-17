@@ -184,6 +184,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     placeholder="{{ __('dixlase-inquiry::front.form.message_placeholder') }}" required>{{ old('message') }}</textarea>
             </div>
 
+            {{-- プライバシー同意 --}}
+            @if(($settings->privacy_consent_enabled ?? false) && !empty($privacyUrl))
+            <div>
+                <label class="flex items-start gap-2 cursor-pointer">
+                    <input type="checkbox" name="privacy_agreed" value="1" required
+                           class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                        {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
+                    </span>
+                </label>
+            </div>
+            @endif
+
             {{-- 送信ボタン --}}
             <div>
                 <button type="submit"

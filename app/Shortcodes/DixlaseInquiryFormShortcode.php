@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Shortcodes;
 
+use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class DixlaseInquiryFormShortcode
@@ -29,24 +30,42 @@ class DixlaseInquiryFormShortcode
     /**
      * ショートコードをレンダリング
      *
-     * @param array $attributes ショートコードの属性
+     * @param array<string, mixed> $attributes ショートコードの属性
      * @param string|null $content ショートコードの内容
-     * @return string
      */
-    public function render($attributes = [], $content = null)
+    public function render(array $attributes = [], ?string $content = null): string
     {
         // 問い合わせ設定を取得
         $settings = DixlaseInquirySetting::getSettings();
-        
+
+        // プライバシーポリシーURLを解決
+        $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
+
         // 埋め込みフォームをレンダリング
         try {
             return view('dixlase-inquiry::front.inquiries.embed-form', [
                 'settings' => $settings,
                 'attributes' => $attributes,
+                'privacyUrl' => $privacyUrl,
             ])->render();
         } catch (\Exception $e) {
             \Log::error('InquiryFormShortcode render error: ' . $e->getMessage());
             return '<!-- Inquiry form error: ' . e($e->getMessage()) . ' -->';
         }
+    }
+
+    /**
+     * プライバシーポリシーURLを解決
+     */
+    private function resolvePrivacyPolicyUrl(object $settings): ?string
+    {
+        if (app()->bound(PrivacyPolicyProviderInterface::class)) {
+            $provider = app(PrivacyPolicyProviderInterface::class);
+            if ($provider->isPrivacyPolicyEnabled()) {
+                return $provider->getPrivacyPolicyUrl();
+            }
+        }
+
+        return !empty($settings->privacy_policy_url) ? $settings->privacy_policy_url : null;
     }
 }

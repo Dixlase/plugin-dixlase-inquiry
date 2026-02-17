@@ -62,6 +62,26 @@ return [
     'form_preview' => 'Form Preview',
     'open_form_page' => 'Open Form Page',
 
+    // プライバシー同意設定
+    'section_privacy' => 'Privacy Consent',
+    'privacy_settings' => 'Privacy Consent Settings',
+    'privacy_consent_enabled' => 'Enable Privacy Consent Checkbox',
+    'privacy_consent_enabled_help' => 'When enabled, users must agree to the privacy policy before submitting the form.',
+    'privacy_policy_url' => 'Privacy Policy URL',
+    'privacy_policy_url_help' => 'Enter the URL of your privacy policy page. If a legal plugin is installed, the URL will be automatically retrieved.',
+    'privacy_consent_text' => 'Consent Text',
+    'privacy_consent_text_placeholder' => 'I agree to the privacy policy',
+    'privacy_consent_text_help' => 'Custom text for the consent checkbox. Leave empty to use the default text.',
+
+    // 送信間隔制限設定
+    'section_throttle' => 'Submission Rate Limit',
+    'throttle_settings' => 'Rate Limit Settings',
+    'throttle_enabled' => 'Enable Submission Rate Limit',
+    'throttle_enabled_help' => 'Limits the number of submissions from the same IP address within a specified time period.',
+    'throttle_max_attempts' => 'Maximum Submissions',
+    'throttle_decay_minutes' => 'Time Period (minutes)',
+    'throttle_help' => 'Example: Allow up to 3 submissions within 5 minutes from the same IP address.',
+
     'confirm_title' => 'Save Form Settings',
     'confirm_message' => 'Are you sure you want to save the form settings?',
     'settings_updated' => 'Form settings have been updated.',

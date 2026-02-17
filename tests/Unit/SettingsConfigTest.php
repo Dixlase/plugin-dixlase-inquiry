@@ -57,6 +57,12 @@ class SettingsConfigTest extends TestCase
             'inquiry_url_slug',
             'name_order_western',
             'form_locale',
+            'privacy_consent_enabled',
+            'privacy_policy_url',
+            'privacy_consent_text',
+            'throttle_enabled',
+            'throttle_max_attempts',
+            'throttle_decay_minutes',
         ];
 
         foreach ($requiredKeys as $key) {

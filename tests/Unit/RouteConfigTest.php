@@ -118,6 +118,40 @@ class RouteConfigTest extends TestCase
     }
 
     /**
+     * ルートファイルにstatus.updateルートが含まれる
+     */
+    public function test_routes_contain_status_update(): void
+    {
+        $routeFile = file_get_contents(__DIR__ . '/../../routes/admin.php');
+
+        $this->assertStringContainsString('status.update', $routeFile);
+        $this->assertStringContainsString('updateStatus', $routeFile);
+    }
+
+    /**
+     * ServiceProviderにRateLimiter登録が含まれる
+     */
+    public function test_service_provider_registers_rate_limiter(): void
+    {
+        $providerFile = file_get_contents(
+            __DIR__ . '/../../app/Providers/DixlaseInquiryServiceProvider.php'
+        );
+
+        $this->assertStringContainsString('RateLimiter::for', $providerFile);
+        $this->assertStringContainsString('inquiry-submit', $providerFile);
+    }
+
+    /**
+     * 埋め込みルートにthrottleミドルウェアが適用されている
+     */
+    public function test_embed_route_has_throttle_middleware(): void
+    {
+        $webRouteFile = file_get_contents(__DIR__ . '/../../routes/web.php');
+
+        $this->assertStringContainsString('throttle:inquiry-submit', $webRouteFile);
+    }
+
+    /**
      * ServiceProviderにconfig登録が含まれる
      */
     public function test_service_provider_registers_config(): void

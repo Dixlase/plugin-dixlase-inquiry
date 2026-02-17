@@ -78,6 +78,7 @@ return [
         'gender_other' => 'その他',
         'gender_prefer_not_to_say' => '回答しない',
         'success_message' => 'お問い合わせありがとうございました。内容を確認の上、担当者よりご連絡させていただきます。',
+        'privacy_consent' => '<a href=":url" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">プライバシーポリシー</a>に同意します。',
     ],
 
     'placeholders' => [
@@ -132,6 +133,7 @@ return [
         'gender_required' => '性別を選択してください。',
         'gender_invalid' => '有効な性別を選択してください。',
         'recaptcha_required' => 'reCAPTCHA認証が必要です。',
+        'privacy_agreed_required' => 'プライバシーポリシーに同意してください。',
     ],
 
     'messages' => [

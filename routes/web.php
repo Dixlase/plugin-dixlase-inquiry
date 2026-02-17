@@ -42,5 +42,6 @@ Route::middleware(['front.ip'])
     ->group(function () {
         // 埋め込みフォーム用の送信ルート
         Route::post('/inquiry/embed/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'embedSend'])
-            ->name('inquiry.embed.send');
+            ->name('inquiry.embed.send')
+            ->middleware('throttle:inquiry-submit');
     });
