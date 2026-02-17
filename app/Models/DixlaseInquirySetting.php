@@ -103,6 +103,12 @@ class DixlaseInquirySetting extends Model
             'inquiry_url_slug' => 'inquiry',
             'name_order_western' => false,
             'form_locale' => 'ja',
+            'privacy_consent_enabled' => false,
+            'privacy_policy_url' => '',
+            'privacy_consent_text' => '',
+            'throttle_enabled' => true,
+            'throttle_max_attempts' => 3,
+            'throttle_decay_minutes' => 5,
         ];
     }
 

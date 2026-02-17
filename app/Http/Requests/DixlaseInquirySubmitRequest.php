@@ -108,11 +108,16 @@ class DixlaseInquirySubmitRequest extends FormRequest
                 : ['nullable', 'string', $genderOptions];
         }
         
+        // プライバシー同意（設定により必須）
+        if ($settings->privacy_consent_enabled ?? false) {
+            $rules['privacy_agreed'] = ['required', 'accepted'];
+        }
+
         // reCAPTCHA（設定により必須）
         if ($settings['use_recaptcha']) {
             $rules['g-recaptcha-response'] = 'required|captcha';
         }
-        
+
         return $rules;
     }
 
@@ -147,6 +152,8 @@ class DixlaseInquirySubmitRequest extends FormRequest
                 : __('dixlase-inquiry::front.validation.phone_format_japanese'),
             'gender.required' => __('dixlase-inquiry::front.validation.gender_required'),
             'gender.in' => __('dixlase-inquiry::front.validation.gender_invalid'),
+            'privacy_agreed.required' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
+            'privacy_agreed.accepted' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
             'g-recaptcha-response.required' => __('dixlase-inquiry::front.validation.recaptcha_required'),
         ];
     }

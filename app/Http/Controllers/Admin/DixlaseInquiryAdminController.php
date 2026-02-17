@@ -26,12 +26,15 @@ use App\Models\BaseSetting;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
+use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificationRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class DixlaseInquiryAdminController extends Controller
@@ -48,9 +51,105 @@ class DixlaseInquiryAdminController extends Controller
     /**
      * 問い合わせ一覧
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('dixlase-inquiry::admin.inquiry.index', $this->viewParams);
+        $search = $request->input('search');
+        $statusFilter = $request->input('status', '');
+
+        $perPage = (int) $request->input('per_page', 25);
+        $allowedPerPage = [10, 25, 50, 100];
+        if (!in_array($perPage, $allowedPerPage)) {
+            $perPage = 25;
+        }
+
+        $inquiries = DixlaseInquiry::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%')
+                      ->orWhere('subject', 'like', '%' . $search . '%')
+                      ->orWhere('message', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($statusFilter, function ($query, $statusFilter) {
+                $query->where('status', $statusFilter);
+            })
+            ->orderBy('submitted_at', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $unreadCount = DixlaseInquiry::unread()->count();
+        $statuses = InquiryStatus::cases();
+        $statusLabels = [];
+        foreach ($statuses as $status) {
+            $statusLabels[$status->value] = $status->label();
+        }
+
+        return view('dixlase-inquiry::admin.inquiry.index', array_merge($this->viewParams, [
+            'inquiries' => $inquiries,
+            'search' => $search,
+            'statusFilter' => $statusFilter,
+            'unreadCount' => $unreadCount,
+            'statuses' => $statuses,
+            'statusLabels' => $statusLabels,
+        ]));
+    }
+
+    /**
+     * 問い合わせ詳細
+     */
+    public function show(int $id): View
+    {
+        $inquiry = DixlaseInquiry::findOrFail($id);
+
+        // 自動既読マーク
+        $inquiry->markAsRead();
+
+        // ステータスが「新規」の場合は「対応中」に変更
+        if ($inquiry->status === InquiryStatus::New) {
+            $inquiry->update(['status' => InquiryStatus::InProgress]);
+        }
+
+        $statuses = InquiryStatus::cases();
+        $statusLabels = [];
+        foreach ($statuses as $status) {
+            $statusLabels[$status->value] = $status->label();
+        }
+
+        return view('dixlase-inquiry::admin.inquiry.show', array_merge($this->viewParams, [
+            'inquiry' => $inquiry,
+            'statuses' => $statuses,
+            'statusLabels' => $statusLabels,
+        ]));
+    }
+
+    /**
+     * 問い合わせ削除
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $inquiry = DixlaseInquiry::findOrFail($id);
+        $inquiry->delete();
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.index')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/index.deleted'));
+    }
+
+    /**
+     * ステータス変更
+     */
+    public function updateStatus(Request $request, int $id): RedirectResponse
+    {
+        $inquiry = DixlaseInquiry::findOrFail($id);
+
+        $request->validate([
+            'status' => ['required', 'string', 'in:' . implode(',', array_column(InquiryStatus::cases(), 'value'))],
+        ]);
+
+        $inquiry->update(['status' => $request->input('status')]);
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.show', $id)
+            ->with('success', __('dixlase-inquiry::admin/inquiry/show.status_updated'));
     }
 
     /**

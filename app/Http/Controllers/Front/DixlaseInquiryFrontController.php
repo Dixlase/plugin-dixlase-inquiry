@@ -22,12 +22,15 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 
+use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySubmitRequest;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Http\Requests\Front\DixlaseInquiryEmbedSendRequest;
 
@@ -43,14 +46,17 @@ class DixlaseInquiryFrontController extends Controller
     public function index()
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
             abort(404);
         }
-        
+
+        $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
+
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
+            'privacyUrl' => $privacyUrl,
         ]);
     }
 
@@ -60,20 +66,20 @@ class DixlaseInquiryFrontController extends Controller
     public function confirm(Request $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
             abort(404);
         }
-        
+
         // 確認画面が無効の場合は404
         if (!$settings->show_confirmation_page) {
             abort(404);
         }
-        
+
         // バリデーション処理
         // TODO: バリデーション実装
-        
+
         return view('dixlase-inquiry::front.inquiries.confirm', [
             'settings' => $settings,
             'data' => $request->all(),
@@ -86,36 +92,36 @@ class DixlaseInquiryFrontController extends Controller
     public function send(Request $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         // シングルページモードの場合は404
         if ($settings->use_single_page) {
             abort(404);
         }
-        
+
         $validated = $request->all();
-        
+
+        // 問い合わせデータを準備
+        $inquiryData = $this->prepareInquiryData($validated, $settings);
+
+        // DB保存
+        $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
+
+        // メール送信（失敗してもDB保存は維持）
         try {
-            // 問い合わせデータを準備
-            $inquiryData = $this->prepareInquiryData($validated, $settings);
-            
-            // 管理者にメール送信
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
-            
-            // 自動返信が有効な場合
+
             if ($settings->auto_reply_enabled && !empty($validated['email'])) {
                 Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
             }
-            
         } catch (\Exception $e) {
-            \Log::error('Inquiry send failed: ' . $e->getMessage());
-            return back()->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])->withInput();
+            \Log::error('Inquiry mail send failed: ' . $e->getMessage());
         }
-        
+
         return view('dixlase-inquiry::front.inquiries.complete', [
             'settings' => $settings,
         ]);
     }
-    
+
     /**
      * 問い合わせデータを準備
      */
@@ -125,7 +131,7 @@ class DixlaseInquiryFrontController extends Controller
         $fullName = ($settings->name_order_western ?? false)
             ? trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''))
             : trim(($validated['last_name'] ?? '') . ' ' . ($validated['first_name'] ?? ''));
-        
+
         return [
             'name' => $fullName,
             'email' => $validated['email'] ?? '',
@@ -134,10 +140,11 @@ class DixlaseInquiryFrontController extends Controller
             'postal_code' => $validated['postal_code'] ?? null,
             'address' => $validated['address'] ?? null,
             'gender' => isset($validated['gender']) ? $this->getGenderLabel($validated['gender']) : null,
+            'gender_value' => $validated['gender'] ?? null,
             'message' => $validated['message'] ?? '',
         ];
     }
-    
+
     /**
      * 性別のラベルを取得
      */
@@ -146,7 +153,7 @@ class DixlaseInquiryFrontController extends Controller
         if (empty($gender)) {
             return null;
         }
-        
+
         $labels = [
             'male' => __('dixlase-inquiry::front.form.gender_male'),
             'female' => __('dixlase-inquiry::front.form.gender_female'),
@@ -154,8 +161,47 @@ class DixlaseInquiryFrontController extends Controller
             'other' => __('dixlase-inquiry::front.form.gender_other'),
             'prefer_not_to_say' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'),
         ];
-        
+
         return $labels[$gender] ?? $gender;
+    }
+
+    /**
+     * 問い合わせをDBに保存
+     */
+    private function saveInquiry(array $inquiryData, Request $request, $settings): DixlaseInquiry
+    {
+        return DixlaseInquiry::create([
+            'status' => InquiryStatus::New,
+            'name' => $inquiryData['name'],
+            'email' => $inquiryData['email'],
+            'subject' => $inquiryData['subject'],
+            'phone' => $inquiryData['phone'],
+            'postal_code' => $inquiryData['postal_code'],
+            'address' => $inquiryData['address'],
+            'gender' => $inquiryData['gender_value'] ?? null,
+            'message' => $inquiryData['message'],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'form_locale' => $settings->form_locale ?? 'ja',
+            'privacy_agreed_at' => $request->has('privacy_agreed') ? now() : null,
+            'submitted_at' => now(),
+        ]);
+    }
+
+    /**
+     * プライバシーポリシーURLを解決
+     */
+    private function resolvePrivacyPolicyUrl($settings): ?string
+    {
+        // 法務プラグインが登録されていれば優先
+        if (app()->bound(PrivacyPolicyProviderInterface::class)) {
+            $provider = app(PrivacyPolicyProviderInterface::class);
+            if ($provider->isPrivacyPolicyEnabled()) {
+                return $provider->getPrivacyPolicyUrl();
+            }
+        }
+
+        return !empty($settings->privacy_policy_url) ? $settings->privacy_policy_url : null;
     }
 
     /**
@@ -164,60 +210,66 @@ class DixlaseInquiryFrontController extends Controller
     public function form()
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         if (!$settings || empty($settings->admin_email)) {
             return view('dixlase-inquiry::front.inquiries.error', [
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ]);
         }
-        
-        return view('dixlase-inquiry::front.inquiries.form', compact('settings'));
+
+        $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
+
+        return view('dixlase-inquiry::front.inquiries.form', compact('settings', 'privacyUrl'));
     }
-    
+
     public function submit(DixlaseInquirySubmitRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         if (!$settings || empty($settings['admin_email'])) {
             return response()->json([
                 'success' => false,
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ], 400);
         }
-        
+
         $validated = $request->validated();
-        
+
+        // 問い合わせデータを準備
+        $inquiryData = $this->prepareInquiryData($validated, $settings);
+
+        // DB保存
+        $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
+
+        // メール送信
         try {
-            // Prepare email content
             $emailBody = $settings['body'];
             foreach ($validated as $key => $value) {
                 $emailBody = str_replace('{{' . $key . '}}', $value, $emailBody);
             }
-            
-            // Send email to admin
-            \Mail::raw($emailBody, function($message) use ($settings, $validated) {
+
+            \Mail::raw($emailBody, function ($message) use ($settings, $validated) {
                 $message->to($settings['admin_email'])
                         ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
             });
-            
-            // Send auto-reply if enabled
+
             if ($settings['auto_reply_enabled'] && !empty($settings['auto_reply_subject']) && !empty($settings['auto_reply_body'])) {
                 $replyBody = $settings['auto_reply_body'];
                 foreach ($validated as $key => $value) {
                     $replyBody = str_replace('{{' . $key . '}}', $value, $replyBody);
                 }
-                
-                \Mail::raw($replyBody, function($message) use ($settings, $validated) {
+
+                \Mail::raw($replyBody, function ($message) use ($settings, $validated) {
                     $message->to($validated['email'])
                             ->subject($settings['auto_reply_subject']);
                 });
             }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => __('dixlase-inquiry::front.messages.submit_success')
             ]);
-            
+
         } catch (\Exception $e) {
             \Log::error('Inquiry send failed: ' . $e->getMessage());
             return response()->json([
@@ -233,24 +285,26 @@ class DixlaseInquiryFrontController extends Controller
     public function embedSend(DixlaseInquiryEmbedSendRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
-        
+
         $validated = $request->validated();
         $redirectUrl = $request->input('redirect_url', url('/'));
-        
+
+        // 問い合わせデータを準備
+        $inquiryData = $this->prepareInquiryData($validated, $settings);
+
+        // DB保存
+        $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
+
+        // メール送信（失敗してもDB保存は維持）
         try {
-            // 問い合わせデータを準備
-            $inquiryData = $this->prepareInquiryData($validated, $settings);
-            
-            // 管理者にメール送信
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
-            
-            // 自動返信が有効な場合
+
             if ($settings->auto_reply_enabled && !empty($validated['email'])) {
                 Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
             }
-            
+
             return redirect($redirectUrl)->with('inquiry_success', true);
-            
+
         } catch (\Exception $e) {
             \Log::error('Inquiry embed send failed: ' . $e->getMessage());
             return redirect($redirectUrl)

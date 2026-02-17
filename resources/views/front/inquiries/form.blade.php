@@ -225,6 +225,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             />
         </fieldset>
 
+        <!-- プライバシー同意 -->
+        @if(($settings->privacy_consent_enabled ?? false) && !empty($privacyUrl))
+        <fieldset class="mt-6">
+            <label class="flex items-start gap-2 cursor-pointer">
+                <input type="checkbox" name="privacy_agreed" value="1" required
+                       class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
+                </span>
+            </label>
+            @error('privacy_agreed')
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+            @enderror
+        </fieldset>
+        @endif
+
         <!-- 送信ボタン -->
         <div class="flex gap-2 mt-6">
             <x-form-button

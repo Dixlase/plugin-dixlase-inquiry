@@ -48,6 +48,7 @@ Route::prefix('inquiry')
         Route::get('/', [DixlaseInquiryAdminController::class, 'index'])->name('index');
         Route::get('/{id}', [DixlaseInquiryAdminController::class, 'show'])->name('show')->where('id', '[0-9]+');
         Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
+        Route::patch('/{id}/status', [DixlaseInquiryAdminController::class, 'updateStatus'])->name('status.update')->where('id', '[0-9]+');
 
         // 設定サブメニュー
         Route::prefix('settings')->name('settings.')->group(function () {

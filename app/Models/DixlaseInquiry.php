@@ -22,9 +22,120 @@
 
 namespace Plugins\DixlaseInquiry\App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
+use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
 
+/**
+ * 問い合わせモデル
+ *
+ * @property int $id
+ * @property InquiryStatus $status
+ * @property string $name
+ * @property string $email
+ * @property string|null $subject
+ * @property string|null $phone
+ * @property string|null $postal_code
+ * @property string|null $address
+ * @property string|null $gender
+ * @property string $message
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property string $form_locale
+ * @property \Illuminate\Support\Carbon|null $privacy_agreed_at
+ * @property \Illuminate\Support\Carbon $submitted_at
+ * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ */
 class DixlaseInquiry extends Model
 {
+    use HasFactory;
 
+    protected $table = 'plg_dixlase_inquiries';
+
+    protected $fillable = [
+        'status',
+        'name',
+        'email',
+        'subject',
+        'phone',
+        'postal_code',
+        'address',
+        'gender',
+        'message',
+        'ip_address',
+        'user_agent',
+        'form_locale',
+        'privacy_agreed_at',
+        'submitted_at',
+        'read_at',
+    ];
+
+    /**
+     * キャスト定義
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => InquiryStatus::class,
+            'submitted_at' => 'datetime',
+            'read_at' => 'datetime',
+            'privacy_agreed_at' => 'datetime',
+        ];
+    }
+
+    /**
+     * ファクトリの取得
+     */
+    protected static function newFactory(): DixlaseInquiryFactory
+    {
+        return DixlaseInquiryFactory::new();
+    }
+
+    /**
+     * 未対応の問い合わせを取得
+     */
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->where('status', InquiryStatus::New);
+    }
+
+    /**
+     * 既読（対応中）の問い合わせを取得
+     */
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->where('status', InquiryStatus::InProgress);
+    }
+
+    /**
+     * 完了した問い合わせを取得
+     */
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', InquiryStatus::Completed);
+    }
+
+    /**
+     * 未読の問い合わせを取得
+     */
+    public function scopeUnread(Builder $query): Builder
+    {
+        return $query->whereNull('read_at');
+    }
+
+    /**
+     * 既読としてマーク
+     */
+    public function markAsRead(): void
+    {
+        if ($this->read_at === null) {
+            $this->update(['read_at' => now()]);
+        }
+    }
 }

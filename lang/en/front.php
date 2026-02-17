@@ -77,6 +77,7 @@ return [
         'gender_other' => 'Other',
         'gender_prefer_not_to_say' => 'Prefer not to say',
         'success_message' => 'Thank you for your inquiry. We will review your message and get back to you soon.',
+        'privacy_consent' => 'I agree to the <a href=":url" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">Privacy Policy</a>.',
     ],
 
     'placeholders' => [
@@ -131,6 +132,7 @@ return [
         'gender_required' => 'Please select your gender.',
         'gender_invalid' => 'Please select a valid gender option.',
         'recaptcha_required' => 'reCAPTCHA verification is required.',
+        'privacy_agreed_required' => 'You must agree to the privacy policy.',
     ],
 
     'messages' => [

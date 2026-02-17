@@ -37,6 +37,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         phoneRequired: '{{ old('phone_required', $settings->phone_required ?? false) ? '1' : '0' }}',
         showGender: '{{ old('show_gender', $settings->show_gender ?? false) ? '1' : '0' }}',
         genderRequired: '{{ old('gender_required', $settings->gender_required ?? false) ? '1' : '0' }}',
+        privacyConsentEnabled: '{{ old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false) ? '1' : '0' }}',
+        privacyPolicyUrl: '{{ old('privacy_policy_url', $settings->privacy_policy_url ?? '') }}',
+        privacyConsentText: '{{ old('privacy_consent_text', $settings->privacy_consent_text ?? '') }}',
+        throttleEnabled: '{{ old('throttle_enabled', $settings->throttle_enabled ?? true) ? '1' : '0' }}',
+        throttleMaxAttempts: '{{ old('throttle_max_attempts', $settings->throttle_max_attempts ?? 3) }}',
+        throttleDecayMinutes: '{{ old('throttle_decay_minutes', $settings->throttle_decay_minutes ?? 5) }}',
         labels: {{ Js::from($formTranslations) }},
         getLabel(key) { return this.labels[this.selectedLocale]?.[key] ?? key; },
     }">
@@ -271,6 +277,111 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation_help') }}
                         </p>
+                    </fieldset>
+                </section>
+
+                {{-- プライバシー同意設定セクション --}}
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_privacy') }}</h2>
+                <section class="mb-8">
+                    <fieldset>
+                        <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_settings') }}</legend>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-form-toggle
+                                    name="privacy_consent_enabled"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_enabled')"
+                                    :checked="old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false)"
+                                    xModel="privacyConsentEnabled"
+                                />
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_enabled_help') }}
+                                </p>
+                            </div>
+
+                            <div x-show="privacyConsentEnabled === '1'" x-cloak class="space-y-4 ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_policy_url') }}
+                                    </label>
+                                    <input type="url"
+                                           name="privacy_policy_url"
+                                           x-model="privacyPolicyUrl"
+                                           placeholder="https://example.com/privacy"
+                                           class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_policy_url_help') }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_text') }}
+                                    </label>
+                                    <input type="text"
+                                           name="privacy_consent_text"
+                                           x-model="privacyConsentText"
+                                           placeholder="{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_text_placeholder') }}"
+                                           class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_text_help') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </section>
+
+                {{-- 送信間隔制限セクション --}}
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_throttle') }}</h2>
+                <section class="mb-8">
+                    <fieldset>
+                        <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_settings') }}</legend>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-form-toggle
+                                    name="throttle_enabled"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled')"
+                                    :checked="old('throttle_enabled', $settings->throttle_enabled ?? true)"
+                                    xModel="throttleEnabled"
+                                />
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled_help') }}
+                                </p>
+                            </div>
+
+                            <div x-show="throttleEnabled === '1'" x-cloak class="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_max_attempts') }}
+                                        </label>
+                                        <input type="number"
+                                               name="throttle_max_attempts"
+                                               x-model="throttleMaxAttempts"
+                                               min="1"
+                                               max="100"
+                                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_decay_minutes') }}
+                                        </label>
+                                        <input type="number"
+                                               name="throttle_decay_minutes"
+                                               x-model="throttleDecayMinutes"
+                                               min="1"
+                                               max="1440"
+                                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_help') }}
+                                </p>
+                            </div>
+                        </div>
                     </fieldset>
                 </section>
             </div>

@@ -55,6 +55,12 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'show_gender' => 'boolean',
             'gender_required' => 'boolean',
             'show_confirmation_page' => 'boolean',
+            'privacy_consent_enabled' => 'boolean',
+            'privacy_policy_url' => 'nullable|url|max:500',
+            'privacy_consent_text' => 'nullable|string|max:500',
+            'throttle_enabled' => 'boolean',
+            'throttle_max_attempts' => 'required_if:throttle_enabled,true|integer|min:1|max:100',
+            'throttle_decay_minutes' => 'required_if:throttle_enabled,true|integer|min:1|max:1440',
         ];
     }
 
@@ -76,6 +82,8 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'show_gender',
             'gender_required',
             'show_confirmation_page',
+            'privacy_consent_enabled',
+            'throttle_enabled',
         ];
 
         $data = [];

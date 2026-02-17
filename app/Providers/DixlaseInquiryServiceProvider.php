@@ -22,17 +22,21 @@
 
 namespace Plugins\DixlaseInquiry\App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
-use App\Traits\PluginLoaderTrait;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 use App\Helpers\PluginHelper;
+use App\Traits\PluginLoaderTrait;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Shortcodes\DixlaseInquiryFormShortcode;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider
 {
     use PluginLoaderTrait;
+
     /**
      * Register services.
      */
@@ -40,7 +44,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     {
         // Load helper functions
         require_once __DIR__ . '/../Helpers/DixlaseInquiryHelpers.php';
-        
+
         // プラグイン設定ファイルの登録
         $this->mergeConfigFrom(__DIR__ . '/../../config/inquiry.php', 'dixlase-inquiry');
 
@@ -54,32 +58,59 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // .git/info/excludeへの追加はplugin:installコマンドで自動実行されます
-        
+
+        // レートリミッター登録
+        $this->registerRateLimiter();
+
         // 動的ルート登録（別ページモード用）
         // 注: 静的ルート（routes/web.php, routes/admin.php）はPluginServiceProviderが自動読み込み
         $this->registerDynamicRoutes();
-        
+
         // ショートコード登録
         $this->registerShortcodes();
-        
+
         // Bladeディレクティブ登録
         $this->registerBladeDirectives();
-        
+
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
-        
+
         // Load translations
         $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'dixlase-inquiry');
-        
+
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        
+
         // Publish assets
         $this->publishes([
             __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
     }
-    
+
+    /**
+     * レートリミッター登録
+     */
+    protected function registerRateLimiter(): void
+    {
+        RateLimiter::for('inquiry-submit', function (Request $request) {
+            try {
+                $settings = DixlaseInquirySetting::getSettings();
+
+                if (!($settings->throttle_enabled ?? true)) {
+                    return Limit::none();
+                }
+
+                $maxAttempts = (int) ($settings->throttle_max_attempts ?? 3);
+                $decayMinutes = (int) ($settings->throttle_decay_minutes ?? 5);
+
+                return Limit::perMinutes($decayMinutes, $maxAttempts)->by($request->ip());
+            } catch (\Exception $e) {
+                // DB未接続時はデフォルト制限
+                return Limit::perMinutes(5, 3)->by($request->ip());
+            }
+        });
+    }
+
     /**
      * ショートコード登録
      */
@@ -88,7 +119,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         // コアのPluginHelperを使用してショートコードを登録
         PluginHelper::registerShortcode('inquiry', DixlaseInquiryFormShortcode::class);
     }
-    
+
     /**
      * Bladeディレクティブ登録
      */
@@ -99,7 +130,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
             return "<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\DixlaseInquiryFormShortcode::class)->render(); ?>";
         });
     }
-    
+
     /**
      * 動的ルート登録
      */
@@ -107,11 +138,11 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     {
         try {
             $settings = DixlaseInquirySetting::getSettings();
-            
+
             // 別ページモードの場合のみルート登録
             if (!$settings->use_single_page) {
                 $slug = $settings->inquiry_url_slug ?? 'inquiry';
-                
+
                 Route::middleware(['web', 'front.ip'])
                     ->group(function () use ($slug) {
                         Route::get($slug, [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'index'])
@@ -119,14 +150,15 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
                         Route::post($slug . '/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'confirm'])
                             ->name('inquiry.confirm');
                         Route::post($slug . '/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'send'])
-                            ->name('inquiry.send');
+                            ->name('inquiry.send')
+                            ->middleware('throttle:inquiry-submit');
                     });
             }
         } catch (\Exception $e) {
             // データベースがまだ存在しない場合などのエラーを無視
         }
     }
-    
+
     /**
      * プラグインアンインストール時の処理
      */

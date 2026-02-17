@@ -57,7 +57,11 @@ class DixlaseInquiryEmbedSendRequest extends FormRequest
         if ($settings->show_phone ?? true) {
             $rules['phone'] = ($settings->phone_required ?? false) ? 'required|string|max:50' : 'nullable|string|max:50';
         }
-        
+
+        if ($settings->privacy_consent_enabled ?? false) {
+            $rules['privacy_agreed'] = ['required', 'accepted'];
+        }
+
         return $rules;
     }
 }
