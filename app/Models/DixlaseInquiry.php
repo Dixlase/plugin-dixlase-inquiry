@@ -34,6 +34,7 @@ use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
  * @property int $id
  * @property InquiryStatus $status
  * @property string $name
+ * @property string|null $name_kana
  * @property string $email
  * @property string|null $subject
  * @property string|null $phone
@@ -59,6 +60,7 @@ class DixlaseInquiry extends Model
     protected $fillable = [
         'status',
         'name',
+        'name_kana',
         'email',
         'subject',
         'phone',

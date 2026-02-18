@@ -23,26 +23,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @section('content')
 <div class="mx-auto">
     <form id="auto-reply-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.auto-reply.update') }}" method="POST"
-          x-data="{ autoReplyEnabled: {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'true' : 'false' }} }">
+          x-data="{ autoReplyEnabled: '{{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? '1' : '0' }}' }">
         @csrf
 
         <section>
             <fieldset>
                 <div class="grid grid-cols-1 gap-6">
-                    <div class="flex items-center space-x-3">
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox"
-                                   name="auto_reply_enabled"
-                                   x-model="autoReplyEnabled"
-                                   {{ old('auto_reply_enabled', $settings->auto_reply_enabled ?? true) ? 'checked' : '' }}
-                                   class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                        </label>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('dixlase-inquiry::admin/inquiry/settings/auto-reply.enabled') }}</span>
-                    </div>
+                    <x-form-toggle
+                        name="auto_reply_enabled"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/auto-reply.enabled')"
+                        :checked="old('auto_reply_enabled', $settings->auto_reply_enabled ?? true)"
+                        xModel="autoReplyEnabled"
+                    />
 
-                    <div x-show="autoReplyEnabled" x-cloak class="space-y-6">
+                    <div x-show="autoReplyEnabled === '1'" x-cloak class="space-y-6">
                         <fieldset>
                             <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/auto-reply.from_email') }}</legend>
                             <x-form-text

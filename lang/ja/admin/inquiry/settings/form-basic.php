@@ -23,7 +23,9 @@ return [
 
     // 言語設定
     'form_locale' => 'フォーム言語',
-    'form_locale_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。',
+    'form_locale_auto' => '自動',
+    'form_locale_auto_desc' => 'サイトのデフォルト言語を使用',
+    'form_locale_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。「自動」を選択すると、サイトのデフォルト言語が使用されます。',
 
     // フォーム表示方式（form-displayから移動）
     'form_type' => 'フォーム表示設定',
@@ -55,6 +57,9 @@ return [
     'phone_required' => '必須',
     'show_gender' => '性別',
     'gender_required' => '必須',
+    'show_kana' => 'フリガナ',
+    'require_kana' => '必須',
+    'show_kana_help' => '日本式選択時のみ使用できます。欧米式ではカタカナフィールドは表示されません。',
     'show_confirmation' => '確認画面を表示する',
     'show_confirmation_help' => 'チェックを外すと、入力後すぐに送信されます。',
 

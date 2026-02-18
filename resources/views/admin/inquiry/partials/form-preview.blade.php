@@ -59,6 +59,32 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     </fieldset>
 
+    {{-- カタカナ（フリガナ）フィールド --}}
+    <div x-show="showKana === '1' && nameOrderWestern == '0'">
+        <fieldset>
+            <legend>
+                <span x-text="getLabel('kana')"></span>
+                <span x-show="requireKana === '1'">
+                    <x-form-required-badge />
+                </span>
+            </legend>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <span x-text="getLabel('last_name_kana')"></span>
+                    </label>
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <span x-text="getLabel('first_name_kana')"></span>
+                    </label>
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
     {{-- メールアドレスフィールド（常に表示・必須） --}}
     <fieldset>
         <legend>
@@ -67,19 +93,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </legend>
         <input type="email" disabled class="input-common my-2 w-full opacity-60">
     </fieldset>
-
-    {{-- 題名フィールド --}}
-    <div x-show="showSubject === '1'">
-        <fieldset>
-            <legend>
-                <span x-text="getLabel('subject')"></span>
-                <span x-show="subjectRequired === '1'">
-                    <x-form-required-badge />
-                </span>
-            </legend>
-            <input type="text" disabled class="input-common my-2 w-full opacity-60">
-        </fieldset>
-    </div>
 
     {{-- 郵便番号フィールド --}}
     <div x-show="showPostalCode === '1'">
@@ -141,15 +154,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div x-show="nameOrderWestern == '1'" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span x-text="getLabel('country')"></span>
+                        <span x-text="getLabel('address_line')"></span>
                     </label>
-                    <select disabled class="input-common my-2 w-full opacity-60">
-                        <option>{{ __('common.please_select') }}</option>
-                    </select>
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span x-text="getLabel('state_province')"></span>
+                        <span x-text="getLabel('building')"></span>
                     </label>
                     <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
@@ -161,7 +172,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span x-text="getLabel('address_line')"></span>
+                        <span x-text="getLabel('state_province')"></span>
+                    </label>
+                    <input type="text" disabled class="input-common my-2 w-full opacity-60">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <span x-text="getLabel('country')"></span>
                     </label>
                     <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
@@ -222,6 +239,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <span class="text-sm">{{ __('common.prefer_not_to_say') }}</span>
                 </label>
             </div>
+        </fieldset>
+    </div>
+
+    {{-- 題名フィールド --}}
+    <div x-show="showSubject === '1'">
+        <fieldset>
+            <legend>
+                <span x-text="getLabel('subject')"></span>
+                <span x-show="subjectRequired === '1'">
+                    <x-form-required-badge />
+                </span>
+            </legend>
+            <input type="text" disabled class="input-common my-2 w-full opacity-60">
         </fieldset>
     </div>
 
