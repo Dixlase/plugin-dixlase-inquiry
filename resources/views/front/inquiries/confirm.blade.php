@@ -46,7 +46,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <div class="space-y-4">
             <!-- 名前 -->
             <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ __('dixlase-inquiry::front.form.name') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white">
@@ -64,7 +64,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @if(!($settings->name_order_western ?? false) && ($settings->show_kana ?? false))
                 @if(!empty($data['last_name_kana']) || !empty($data['first_name_kana']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.kana') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -78,7 +78,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
             <!-- メールアドレス -->
             <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ __('dixlase-inquiry::front.form.email') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white">
@@ -91,7 +91,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @if($settings->name_order_western ?? false)
                 @if(!empty($data['postal_code']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.postal_code') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -103,7 +103,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @else
                 @if(!empty($data['postal_code_1']) && !empty($data['postal_code_2']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.postal_code') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -119,7 +119,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @if($settings->name_order_western ?? false)
                 @if(!empty($data['street_address']) || !empty($data['city']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.address') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -135,7 +135,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @else
                 @if(!empty($data['prefecture']) || !empty($data['city']) || !empty($data['address_line']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.address') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -153,7 +153,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @if($settings->name_order_western ?? false)
                 @if(!empty($data['phone']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.phone') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -165,7 +165,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @else
                 @if(!empty($data['phone_1']) && !empty($data['phone_2']) && !empty($data['phone_3']))
                 <div class="border-b pb-2">
-                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {{ __('dixlase-inquiry::front.form.phone') }}
                     </dt>
                     <dd class="mt-1 text-gray-900 dark:text-white">
@@ -181,7 +181,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <!-- 性別 -->
             @if(!empty($data['gender']))
             <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ __('dixlase-inquiry::front.form.gender') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white">
@@ -194,7 +194,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <!-- 題名 -->
             @if(!empty($data['subject']))
             <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ __('dixlase-inquiry::front.form.subject') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white">
@@ -206,7 +206,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
             <!-- 問い合わせ内容 -->
             <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ __('dixlase-inquiry::front.form.message') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white whitespace-pre-wrap">
