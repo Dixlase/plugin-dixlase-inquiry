@@ -227,46 +227,91 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式住所 --}}
                     <div class="space-y-3">
-                        <input type="text" name="street_address" value="{{ old('street_address') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.street_address_placeholder') }}"
-                            @if($settings->address_required ?? false) required @endif>
-                        <input type="text" name="building" value="{{ old('building') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
-                        <input type="text" name="city" value="{{ old('city') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
-                            @if($settings->address_required ?? false) required @endif>
-                        <input type="text" name="state" value="{{ old('state') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.state_placeholder') }}">
-                        <input type="text" name="country" value="{{ old('country') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.country_placeholder') }}">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.street_address') }}
+                            </label>
+                            <input type="text" name="street_address" value="{{ old('street_address') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.street_address_placeholder') }}"
+                                @if($settings->address_required ?? false) required @endif>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.building') }}
+                            </label>
+                            <input type="text" name="building" value="{{ old('building') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.city') }}
+                            </label>
+                            <input type="text" name="city" value="{{ old('city') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
+                                @if($settings->address_required ?? false) required @endif>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.state') }}
+                            </label>
+                            <input type="text" name="state" value="{{ old('state') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.state_placeholder') }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.country') }}
+                            </label>
+                            <input type="text" name="country" value="{{ old('country') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.country_placeholder') }}">
+                        </div>
                     </div>
                 @else
                     {{-- 日本式住所 --}}
                     <div class="space-y-3">
-                        <select name="prefecture"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            @if($settings->address_required ?? false) required @endif>
-                            <option value="">{{ __('dixlase-inquiry::front.form.prefecture_placeholder') }}</option>
-                            @foreach($prefectures as $key => $name)
-                                <option value="{{ $key }}" {{ old('prefecture') === $key ? 'selected' : '' }}>{{ $name }}</option>
-                            @endforeach
-                        </select>
-                        <input type="text" name="city" value="{{ old('city') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
-                            @if($settings->address_required ?? false) required @endif>
-                        <input type="text" name="address_line" value="{{ old('address_line') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder') }}"
-                            @if($settings->address_required ?? false) required @endif>
-                        <input type="text" name="building" value="{{ old('building') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.prefecture') }}
+                            </label>
+                            <select name="prefecture"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                @if($settings->address_required ?? false) required @endif>
+                                <option value="">{{ __('dixlase-inquiry::front.form.prefecture_placeholder') }}</option>
+                                @foreach($prefectures as $key => $name)
+                                    <option value="{{ $key }}" {{ old('prefecture') === $key ? 'selected' : '' }}>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.city') }}
+                            </label>
+                            <input type="text" name="city" value="{{ old('city') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
+                                @if($settings->address_required ?? false) required @endif>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.address_line') }}
+                            </label>
+                            <input type="text" name="address_line" value="{{ old('address_line') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder') }}"
+                                @if($settings->address_required ?? false) required @endif>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                {{ __('dixlase-inquiry::front.form.building') }}
+                            </label>
+                            <input type="text" name="building" value="{{ old('building') }}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
+                        </div>
                     </div>
                 @endif
             </div>

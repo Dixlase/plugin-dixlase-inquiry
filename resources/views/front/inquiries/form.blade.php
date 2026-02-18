@@ -40,8 +40,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         @csrf
 
         {{-- 1. 名前（2カラム） --}}
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.name') }}
                 <x-form-required-badge />
             </legend>
@@ -92,8 +92,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 1b. カタカナ（日本式+カナONの場合のみ） --}}
         @if(!($settings->name_order_western ?? false) && ($settings->show_kana ?? false))
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.kana') }}
                 @if($settings->require_kana ?? false)
                     <x-form-required-badge />
@@ -123,8 +123,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         @endif
 
         {{-- 2. メールアドレス --}}
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.email') }}
                 <x-form-required-badge />
             </legend>
@@ -139,8 +139,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 3. 郵便番号 --}}
         @if($settings->show_postal_code ?? false)
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.postal_code') }}
                 @if($settings->postal_code_required ?? false)
                     <x-form-required-badge />
@@ -181,8 +181,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 4. 住所 --}}
         @if($settings->show_address ?? false)
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.address') }}
                 @if($settings->address_required ?? false)
                     <x-form-required-badge />
@@ -191,75 +191,109 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @if($settings->name_order_western ?? false)
                 {{-- 欧米式住所: Address Line → Building → City → State → Country --}}
                 <div class="space-y-4">
-                    <x-form-text
-                        name="street_address"
-                        :value="old('street_address')"
-                        :required="$settings->address_required ?? false"
-                        :placeholder="__('dixlase-inquiry::front.form.street_address_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.street_address')"
-                    />
-                    <x-form-text
-                        name="building"
-                        :value="old('building')"
-                        :required="false"
-                        :placeholder="__('dixlase-inquiry::front.form.building_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.building')"
-                    />
-                    <x-form-text
-                        name="city"
-                        :value="old('city')"
-                        :required="$settings->address_required ?? false"
-                        :placeholder="__('dixlase-inquiry::front.form.city_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.city')"
-                    />
-                    <x-form-text
-                        name="state"
-                        :value="old('state')"
-                        :required="false"
-                        :placeholder="__('dixlase-inquiry::front.form.state_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.state')"
-                    />
-                    <x-form-text
-                        name="country"
-                        :value="old('country')"
-                        :required="false"
-                        :placeholder="__('dixlase-inquiry::front.form.country_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.country')"
-                    />
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.street_address') }}
+                        </label>
+                        <x-form-text
+                            name="street_address"
+                            :value="old('street_address')"
+                            :required="$settings->address_required ?? false"
+                            :placeholder="__('dixlase-inquiry::front.form.street_address_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.building') }}
+                        </label>
+                        <x-form-text
+                            name="building"
+                            :value="old('building')"
+                            :required="false"
+                            :placeholder="__('dixlase-inquiry::front.form.building_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.city') }}
+                        </label>
+                        <x-form-text
+                            name="city"
+                            :value="old('city')"
+                            :required="$settings->address_required ?? false"
+                            :placeholder="__('dixlase-inquiry::front.form.city_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.state') }}
+                        </label>
+                        <x-form-text
+                            name="state"
+                            :value="old('state')"
+                            :required="false"
+                            :placeholder="__('dixlase-inquiry::front.form.state_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.country') }}
+                        </label>
+                        <x-form-text
+                            name="country"
+                            :value="old('country')"
+                            :required="false"
+                            :placeholder="__('dixlase-inquiry::front.form.country_placeholder')"
+                        />
+                    </div>
                 </div>
             @else
                 {{-- 日本式住所: 都道府県(select) + 市区町村 + 番地 + 建物名 --}}
                 <div class="space-y-4">
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.prefecture') }}
+                        </label>
                         <x-form-select
                             name="prefecture"
                             :value="old('prefecture')"
                             :required="$settings->address_required ?? false"
                             :options="array_merge(['' => __('dixlase-inquiry::front.form.prefecture_placeholder')], $prefectures)"
-                            :label="__('dixlase-inquiry::front.form.prefecture')"
                         />
                     </div>
-                    <x-form-text
-                        name="city"
-                        :value="old('city')"
-                        :required="$settings->address_required ?? false"
-                        :placeholder="__('dixlase-inquiry::front.form.city_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.city')"
-                    />
-                    <x-form-text
-                        name="address_line"
-                        :value="old('address_line')"
-                        :required="$settings->address_required ?? false"
-                        :placeholder="__('dixlase-inquiry::front.form.address_line_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.address_line')"
-                    />
-                    <x-form-text
-                        name="building"
-                        :value="old('building')"
-                        :required="false"
-                        :placeholder="__('dixlase-inquiry::front.form.building_placeholder')"
-                        :label="__('dixlase-inquiry::front.form.building')"
-                    />
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.city') }}
+                        </label>
+                        <x-form-text
+                            name="city"
+                            :value="old('city')"
+                            :required="$settings->address_required ?? false"
+                            :placeholder="__('dixlase-inquiry::front.form.city_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.address_line') }}
+                        </label>
+                        <x-form-text
+                            name="address_line"
+                            :value="old('address_line')"
+                            :required="$settings->address_required ?? false"
+                            :placeholder="__('dixlase-inquiry::front.form.address_line_placeholder')"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            {{ __('dixlase-inquiry::front.form.building') }}
+                        </label>
+                        <x-form-text
+                            name="building"
+                            :value="old('building')"
+                            :required="false"
+                            :placeholder="__('dixlase-inquiry::front.form.building_placeholder')"
+                        />
+                    </div>
                 </div>
             @endif
         </fieldset>
@@ -267,8 +301,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 5. 電話番号 --}}
         @if($settings->show_phone ?? true)
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.phone') }}
                 @if($settings->phone_required ?? false)
                     <x-form-required-badge />
@@ -322,8 +356,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 6. 性別（ラジオカード） --}}
         @if($settings->show_gender ?? false)
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.gender') }}
                 @if($settings->gender_required ?? false)
                     <x-form-required-badge />
@@ -341,8 +375,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 7. 題名（条件付き表示・お問い合わせ内容の直前） --}}
         @if($settings->show_subject ?? false)
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.subject') }}
                 @if($settings->subject_required ?? false)
                     <x-form-required-badge />
@@ -358,8 +392,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         @endif
 
         {{-- 8. お問い合わせ内容 --}}
-        <fieldset>
-            <legend>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
                 {{ __('dixlase-inquiry::front.form.message') }}
                 <x-form-required-badge />
             </legend>
@@ -374,7 +408,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- 9. プライバシー同意 --}}
         @if(($settings->privacy_consent_enabled ?? false) && !empty($privacyUrl))
-        <fieldset class="mt-6">
+        <fieldset class="border-0 p-0 m-0 mt-6">
             <label class="flex items-start gap-2 cursor-pointer">
                 <input type="checkbox" name="privacy_agreed" value="1" required
                        class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
