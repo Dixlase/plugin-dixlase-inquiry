@@ -14,7 +14,7 @@ class SettingsConfigTest extends TestCase
         $defaults = \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting::getDefaultSettings();
 
         $this->assertObjectHasProperty('form_locale', $defaults);
-        $this->assertEquals('ja', $defaults->form_locale);
+        $this->assertEquals('auto', $defaults->form_locale);
     }
 
     /**
@@ -48,6 +48,8 @@ class SettingsConfigTest extends TestCase
             'postal_code_required',
             'show_gender',
             'gender_required',
+            'show_kana',
+            'require_kana',
             'auto_reply_enabled',
             'auto_reply_from_email',
             'auto_reply_subject',

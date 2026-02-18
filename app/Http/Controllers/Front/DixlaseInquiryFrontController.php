@@ -52,11 +52,15 @@ class DixlaseInquiryFrontController extends Controller
             abort(404);
         }
 
+        $this->applyFormLocale($settings);
+
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
 
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
+            'genderOptions' => $this->getGenderOptions(),
+            'prefectures' => $this->getPrefectures(),
         ]);
     }
 
@@ -77,12 +81,12 @@ class DixlaseInquiryFrontController extends Controller
             abort(404);
         }
 
-        // バリデーション処理
-        // TODO: バリデーション実装
+        $this->applyFormLocale($settings);
 
         return view('dixlase-inquiry::front.inquiries.confirm', [
             'settings' => $settings,
             'data' => $request->all(),
+            'genderOptions' => $this->getGenderOptions(),
         ]);
     }
 
@@ -97,6 +101,8 @@ class DixlaseInquiryFrontController extends Controller
         if ($settings->use_single_page) {
             abort(404);
         }
+
+        $this->applyFormLocale($settings);
 
         $validated = $request->all();
 
@@ -124,25 +130,131 @@ class DixlaseInquiryFrontController extends Controller
 
     /**
      * 問い合わせデータを準備
+     * 分割フィールドの結合も行う
      */
     private function prepareInquiryData(array $validated, $settings): array
     {
+        $isWestern = (bool) ($settings->name_order_western ?? false);
+
         // 名前を結合
-        $fullName = ($settings->name_order_western ?? false)
+        $fullName = $isWestern
             ? trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''))
             : trim(($validated['last_name'] ?? '') . ' ' . ($validated['first_name'] ?? ''));
 
+        // カタカナ名前を結合（日本式のみ）
+        $nameKana = null;
+        if (!$isWestern && ($settings->show_kana ?? false)) {
+            $lastKana = $validated['last_name_kana'] ?? '';
+            $firstKana = $validated['first_name_kana'] ?? '';
+            if ($lastKana || $firstKana) {
+                $nameKana = trim($lastKana . ' ' . $firstKana);
+            }
+        }
+
+        // 郵便番号の結合
+        $postalCode = $this->mergePostalCode($validated, $isWestern);
+
+        // 住所の結合
+        $address = $this->mergeAddress($validated, $isWestern);
+
+        // 電話番号の結合
+        $phone = $this->mergePhone($validated, $isWestern);
+
         return [
             'name' => $fullName,
+            'name_kana' => $nameKana,
             'email' => $validated['email'] ?? '',
             'subject' => $validated['subject'] ?? null,
-            'phone' => $validated['phone'] ?? null,
-            'postal_code' => $validated['postal_code'] ?? null,
-            'address' => $validated['address'] ?? null,
+            'phone' => $phone,
+            'postal_code' => $postalCode,
+            'address' => $address,
             'gender' => isset($validated['gender']) ? $this->getGenderLabel($validated['gender']) : null,
             'gender_value' => $validated['gender'] ?? null,
             'message' => $validated['message'] ?? '',
         ];
+    }
+
+    /**
+     * 郵便番号を結合
+     * 日本式: postal_code_1 + '-' + postal_code_2
+     * 欧米式: postal_code そのまま
+     */
+    private function mergePostalCode(array $validated, bool $isWestern): ?string
+    {
+        if ($isWestern) {
+            return $validated['postal_code'] ?? null;
+        }
+
+        $part1 = $validated['postal_code_1'] ?? null;
+        $part2 = $validated['postal_code_2'] ?? null;
+
+        if ($part1 && $part2) {
+            return $part1 . '-' . $part2;
+        }
+
+        // 旧形式のフォールバック
+        return $validated['postal_code'] ?? null;
+    }
+
+    /**
+     * 住所を結合
+     * 日本式: 都道府県 + 市区町村 + 番地 + 建物名
+     * 欧米式: street_address, building, city, state, postal_code, country
+     */
+    private function mergeAddress(array $validated, bool $isWestern): ?string
+    {
+        if ($isWestern) {
+            $parts = array_filter([
+                $validated['street_address'] ?? null,
+                $validated['building'] ?? null,
+                $validated['city'] ?? null,
+                $validated['state'] ?? null,
+                $validated['country'] ?? null,
+            ]);
+
+            return !empty($parts) ? implode(', ', $parts) : ($validated['address'] ?? null);
+        }
+
+        // 日本式分割フィールド
+        $prefecture = $validated['prefecture'] ?? null;
+        $city = $validated['city'] ?? null;
+        $addressLine = $validated['address_line'] ?? null;
+        $building = $validated['building'] ?? null;
+
+        if ($prefecture || $city || $addressLine) {
+            $combined = ($prefecture ?? '') . ($city ?? '') . ($addressLine ?? '');
+            if ($building) {
+                $combined .= ' ' . $building;
+            }
+
+            return trim($combined) ?: null;
+        }
+
+        // 旧形式のフォールバック
+        return $validated['address'] ?? null;
+    }
+
+    /**
+     * 電話番号を結合
+     * 日本式: phone_1 + '-' + phone_2 + '-' + phone_3
+     * 欧米式: phone そのまま
+     */
+    private function mergePhone(array $validated, bool $isWestern): ?string
+    {
+        if ($isWestern) {
+            return $validated['phone'] ?? null;
+        }
+
+        $part1 = $validated['phone_1'] ?? null;
+        $part2 = $validated['phone_2'] ?? null;
+        $part3 = $validated['phone_3'] ?? null;
+
+        if ($part1 && $part2 && $part3) {
+            return $part1 . '-' . $part2 . '-' . $part3;
+        }
+
+        // 旧形式のフォールバック
+        return $validated['phone'] ?? null;
     }
 
     /**
@@ -166,6 +278,54 @@ class DixlaseInquiryFrontController extends Controller
     }
 
     /**
+     * 性別オプション配列（ラジオカード用）
+     *
+     * @return array<int, array{value: string, label: string, icon: string, color: string}>
+     */
+    private function getGenderOptions(): array
+    {
+        return [
+            ['value' => 'male', 'label' => __('dixlase-inquiry::front.form.gender_male'), 'icon' => 'fas fa-mars', 'color' => 'blue'],
+            ['value' => 'female', 'label' => __('dixlase-inquiry::front.form.gender_female'), 'icon' => 'fas fa-venus', 'color' => 'red'],
+            ['value' => 'other', 'label' => __('dixlase-inquiry::front.form.gender_other'), 'icon' => 'fas fa-genderless', 'color' => 'purple'],
+            ['value' => 'prefer_not_to_say', 'label' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'), 'icon' => 'fas fa-user-secret', 'color' => 'gray'],
+        ];
+    }
+
+    /**
+     * 都道府県リスト取得
+     *
+     * @return array<string, string>
+     */
+    private function getPrefectures(): array
+    {
+        $prefectures = __('dixlase-inquiry::front.prefectures');
+
+        if (!is_array($prefectures)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($prefectures as $name) {
+            $result[$name] = $name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * フォームロケールを適用
+     * 'auto'の場合は現在のロケールを維持
+     */
+    private function applyFormLocale(object $settings): void
+    {
+        $locale = $settings->form_locale ?? 'auto';
+        if ($locale !== 'auto') {
+            app()->setLocale($locale);
+        }
+    }
+
+    /**
      * 問い合わせをDBに保存
      */
     private function saveInquiry(array $inquiryData, Request $request, $settings): DixlaseInquiry
@@ -173,6 +333,7 @@ class DixlaseInquiryFrontController extends Controller
         return DixlaseInquiry::create([
             'status' => InquiryStatus::New,
             'name' => $inquiryData['name'],
+            'name_kana' => $inquiryData['name_kana'] ?? null,
             'email' => $inquiryData['email'],
             'subject' => $inquiryData['subject'],
             'phone' => $inquiryData['phone'],
@@ -217,9 +378,16 @@ class DixlaseInquiryFrontController extends Controller
             ]);
         }
 
+        $this->applyFormLocale($settings);
+
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
 
-        return view('dixlase-inquiry::front.inquiries.form', compact('settings', 'privacyUrl'));
+        return view('dixlase-inquiry::front.inquiries.form', [
+            'settings' => $settings,
+            'privacyUrl' => $privacyUrl,
+            'genderOptions' => $this->getGenderOptions(),
+            'prefectures' => $this->getPrefectures(),
+        ]);
     }
 
     public function submit(DixlaseInquirySubmitRequest $request)
@@ -232,6 +400,8 @@ class DixlaseInquiryFrontController extends Controller
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable')
             ], 400);
         }
+
+        $this->applyFormLocale($settings);
 
         $validated = $request->validated();
 
@@ -285,6 +455,8 @@ class DixlaseInquiryFrontController extends Controller
     public function embedSend(DixlaseInquiryEmbedSendRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
+
+        $this->applyFormLocale($settings);
 
         $validated = $request->validated();
         $redirectUrl = $request->input('redirect_url', url('/'));

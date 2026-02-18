@@ -42,7 +42,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'form_locale' => 'required|string|in:' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
+            'form_locale' => 'required|string|in:auto,' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
             'use_single_page' => 'boolean',
             'inquiry_url_slug' => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
             'name_order_western' => 'boolean',
@@ -54,6 +54,8 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'phone_required' => 'boolean',
             'show_gender' => 'boolean',
             'gender_required' => 'boolean',
+            'show_kana' => 'boolean',
+            'require_kana' => 'boolean',
             'show_confirmation_page' => 'boolean',
             'privacy_consent_enabled' => 'boolean',
             'privacy_policy_url' => 'nullable|url|max:500',
@@ -81,6 +83,8 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'phone_required',
             'show_gender',
             'gender_required',
+            'show_kana',
+            'require_kana',
             'show_confirmation_page',
             'privacy_consent_enabled',
             'throttle_enabled',

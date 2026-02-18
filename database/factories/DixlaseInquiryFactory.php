@@ -45,6 +45,7 @@ class DixlaseInquiryFactory extends Factory
         return [
             'status' => InquiryStatus::New,
             'name' => fake()->name(),
+            'name_kana' => null,
             'email' => fake()->safeEmail(),
             'subject' => fake()->sentence(),
             'phone' => fake()->phoneNumber(),

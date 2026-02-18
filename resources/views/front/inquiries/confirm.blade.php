@@ -36,7 +36,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         {{ __('dixlase-inquiry::front.confirmation.message') }}
                     </p>
                 </header>
-                
+
                 <!-- 確認内容 -->
                 <div class="px-6 py-8">
                     <form action="{{ route('inquiry.send') }}" method="POST">
@@ -44,20 +44,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                         <!-- 入力内容の確認表示 -->
                         <div class="space-y-4">
-            <!-- 題名 -->
-            @if(!empty($data['subject']))
-            <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
-                    {{ __('dixlase-inquiry::front.form.subject') }}
-                </dt>
-                <dd class="mt-1 text-gray-900 dark:text-white">
-                    {{ $data['subject'] }}
-                </dd>
-                <input type="hidden" name="subject" value="{{ $data['subject'] }}">
-            </div>
-            @endif
-
-            <!-- 名前（日本式：姓・名 / 欧米式：名・姓） -->
+            <!-- 名前 -->
             <div class="border-b pb-2">
                 <dt class="font-semibold text-gray-700 dark:text-gray-300">
                     {{ __('dixlase-inquiry::front.form.name') }}
@@ -73,6 +60,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <input type="hidden" name="last_name" value="{{ $data['last_name'] }}">
             </div>
 
+            <!-- カタカナ -->
+            @if(!($settings->name_order_western ?? false) && ($settings->show_kana ?? false))
+                @if(!empty($data['last_name_kana']) || !empty($data['first_name_kana']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.kana') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ ($data['last_name_kana'] ?? '') . ' ' . ($data['first_name_kana'] ?? '') }}
+                    </dd>
+                    <input type="hidden" name="last_name_kana" value="{{ $data['last_name_kana'] ?? '' }}">
+                    <input type="hidden" name="first_name_kana" value="{{ $data['first_name_kana'] ?? '' }}">
+                </div>
+                @endif
+            @endif
+
             <!-- メールアドレス -->
             <div class="border-b pb-2">
                 <dt class="font-semibold text-gray-700 dark:text-gray-300">
@@ -85,41 +88,119 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </div>
 
             <!-- 郵便番号 -->
-            @if(!empty($data['postal_code']))
-            <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
-                    {{ __('dixlase-inquiry::front.form.postal_code') }}
-                </dt>
-                <dd class="mt-1 text-gray-900 dark:text-white">
-                    {{ $data['postal_code'] }}
-                </dd>
-                <input type="hidden" name="postal_code" value="{{ $data['postal_code'] }}">
-            </div>
+            @if($settings->name_order_western ?? false)
+                @if(!empty($data['postal_code']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.postal_code') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ $data['postal_code'] }}
+                    </dd>
+                    <input type="hidden" name="postal_code" value="{{ $data['postal_code'] }}">
+                </div>
+                @endif
+            @else
+                @if(!empty($data['postal_code_1']) && !empty($data['postal_code_2']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.postal_code') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ $data['postal_code_1'] }}-{{ $data['postal_code_2'] }}
+                    </dd>
+                    <input type="hidden" name="postal_code_1" value="{{ $data['postal_code_1'] }}">
+                    <input type="hidden" name="postal_code_2" value="{{ $data['postal_code_2'] }}">
+                </div>
+                @endif
             @endif
 
             <!-- 住所 -->
-            @if(!empty($data['address']))
-            <div class="border-b pb-2">
-                <dt class="font-semibold text-gray-700 dark:text-gray-300">
-                    {{ __('dixlase-inquiry::front.form.address') }}
-                </dt>
-                <dd class="mt-1 text-gray-900 dark:text-white">
-                    {{ $data['address'] }}
-                </dd>
-                <input type="hidden" name="address" value="{{ $data['address'] }}">
-            </div>
+            @if($settings->name_order_western ?? false)
+                @if(!empty($data['street_address']) || !empty($data['city']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.address') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ collect([$data['street_address'] ?? null, $data['building'] ?? null, $data['city'] ?? null, $data['state'] ?? null, $data['country'] ?? null])->filter()->implode(', ') }}
+                    </dd>
+                    <input type="hidden" name="street_address" value="{{ $data['street_address'] ?? '' }}">
+                    <input type="hidden" name="building" value="{{ $data['building'] ?? '' }}">
+                    <input type="hidden" name="city" value="{{ $data['city'] ?? '' }}">
+                    <input type="hidden" name="state" value="{{ $data['state'] ?? '' }}">
+                    <input type="hidden" name="country" value="{{ $data['country'] ?? '' }}">
+                </div>
+                @endif
+            @else
+                @if(!empty($data['prefecture']) || !empty($data['city']) || !empty($data['address_line']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.address') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ ($data['prefecture'] ?? '') . ($data['city'] ?? '') . ($data['address_line'] ?? '') }}{{ !empty($data['building']) ? ' ' . $data['building'] : '' }}
+                    </dd>
+                    <input type="hidden" name="prefecture" value="{{ $data['prefecture'] ?? '' }}">
+                    <input type="hidden" name="city" value="{{ $data['city'] ?? '' }}">
+                    <input type="hidden" name="address_line" value="{{ $data['address_line'] ?? '' }}">
+                    <input type="hidden" name="building" value="{{ $data['building'] ?? '' }}">
+                </div>
+                @endif
             @endif
 
             <!-- 電話番号 -->
-            @if(!empty($data['phone']))
+            @if($settings->name_order_western ?? false)
+                @if(!empty($data['phone']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.phone') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ $data['phone'] }}
+                    </dd>
+                    <input type="hidden" name="phone" value="{{ $data['phone'] }}">
+                </div>
+                @endif
+            @else
+                @if(!empty($data['phone_1']) && !empty($data['phone_2']) && !empty($data['phone_3']))
+                <div class="border-b pb-2">
+                    <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                        {{ __('dixlase-inquiry::front.form.phone') }}
+                    </dt>
+                    <dd class="mt-1 text-gray-900 dark:text-white">
+                        {{ $data['phone_1'] }}-{{ $data['phone_2'] }}-{{ $data['phone_3'] }}
+                    </dd>
+                    <input type="hidden" name="phone_1" value="{{ $data['phone_1'] }}">
+                    <input type="hidden" name="phone_2" value="{{ $data['phone_2'] }}">
+                    <input type="hidden" name="phone_3" value="{{ $data['phone_3'] }}">
+                </div>
+                @endif
+            @endif
+
+            <!-- 性別 -->
+            @if(!empty($data['gender']))
             <div class="border-b pb-2">
                 <dt class="font-semibold text-gray-700 dark:text-gray-300">
-                    {{ __('dixlase-inquiry::front.form.phone') }}
+                    {{ __('dixlase-inquiry::front.form.gender') }}
                 </dt>
                 <dd class="mt-1 text-gray-900 dark:text-white">
-                    {{ $data['phone'] }}
+                    {{ collect($genderOptions)->firstWhere('value', $data['gender'])['label'] ?? $data['gender'] }}
                 </dd>
-                <input type="hidden" name="phone" value="{{ $data['phone'] }}">
+                <input type="hidden" name="gender" value="{{ $data['gender'] }}">
+            </div>
+            @endif
+
+            <!-- 題名 -->
+            @if(!empty($data['subject']))
+            <div class="border-b pb-2">
+                <dt class="font-semibold text-gray-700 dark:text-gray-300">
+                    {{ __('dixlase-inquiry::front.form.subject') }}
+                </dt>
+                <dd class="mt-1 text-gray-900 dark:text-white">
+                    {{ $data['subject'] }}
+                </dd>
+                <input type="hidden" name="subject" value="{{ $data['subject'] }}">
             </div>
             @endif
 
@@ -133,6 +214,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </dd>
                 <input type="hidden" name="message" value="{{ $data['message'] }}">
             </div>
+
+            <!-- プライバシー同意（hiddenで再送信） -->
+            @if(!empty($data['privacy_agreed']))
+                <input type="hidden" name="privacy_agreed" value="{{ $data['privacy_agreed'] }}">
+            @endif
         </div>
 
         <!-- ボタン -->

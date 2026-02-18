@@ -38,8 +38,31 @@ class DixlaseInquiryFormShortcode
         // 問い合わせ設定を取得
         $settings = DixlaseInquirySetting::getSettings();
 
+        // フォームロケールを適用（'auto'時は現在のロケールを維持）
+        $formLocale = $settings->form_locale ?? 'auto';
+        if ($formLocale !== 'auto') {
+            app()->setLocale($formLocale);
+        }
+
         // プライバシーポリシーURLを解決
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
+
+        // 性別オプション配列
+        $genderOptions = [
+            ['value' => 'male', 'label' => __('dixlase-inquiry::front.form.gender_male'), 'icon' => 'fas fa-mars', 'color' => 'blue'],
+            ['value' => 'female', 'label' => __('dixlase-inquiry::front.form.gender_female'), 'icon' => 'fas fa-venus', 'color' => 'red'],
+            ['value' => 'other', 'label' => __('dixlase-inquiry::front.form.gender_other'), 'icon' => 'fas fa-genderless', 'color' => 'purple'],
+            ['value' => 'prefer_not_to_say', 'label' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'), 'icon' => 'fas fa-user-secret', 'color' => 'gray'],
+        ];
+
+        // 都道府県リスト
+        $prefectureList = __('dixlase-inquiry::front.prefectures');
+        $prefectures = [];
+        if (is_array($prefectureList)) {
+            foreach ($prefectureList as $name) {
+                $prefectures[$name] = $name;
+            }
+        }
 
         // 埋め込みフォームをレンダリング
         try {
@@ -47,6 +70,8 @@ class DixlaseInquiryFormShortcode
                 'settings' => $settings,
                 'attributes' => $attributes,
                 'privacyUrl' => $privacyUrl,
+                'genderOptions' => $genderOptions,
+                'prefectures' => $prefectures,
             ])->render();
         } catch (\Exception $e) {
             \Log::error('InquiryFormShortcode render error: ' . $e->getMessage());

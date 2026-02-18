@@ -23,7 +23,9 @@ return [
 
     // 言語設定
     'form_locale' => 'Form Language',
-    'form_locale_help' => 'Select the language for the inquiry form displayed to visitors.',
+    'form_locale_auto' => 'Auto',
+    'form_locale_auto_desc' => "Use the site's default language",
+    'form_locale_help' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" will use the site\'s default language.',
 
     // フォーム表示方式（form-displayから移動）
     'form_type' => 'Display Settings',
@@ -55,6 +57,9 @@ return [
     'phone_required' => 'Required',
     'show_gender' => 'Gender',
     'gender_required' => 'Required',
+    'show_kana' => 'Katakana (Furigana)',
+    'require_kana' => 'Required',
+    'show_kana_help' => 'Only available when Japanese style is selected. Katakana fields are not displayed in Western style.',
     'show_confirmation' => 'Show Confirmation Screen',
     'show_confirmation_help' => 'If unchecked, the form will be submitted immediately after input.',
 

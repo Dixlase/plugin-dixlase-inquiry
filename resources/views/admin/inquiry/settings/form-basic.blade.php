@@ -23,7 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @section('content')
 <div class="mx-auto">
     <form id="form-basic-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.update') }}" method="POST" x-data="{
-        selectedLocale: '{{ old('form_locale', $settings->form_locale ?? 'ja') }}',
+        selectedLocale: '{{ old('form_locale', $settings->form_locale ?? 'auto') }}',
         useSinglePage: '{{ old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0' }}',
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
         nameOrderWestern: '{{ old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0' }}',
@@ -37,6 +37,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         phoneRequired: '{{ old('phone_required', $settings->phone_required ?? false) ? '1' : '0' }}',
         showGender: '{{ old('show_gender', $settings->show_gender ?? false) ? '1' : '0' }}',
         genderRequired: '{{ old('gender_required', $settings->gender_required ?? false) ? '1' : '0' }}',
+        showKana: '{{ old('show_kana', $settings->show_kana ?? false) ? '1' : '0' }}',
+        requireKana: '{{ old('require_kana', $settings->require_kana ?? false) ? '1' : '0' }}',
         privacyConsentEnabled: '{{ old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false) ? '1' : '0' }}',
         privacyPolicyUrl: '{{ old('privacy_policy_url', $settings->privacy_policy_url ?? '') }}',
         privacyConsentText: '{{ old('privacy_consent_text', $settings->privacy_consent_text ?? '') }}',
@@ -44,7 +46,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         throttleMaxAttempts: '{{ old('throttle_max_attempts', $settings->throttle_max_attempts ?? 3) }}',
         throttleDecayMinutes: '{{ old('throttle_decay_minutes', $settings->throttle_decay_minutes ?? 5) }}',
         labels: {{ Js::from($formTranslations) }},
-        getLabel(key) { return this.labels[this.selectedLocale]?.[key] ?? key; },
+        defaultLocale: '{{ config('app.locale') }}',
+        getLabel(key) {
+            const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
+            return this.labels[locale]?.[key] ?? key;
+        },
     }">
         @csrf
 
@@ -62,6 +68,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             name="form_locale"
                             :options="[
                                 [
+                                    'value' => 'auto',
+                                    'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale_auto'),
+                                    'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale_auto_desc'),
+                                    'icon' => 'fas fa-magic',
+                                ],
+                                [
                                     'value' => 'ja',
                                     'label' => '日本語',
                                     'description' => 'Japanese',
@@ -74,9 +86,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                     'icon' => 'fas fa-globe',
                                 ],
                             ]"
-                            :value="old('form_locale', $settings->form_locale ?? 'ja')"
+                            :value="old('form_locale', $settings->form_locale ?? 'auto')"
                             xModel="selectedLocale"
-                            :columns="2"
+                            :columns="3"
                             color="primary"
                         />
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -132,6 +144,31 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                            {{-- カタカナ（フリガナ）フィールド --}}
+                            <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
+                                <x-form-toggle
+                                    name="show_kana"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_kana')"
+                                    :checked="old('show_kana', $settings->show_kana ?? false)"
+                                    xModel="showKana"
+                                    ::disabled="nameOrderWestern === '1'"
+                                />
+                            </div>
+                            <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
+                                <x-form-toggle
+                                    name="require_kana"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.require_kana')"
+                                    :checked="old('require_kana', $settings->require_kana ?? false)"
+                                    xBind="(showKana === '1' && nameOrderWestern === '0')"
+                                    xModel="requireKana"
+                                />
+                            </div>
+                            <div class="lg:col-span-2">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_kana_help') }}
+                                </p>
+                            </div>
                             {{-- 題名フィールド --}}
                             <div>
                                 <x-form-toggle
@@ -209,6 +246,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                     xModel="genderRequired"
                                 />
                             </div>
+
+                            
                         </div>
                     </fieldset>
                 </section>
@@ -299,7 +338,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 </p>
                             </div>
 
-                            <div x-show="privacyConsentEnabled === '1'" x-cloak class="space-y-4 ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                            <div :class="{ 'opacity-50 pointer-events-none': privacyConsentEnabled === '0' }" class="space-y-4 ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_policy_url') }}
@@ -307,6 +346,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                     <input type="url"
                                            name="privacy_policy_url"
                                            x-model="privacyPolicyUrl"
+                                           :disabled="privacyConsentEnabled === '0'"
                                            placeholder="https://example.com/privacy"
                                            class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
                                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -321,6 +361,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                     <input type="text"
                                            name="privacy_consent_text"
                                            x-model="privacyConsentText"
+                                           :disabled="privacyConsentEnabled === '0'"
                                            placeholder="{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_consent_text_placeholder') }}"
                                            class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
                                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -351,7 +392,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 </p>
                             </div>
 
-                            <div x-show="throttleEnabled === '1'" x-cloak class="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                            <div :class="{ 'opacity-50 pointer-events-none': throttleEnabled === '0' }" class="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -360,6 +401,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                         <input type="number"
                                                name="throttle_max_attempts"
                                                x-model="throttleMaxAttempts"
+                                               :disabled="throttleEnabled === '0'"
                                                min="1"
                                                max="100"
                                                class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
@@ -372,6 +414,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                         <input type="number"
                                                name="throttle_decay_minutes"
                                                x-model="throttleDecayMinutes"
+                                               :disabled="throttleEnabled === '0'"
                                                min="1"
                                                max="1440"
                                                class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
