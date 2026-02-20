@@ -66,6 +66,12 @@ return [
     // プレビュー
     'form_preview' => 'Form Preview',
     'open_form_page' => 'Open Form Page',
+    'preview_button' => 'Preview',
+    'preview_toolbar_title' => 'Preview Mode',
+    'preview_save_to_db' => 'Save to DB',
+    'preview_send_email' => 'Send Email',
+    'preview_toolbar_help' => 'Both toggles are OFF by default. The form can be tested without saving data or sending emails.',
+    'preview_completed_no_save' => 'Preview completed. No data was saved and no email was sent.',
 
     // プライバシー同意設定
     'section_privacy' => 'Privacy Consent',
