@@ -55,6 +55,12 @@ Route::prefix('inquiry')
             Route::get('/', [DixlaseInquiryAdminController::class, 'settingsIndex'])->name('index');
             Route::get('/form-basic', [DixlaseInquiryAdminController::class, 'settingsFormBasic'])->name('form-basic');
             Route::post('/form-basic', [DixlaseInquiryAdminController::class, 'updateFormBasic'])->name('form-basic.update');
+
+            // フォームプレビュー
+            Route::post('/form-basic/preview', [DixlaseInquiryAdminController::class, 'storePreviewSettings'])->name('form-basic.preview.store');
+            Route::get('/form-basic/preview', [DixlaseInquiryAdminController::class, 'showPreview'])->name('form-basic.preview');
+            Route::post('/form-basic/preview/confirm', [DixlaseInquiryAdminController::class, 'previewConfirm'])->name('form-basic.preview.confirm');
+            Route::post('/form-basic/preview/send', [DixlaseInquiryAdminController::class, 'previewSend'])->name('form-basic.preview.send');
             Route::get('/completion', [DixlaseInquiryAdminController::class, 'settingsCompletion'])->name('completion');
             Route::post('/completion', [DixlaseInquiryAdminController::class, 'updateCompletion'])->name('completion.update');
             Route::get('/admin-notification', [DixlaseInquiryAdminController::class, 'settingsAdminNotification'])->name('admin-notification');

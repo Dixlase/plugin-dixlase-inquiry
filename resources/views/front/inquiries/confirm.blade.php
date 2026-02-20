@@ -39,7 +39,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 <!-- 確認内容 -->
                 <div class="px-6 py-8">
-                    <form action="{{ route('inquiry.send') }}" method="POST">
+                    <form action="{{ ($isPreview ?? false) ? route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.send') : route('inquiry.send') }}" method="POST">
                         @csrf
 
                         <!-- 入力内容の確認表示 -->
@@ -218,6 +218,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <!-- プライバシー同意（hiddenで再送信） -->
             @if(!empty($data['privacy_agreed']))
                 <input type="hidden" name="privacy_agreed" value="{{ $data['privacy_agreed'] }}">
+            @endif
+
+            {{-- プレビュー時: トグル値を引き継ぎ --}}
+            @if($isPreview ?? false)
+                <input type="hidden" name="_preview_save_to_db" value="{{ $data['_preview_save_to_db'] ?? '0' }}">
+                <input type="hidden" name="_preview_send_email" value="{{ $data['_preview_send_email'] ?? '0' }}">
             @endif
         </div>
 

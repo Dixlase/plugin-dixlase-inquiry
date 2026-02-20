@@ -7,7 +7,7 @@ use ReflectionMethod;
 
 /**
  * prepareInquiryData / merge系メソッドのユニットテスト
- * コントローラーのprivateメソッドをリフレクションで直接テスト
+ * InquiryFormDataTraitのメソッドをリフレクションで直接テスト
  */
 class PrepareInquiryDataTest extends TestCase
 {
@@ -18,7 +18,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePostalCode');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'postal_code_1' => '123',
@@ -35,7 +34,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePostalCode');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'postal_code' => '90210',
@@ -51,7 +49,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePostalCode');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'postal_code_1' => '123',
@@ -67,7 +64,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergeAddress');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'prefecture' => '東京都',
@@ -86,7 +82,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergeAddress');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'prefecture' => '大阪府',
@@ -104,7 +99,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergeAddress');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'street_address' => '123 Main Street',
@@ -124,7 +118,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergeAddress');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'street_address' => '123 Main Street',
@@ -141,7 +134,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePhone');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'phone_1' => '090',
@@ -159,7 +151,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePhone');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'phone' => '+1-234-567-8900',
@@ -175,7 +166,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'mergePhone');
-        $method->setAccessible(true);
 
         $result = $method->invoke($controller, [
             'phone_1' => '090',
@@ -192,7 +182,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'prepareInquiryData');
-        $method->setAccessible(true);
 
         $settings = (object) [
             'name_order_western' => false,
@@ -224,7 +213,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'prepareInquiryData');
-        $method->setAccessible(true);
 
         $settings = (object) [
             'name_order_western' => true,
@@ -254,7 +242,6 @@ class PrepareInquiryDataTest extends TestCase
     {
         $controller = $this->createController();
         $method = new ReflectionMethod($controller, 'prepareInquiryData');
-        $method->setAccessible(true);
 
         $settings = (object) [
             'name_order_western' => false,

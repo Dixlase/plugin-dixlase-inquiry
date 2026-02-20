@@ -28,19 +28,24 @@ use App\Traits\AdminLoggedInTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificationRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
+use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
+use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Traits\InquiryFormDataTrait;
 
 class DixlaseInquiryAdminController extends Controller
 {
     use AdminInterfaceTrait;
     use AdminLoggedInTrait;
+    use InquiryFormDataTrait;
 
     public function __construct()
     {
@@ -175,7 +180,10 @@ class DixlaseInquiryAdminController extends Controller
         $locales = config('dixlase-inquiry.locales', ['ja', 'en']);
         $formTranslations = [];
         foreach ($locales as $locale) {
-            $formTranslations[$locale] = trans('dixlase-inquiry::front.form', [], $locale);
+            $formTranslations[$locale] = array_merge(
+                trans('dixlase-inquiry::front.form', [], $locale),
+                ['confirm_button' => trans('dixlase-inquiry::front.buttons.confirm', [], $locale)],
+            );
         }
 
         return view('dixlase-inquiry::admin.inquiry.settings.form-basic', array_merge($this->viewParams, [
@@ -272,5 +280,138 @@ class DixlaseInquiryAdminController extends Controller
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.auto-reply')
             ->with('success', __('dixlase-inquiry::admin/inquiry/settings/auto-reply.settings_updated'));
+    }
+
+    /**
+     * プレビュー設定をセッションに保存してリダイレクト
+     */
+    public function storePreviewSettings(Request $request): RedirectResponse
+    {
+        $settingsData = $request->except(['_token']);
+        // 真偽値フィールドを正規化
+        $boolFields = [
+            'use_single_page', 'name_order_western', 'show_subject', 'subject_required',
+            'show_postal_code', 'postal_code_required', 'show_address', 'address_required',
+            'show_phone', 'phone_required', 'show_gender', 'gender_required',
+            'show_kana', 'require_kana', 'privacy_consent_enabled', 'throttle_enabled',
+            'show_confirmation_page',
+        ];
+        foreach ($boolFields as $field) {
+            if (isset($settingsData[$field])) {
+                $settingsData[$field] = filter_var($settingsData[$field], FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+
+        session(['inquiry_preview_settings' => $settingsData]);
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview');
+    }
+
+    /**
+     * プレビュー用設定を取得
+     * セッションのフォーム設定をDB保存済み設定にマージして返す
+     */
+    private function getPreviewSettings(): object
+    {
+        $dbSettings = DixlaseInquirySetting::getSettings();
+        $previewData = session('inquiry_preview_settings');
+
+        if (!$previewData) {
+            return $dbSettings;
+        }
+
+        // DB設定をベースにプレビュー設定で上書き
+        $merged = (array) $dbSettings;
+        foreach ($previewData as $key => $value) {
+            $merged[$key] = $value;
+        }
+
+        return (object) $merged;
+    }
+
+    /**
+     * プレビューページ表示
+     */
+    public function showPreview(): View
+    {
+        $settings = $this->getPreviewSettings();
+
+        $this->applyFormLocale($settings);
+
+        $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
+
+        $formAction = route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.confirm');
+        $sendAction = route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.send');
+
+        return view('dixlase-inquiry::front.inquiries.preview', [
+            'settings' => $settings,
+            'privacyUrl' => $privacyUrl,
+            'genderOptions' => $this->getGenderOptions(),
+            'prefectures' => $this->getPrefectures(),
+            'formAction' => $settings->show_confirmation_page ?? true
+                ? $formAction
+                : $sendAction,
+            'isPreview' => true,
+        ]);
+    }
+
+    /**
+     * プレビュー確認画面
+     */
+    public function previewConfirm(Request $request): View
+    {
+        $settings = $this->getPreviewSettings();
+
+        $this->applyFormLocale($settings);
+
+        return view('dixlase-inquiry::front.inquiries.confirm', [
+            'settings' => $settings,
+            'data' => $request->all(),
+            'genderOptions' => $this->getGenderOptions(),
+            'isPreview' => true,
+        ]);
+    }
+
+    /**
+     * プレビュー送信処理
+     */
+    public function previewSend(Request $request): View
+    {
+        $settings = $this->getPreviewSettings();
+
+        $this->applyFormLocale($settings);
+
+        $validated = $request->except(['_token', '_preview_save_to_db', '_preview_send_email']);
+        $inquiryData = $this->prepareInquiryData($validated, $settings);
+
+        $inquiry = null;
+        $previewSaveToDb = $request->input('_preview_save_to_db') === '1';
+        $previewSendEmail = $request->input('_preview_send_email') === '1';
+
+        // トグルに応じてDB保存
+        if ($previewSaveToDb) {
+            $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
+        }
+
+        // トグルに応じてメール送信
+        if ($previewSendEmail && !empty($settings->admin_email)) {
+            try {
+                Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
+
+                if (($settings->auto_reply_enabled ?? false) && !empty($validated['email'])) {
+                    Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Inquiry preview mail send failed: ' . $e->getMessage());
+            }
+        }
+
+        return view('dixlase-inquiry::front.inquiries.complete', [
+            'settings' => $settings,
+            'inquiry' => $inquiry,
+            'isPreview' => true,
+            'previewSavedToDb' => $previewSaveToDb,
+            'previewSentEmail' => $previewSendEmail,
+        ]);
     }
 }

@@ -45,11 +45,58 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         throttleEnabled: '{{ old('throttle_enabled', $settings->throttle_enabled ?? true) ? '1' : '0' }}',
         throttleMaxAttempts: '{{ old('throttle_max_attempts', $settings->throttle_max_attempts ?? 3) }}',
         throttleDecayMinutes: '{{ old('throttle_decay_minutes', $settings->throttle_decay_minutes ?? 5) }}',
+        showConfirmationPage: '{{ old('show_confirmation_page', $settings->show_confirmation_page ?? true) ? '1' : '0' }}',
         labels: {{ Js::from($formTranslations) }},
         defaultLocale: '{{ config('app.locale') }}',
         getLabel(key) {
             const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
             return this.labels[locale]?.[key] ?? key;
+        },
+        openPreview() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.store') }}';
+            form.target = '_blank';
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+            const settings = {
+                form_locale: this.selectedLocale,
+                name_order_western: this.nameOrderWestern,
+                show_subject: this.showSubject,
+                subject_required: this.subjectRequired,
+                show_postal_code: this.showPostalCode,
+                postal_code_required: this.postalCodeRequired,
+                show_address: this.showPostalCode,
+                address_required: this.postalCodeRequired,
+                show_phone: this.showPhone,
+                phone_required: this.phoneRequired,
+                show_gender: this.showGender,
+                gender_required: this.genderRequired,
+                show_kana: this.showKana,
+                require_kana: this.requireKana,
+                use_single_page: this.useSinglePage,
+                inquiry_url_slug: this.inquiryUrlSlug,
+                privacy_consent_enabled: this.privacyConsentEnabled,
+                privacy_policy_url: this.privacyPolicyUrl,
+                privacy_consent_text: this.privacyConsentText,
+                throttle_enabled: this.throttleEnabled,
+                throttle_max_attempts: this.throttleMaxAttempts,
+                throttle_decay_minutes: this.throttleDecayMinutes,
+                show_confirmation_page: this.showConfirmationPage,
+            };
+            Object.entries(settings).forEach(([k, v]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = k;
+                input.value = v ?? '';
+                form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            form.submit();
+            form.remove();
         },
     }">
         @csrf
@@ -312,6 +359,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             name="show_confirmation_page"
                             :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation')"
                             :checked="old('show_confirmation_page', $settings->show_confirmation_page ?? true)"
+                            xModel="showConfirmationPage"
                         />
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation_help') }}
@@ -433,12 +481,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="xl:sticky xl:top-4 xl:self-start">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_preview') }}</h2>
-                    <a :href="'{{ url('/') }}/' + inquiryUrlSlug"
-                       target="_blank"
-                       class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                        <i class="fas fa-external-link-alt mr-1"></i>
-                        {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.open_form_page') }}
-                    </a>
+                    <x-form-button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        icon="fas fa-external-link-alt"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_button')"
+                        x-on:click="openPreview()"
+                    />
                 </div>
                 <div class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
                     @include('dixlase-inquiry::admin.inquiry.partials.form-preview')

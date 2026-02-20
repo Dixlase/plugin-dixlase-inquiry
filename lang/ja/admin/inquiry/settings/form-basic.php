@@ -66,6 +66,12 @@ return [
     // プレビュー
     'form_preview' => 'フォームプレビュー',
     'open_form_page' => 'フォームページを開く',
+    'preview_button' => 'プレビュー',
+    'preview_toolbar_title' => 'プレビューモード',
+    'preview_save_to_db' => 'DB保存',
+    'preview_send_email' => 'メール送信',
+    'preview_toolbar_help' => '両方のトグルはデフォルトでOFFです。データ保存やメール送信なしでフォームをテストできます。',
+    'preview_completed_no_save' => 'プレビューが完了しました。データの保存・メールの送信は行われていません。',
 
     // プライバシー同意設定
     'section_privacy' => 'プライバシー同意',

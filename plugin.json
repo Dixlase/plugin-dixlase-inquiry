@@ -37,7 +37,7 @@
     "permissions": {
         "database": {
             "own_tables": true,
-            "core_tables": []
+            "core_tables": true
         },
         "storage": {
             "own_directory": true,
@@ -66,8 +66,24 @@
             "register_shortcodes": true,
             "register_middleware": false,
             "register_commands": false,
-            "register_blade_directives": false,
+            "register_blade_directives": true,
             "modify_routes": false
+        },
+        "_optional": [],
+        "_notes": {
+            "ja": "",
+            "en": ""
         }
+    },
+    "declares": {
+        "configs": {
+            "roles": false,
+            "database_cleanup": false,
+            "navigation": true
+        },
+        "contracts": [],
+        "migrations": true,
+        "commands": false,
+        "middleware": false
     }
 }

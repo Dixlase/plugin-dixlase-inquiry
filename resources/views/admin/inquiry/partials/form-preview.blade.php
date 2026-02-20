@@ -266,8 +266,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     {{-- 送信ボタン --}}
     <div class="flex justify-center mt-6">
-        <button type="button" disabled class="btn-primary px-8 py-3 opacity-60 cursor-not-allowed">
-            <span x-text="getLabel('submit')"></span>
-        </button>
+        <x-form-button type="button" variant="primary" size="lg" :disabled="true" class="opacity-60 cursor-not-allowed" icon="fas fa-paper-plane">
+            <span x-show="showConfirmationPage === '1'" x-text="getLabel('confirm_button')"></span>
+            <span x-show="showConfirmationPage !== '1'" x-text="getLabel('submit')"></span>
+        </x-form-button>
     </div>
 </div>

@@ -36,6 +36,28 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 
                 <!-- 完了メッセージ -->
                 <div class="px-6 py-8">
+                    {{-- プレビュー時の情報バナー --}}
+                    @if($isPreview ?? false)
+                    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-eye text-amber-600 dark:text-amber-400 text-lg mt-0.5"></i>
+                            <div class="ml-3 text-sm text-amber-800 dark:text-amber-300">
+                                <p class="font-semibold">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_toolbar_title') }}</p>
+                                @if(!($previewSavedToDb ?? false) && !($previewSentEmail ?? false))
+                                    <p>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_completed_no_save') }}</p>
+                                @else
+                                    @if($previewSavedToDb ?? false)
+                                        <p><i class="fas fa-database mr-1"></i> {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_save_to_db') }}: ON</p>
+                                    @endif
+                                    @if($previewSentEmail ?? false)
+                                        <p><i class="fas fa-envelope mr-1"></i> {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_send_email') }}: ON</p>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-6">
         <div class="flex items-start">
             <div class="flex-shrink-0">
