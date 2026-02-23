@@ -111,6 +111,8 @@ class DixlaseInquirySetting extends Model
             'throttle_enabled' => true,
             'throttle_max_attempts' => 3,
             'throttle_decay_minutes' => 5,
+            'completion_title' => '',
+            'completion_message' => '',
         ];
     }
 

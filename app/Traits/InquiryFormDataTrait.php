@@ -34,6 +34,11 @@ use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 trait InquiryFormDataTrait
 {
     /**
+     * CAPTCHA フォームキー（{slug}.{form_key} 形式）
+     * CaptchaService がプラグインslugをプレフィックスに付与するため
+     */
+    protected const CAPTCHA_FORM_KEY = 'dixlase-inquiry.inquiry_contact';
+    /**
      * フォームロケールを適用
      * 'auto'の場合は現在のロケールを維持
      */

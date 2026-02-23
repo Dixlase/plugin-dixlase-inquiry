@@ -57,4 +57,7 @@ return [
     // 警告メッセージ
     'warning_admin_email' => '管理者通知メールアドレスが未設定です。<a href=":url" class="font-medium underline">管理者通知設定</a>で設定してください。',
     'warning_auto_reply_email' => '自動返信が有効ですが、送信元メールアドレスが未設定です。<a href=":url" class="font-medium underline">自動返信設定</a>で設定してください。',
+
+    // CAPTCHA案内メッセージ
+    'notice_captcha_disabled' => 'お問い合わせフォームのCAPTCHAが有効になっていません。スパム対策のため、<a href=":url" class="font-medium underline">セキュリティ設定 &gt; CAPTCHA</a>でCAPTCHAを有効にすることを推奨します。',
 ];

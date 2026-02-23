@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Requests;
 
+use App\Helpers\CaptchaHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
@@ -151,8 +152,8 @@ class DixlaseInquirySubmitRequest extends FormRequest
             $rules['privacy_agreed'] = ['required', 'accepted'];
         }
 
-        // reCAPTCHA（設定により必須）
-        if ($settings->use_recaptcha ?? false) {
+        // CAPTCHA（CaptchaHelper経由で有効判定）
+        if (CaptchaHelper::shouldShowCaptcha('dixlase-inquiry.inquiry_contact')) {
             $rules['g-recaptcha-response'] = 'required|captcha';
         }
 

@@ -21,6 +21,9 @@ return [
     'message' => 'Completion Page Message',
     'message_help' => 'Message displayed when inquiry submission is completed. HTML tags can be used.',
 
+    'default_title' => 'Message Sent',
+    'default_message' => 'Thank you for your inquiry.<br>We will review your message and get back to you soon.',
+
     'confirm_title' => 'Save Completion Page Settings',
     'confirm_message' => 'Are you sure you want to save the completion page settings?',
     'settings_updated' => 'Completion page settings have been updated.',

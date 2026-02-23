@@ -40,7 +40,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         />
     @endif
 
-
+    {{-- CAPTCHA未有効の案内 --}}
+    @if(!$captchaEnabled)
+        <x-ui-message
+            type="notice"
+            icon="fas fa-shield-alt"
+            :message="__('dixlase-inquiry::admin/inquiry/settings/index.notice_captcha_disabled', ['url' => url('/admin/settings/security/captcha')])"
+        />
+    @endif
 
     {{-- 設定カード一覧 --}}
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 mb-8">

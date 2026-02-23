@@ -21,6 +21,9 @@ return [
     'message' => '完了ページのメッセージ',
     'message_help' => '問い合わせ送信完了時に表示されるメッセージ。HTMLタグが使用できます。',
 
+    'default_title' => '送信完了',
+    'default_message' => 'お問い合わせありがとうございました。<br>内容を確認の上、担当者よりご連絡させていただきます。',
+
     'confirm_title' => '完了ページ設定の保存',
     'confirm_message' => '完了ページ設定を保存してもよろしいですか？',
     'settings_updated' => '完了ページ設定が更新されました。',

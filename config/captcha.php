@@ -39,24 +39,10 @@ return [
     'forms' => [
         'inquiry_contact' => [
             'name' => 'dixlase-inquiry::captcha.forms.inquiry_contact',
-            'route' => 'inquiry.contact.store',
+            'route' => 'inquiry.send',
             'category' => 'contact',
             'default_enabled' => true,
             'priority' => 200,
-        ],
-        'inquiry_feedback' => [
-            'name' => 'dixlase-inquiry::captcha.forms.inquiry_feedback',
-            'route' => 'inquiry.feedback.store',
-            'category' => 'contact',
-            'default_enabled' => true,
-            'priority' => 210,
-        ],
-        'inquiry_support' => [
-            'name' => 'dixlase-inquiry::captcha.forms.inquiry_support',
-            'route' => 'inquiry.support.store',
-            'category' => 'contact',
-            'default_enabled' => true,
-            'priority' => 220,
         ],
     ],
 ];

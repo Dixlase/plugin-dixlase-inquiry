@@ -23,7 +23,5 @@
 return [
     'forms' => [
         'inquiry_contact' => 'お問い合わせフォーム',
-        'inquiry_feedback' => 'フィードバックフォーム',
-        'inquiry_support' => 'サポートリクエスト',
     ],
 ];
