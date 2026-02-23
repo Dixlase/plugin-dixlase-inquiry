@@ -68,17 +68,26 @@ trait InquiryFormDataTrait
 
     /**
      * 性別オプション配列（ラジオカード用）
+     * 設定に応じて有効な選択肢のみ返す
      *
      * @return array<int, array{value: string, label: string, icon: string, color: string}>
      */
-    protected function getGenderOptions(): array
+    protected function getGenderOptions(object $settings): array
     {
-        return [
+        $options = [
             ['value' => 'male', 'label' => __('dixlase-inquiry::front.form.gender_male'), 'icon' => 'fas fa-mars', 'color' => 'blue'],
             ['value' => 'female', 'label' => __('dixlase-inquiry::front.form.gender_female'), 'icon' => 'fas fa-venus', 'color' => 'red'],
-            ['value' => 'other', 'label' => __('dixlase-inquiry::front.form.gender_other'), 'icon' => 'fas fa-genderless', 'color' => 'purple'],
-            ['value' => 'prefer_not_to_say', 'label' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'), 'icon' => 'fas fa-user-secret', 'color' => 'gray'],
         ];
+
+        if ($settings->show_gender_other ?? false) {
+            $options[] = ['value' => 'other', 'label' => __('dixlase-inquiry::front.form.gender_other'), 'icon' => 'fas fa-genderless', 'color' => 'purple'];
+        }
+
+        if ($settings->show_gender_prefer_not_to_say ?? false) {
+            $options[] = ['value' => 'prefer_not_to_say', 'label' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'), 'icon' => 'fas fa-user-secret', 'color' => 'gray'];
+        }
+
+        return $options;
     }
 
     /**

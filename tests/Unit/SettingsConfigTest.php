@@ -48,6 +48,8 @@ class SettingsConfigTest extends TestCase
             'postal_code_required',
             'show_gender',
             'gender_required',
+            'show_gender_other',
+            'show_gender_prefer_not_to_say',
             'show_kana',
             'require_kana',
             'auto_reply_enabled',

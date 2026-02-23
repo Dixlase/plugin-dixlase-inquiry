@@ -63,7 +63,7 @@ class DixlaseInquiryFrontController extends Controller
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
-            'genderOptions' => $this->getGenderOptions(),
+            'genderOptions' => $this->getGenderOptions($settings),
             'prefectures' => $this->getPrefectures(),
             'captchaEnabled' => $captchaEnabled,
             'captchaWidget' => $captchaWidget,
@@ -92,7 +92,7 @@ class DixlaseInquiryFrontController extends Controller
         return view('dixlase-inquiry::front.inquiries.confirm', [
             'settings' => $settings,
             'data' => $request->all(),
-            'genderOptions' => $this->getGenderOptions(),
+            'genderOptions' => $this->getGenderOptions($settings),
         ]);
     }
 
@@ -157,7 +157,7 @@ class DixlaseInquiryFrontController extends Controller
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
-            'genderOptions' => $this->getGenderOptions(),
+            'genderOptions' => $this->getGenderOptions($settings),
             'prefectures' => $this->getPrefectures(),
             'captchaEnabled' => $captchaEnabled,
             'captchaWidget' => $captchaWidget,

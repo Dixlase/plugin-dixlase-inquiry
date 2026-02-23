@@ -57,6 +57,8 @@ return [
     'phone_required' => 'Required',
     'show_gender' => 'Gender',
     'gender_required' => 'Required',
+    'show_gender_other' => 'Include "Other"',
+    'show_gender_prefer_not_to_say' => 'Include "Prefer not to say"',
     'show_kana' => 'Katakana (Furigana)',
     'require_kana' => 'Required',
     'show_kana_help' => 'Only available when Japanese style is selected. Katakana fields are not displayed in Western style.',

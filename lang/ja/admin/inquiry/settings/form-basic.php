@@ -57,6 +57,8 @@ return [
     'phone_required' => '必須',
     'show_gender' => '性別',
     'gender_required' => '必須',
+    'show_gender_other' => '「その他」を含める',
+    'show_gender_prefer_not_to_say' => '「回答しない」を含める',
     'show_kana' => 'フリガナ',
     'require_kana' => '必須',
     'show_kana_help' => '日本式選択時のみ使用できます。欧米式ではカタカナフィールドは表示されません。',

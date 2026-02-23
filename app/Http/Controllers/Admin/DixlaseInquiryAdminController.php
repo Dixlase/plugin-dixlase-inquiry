@@ -297,6 +297,7 @@ class DixlaseInquiryAdminController extends Controller
             'use_single_page', 'name_order_western', 'show_subject', 'subject_required',
             'show_postal_code', 'postal_code_required', 'show_address', 'address_required',
             'show_phone', 'phone_required', 'show_gender', 'gender_required',
+            'show_gender_other', 'show_gender_prefer_not_to_say',
             'show_kana', 'require_kana', 'privacy_consent_enabled', 'throttle_enabled',
             'show_confirmation_page',
         ];
@@ -353,7 +354,7 @@ class DixlaseInquiryAdminController extends Controller
         return view('dixlase-inquiry::front.inquiries.preview', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
-            'genderOptions' => $this->getGenderOptions(),
+            'genderOptions' => $this->getGenderOptions($settings),
             'prefectures' => $this->getPrefectures(),
             'formAction' => $settings->show_confirmation_page ?? true
                 ? $formAction
@@ -376,7 +377,7 @@ class DixlaseInquiryAdminController extends Controller
         return view('dixlase-inquiry::front.inquiries.confirm', [
             'settings' => $settings,
             'data' => $request->all(),
-            'genderOptions' => $this->getGenderOptions(),
+            'genderOptions' => $this->getGenderOptions($settings),
             'isPreview' => true,
         ]);
     }

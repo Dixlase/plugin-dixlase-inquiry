@@ -413,7 +413,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         @endif
 
         {{-- 10. 送信ボタン --}}
-        <div class="flex gap-2 mt-6">
+        <div class="flex justify-center gap-2 mt-6">
             <x-form-button
                 type="submit"
                 variant="primary"
