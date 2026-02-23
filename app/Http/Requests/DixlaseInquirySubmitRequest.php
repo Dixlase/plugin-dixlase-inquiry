@@ -139,9 +139,16 @@ class DixlaseInquirySubmitRequest extends FormRequest
                 : ['nullable', 'string', 'max:50', $kanaRule];
         }
 
-        // 性別（設定により必須/任意）
+        // 性別（設定により必須/任意、有効な選択肢のみ許可）
         if ($settings->show_gender ?? false) {
-            $genderOptions = 'in:male,female,non_binary,other,prefer_not_to_say';
+            $genderValues = ['male', 'female'];
+            if ($settings->show_gender_other ?? false) {
+                $genderValues[] = 'other';
+            }
+            if ($settings->show_gender_prefer_not_to_say ?? false) {
+                $genderValues[] = 'prefer_not_to_say';
+            }
+            $genderOptions = 'in:' . implode(',', $genderValues);
             $rules['gender'] = ($settings->gender_required ?? false)
                 ? ['required', 'string', $genderOptions]
                 : ['nullable', 'string', $genderOptions];

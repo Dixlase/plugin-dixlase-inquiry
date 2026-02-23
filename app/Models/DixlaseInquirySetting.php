@@ -94,6 +94,8 @@ class DixlaseInquirySetting extends Model
             'postal_code_required' => false,
             'show_gender' => false,
             'gender_required' => false,
+            'show_gender_other' => false,
+            'show_gender_prefer_not_to_say' => false,
             'show_kana' => false,
             'require_kana' => false,
             'auto_reply_enabled' => true,

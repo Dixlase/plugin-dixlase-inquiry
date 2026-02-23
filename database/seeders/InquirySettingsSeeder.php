@@ -65,6 +65,8 @@ class InquirySettingsSeeder extends Seeder
             'address_required' => '0',
             'show_subject' => '0',
             'subject_required' => '0',
+            'show_gender_other' => '0',
+            'show_gender_prefer_not_to_say' => '0',
             'show_postal_code' => '0',
             'postal_code_required' => '0',
             'use_single_page' => '1',

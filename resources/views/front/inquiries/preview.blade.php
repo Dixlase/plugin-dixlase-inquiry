@@ -58,7 +58,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                 {{-- ページヘッダー --}}
                 <header class="px-6 py-8 border-b border-gray-200 dark:border-gray-700">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white text-center">
                         {{ __('dixlase-inquiry::front.form.heading') }}
                     </h1>
                 </header>

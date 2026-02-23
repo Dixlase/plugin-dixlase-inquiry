@@ -37,6 +37,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         phoneRequired: '{{ old('phone_required', $settings->phone_required ?? false) ? '1' : '0' }}',
         showGender: '{{ old('show_gender', $settings->show_gender ?? false) ? '1' : '0' }}',
         genderRequired: '{{ old('gender_required', $settings->gender_required ?? false) ? '1' : '0' }}',
+        showGenderOther: '{{ old('show_gender_other', $settings->show_gender_other ?? false) ? '1' : '0' }}',
+        showGenderPreferNotToSay: '{{ old('show_gender_prefer_not_to_say', $settings->show_gender_prefer_not_to_say ?? false) ? '1' : '0' }}',
         showKana: '{{ old('show_kana', $settings->show_kana ?? false) ? '1' : '0' }}',
         requireKana: '{{ old('require_kana', $settings->require_kana ?? false) ? '1' : '0' }}',
         privacyConsentEnabled: '{{ old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false) ? '1' : '0' }}',
@@ -75,6 +77,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 phone_required: this.phoneRequired,
                 show_gender: this.showGender,
                 gender_required: this.genderRequired,
+                show_gender_other: this.showGenderOther,
+                show_gender_prefer_not_to_say: this.showGenderPreferNotToSay,
                 show_kana: this.showKana,
                 require_kana: this.requireKana,
                 use_single_page: this.useSinglePage,
@@ -294,7 +298,29 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 />
                             </div>
 
-                            
+                            {{-- 性別サブオプション --}}
+                            <div x-show="showGender === '1'" x-cloak class="lg:col-span-2 ml-6 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div>
+                                        <x-form-toggle
+                                            name="show_gender_other"
+                                            :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_other')"
+                                            :checked="old('show_gender_other', $settings->show_gender_other ?? false)"
+                                            xModel="showGenderOther"
+                                        />
+                                    </div>
+                                    <div>
+                                        <x-form-toggle
+                                            name="show_gender_prefer_not_to_say"
+                                            :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_prefer_not_to_say')"
+                                            :checked="old('show_gender_prefer_not_to_say', $settings->show_gender_prefer_not_to_say ?? false)"
+                                            xModel="showGenderPreferNotToSay"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </fieldset>
                 </section>

@@ -228,15 +228,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <i class="fas fa-venus text-pink-500 mr-2"></i>
                     <span class="text-sm" x-text="getLabel('gender_female')"></span>
                 </label>
-                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
+                <label x-show="showGenderOther === '1'" class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
                     <i class="fas fa-genderless text-purple-500 mr-2"></i>
                     <span class="text-sm" x-text="getLabel('gender_other')"></span>
                 </label>
-                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
+                <label x-show="showGenderPreferNotToSay === '1'" class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-60">
                     <input type="radio" disabled class="mr-2">
                     <i class="fas fa-user-secret text-gray-500 mr-2"></i>
-                    <span class="text-sm">{{ __('common.prefer_not_to_say') }}</span>
+                    <span class="text-sm" x-text="getLabel('gender_prefer_not_to_say')"></span>
                 </label>
             </div>
         </fieldset>
