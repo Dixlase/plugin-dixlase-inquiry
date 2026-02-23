@@ -188,11 +188,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <fieldset>
                         <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.field_settings') }}</legend>
 
-                        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                <span class="font-medium">{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.required_fields_note') }}</span>
-                            </p>
-                        </div>
+                        <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.required_fields_note')" textSize="text-sm" />
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -216,9 +212,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 />
                             </div>
                             <div class="lg:col-span-2">
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.show_kana_help') }}
-                                </p>
+                                <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_kana_help')" textSize="text-sm" />
                             </div>
                             {{-- 題名フィールド --}}
                             <div>
@@ -299,24 +293,23 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                             </div>
 
                             {{-- 性別サブオプション --}}
-                            <div x-show="showGender === '1'" x-cloak class="lg:col-span-2 ml-6 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div>
-                                        <x-form-toggle
-                                            name="show_gender_other"
-                                            :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_other')"
-                                            :checked="old('show_gender_other', $settings->show_gender_other ?? false)"
-                                            xModel="showGenderOther"
-                                        />
-                                    </div>
-                                    <div>
-                                        <x-form-toggle
-                                            name="show_gender_prefer_not_to_say"
-                                            :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_prefer_not_to_say')"
-                                            :checked="old('show_gender_prefer_not_to_say', $settings->show_gender_prefer_not_to_say ?? false)"
-                                            xModel="showGenderPreferNotToSay"
-                                        />
-                                    </div>
+                            <div class="lg:col-span-2 ml-6 pl-4 border-l-2 border-gray-200 dark:border-gray-700" :class="{ 'opacity-50 pointer-events-none': showGender === '0' }">
+                                <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.gender_default_note')" textSize="text-sm" />
+                                <div class="space-y-3">
+                                    <x-form-toggle
+                                        name="show_gender_other"
+                                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_other')"
+                                        :checked="old('show_gender_other', $settings->show_gender_other ?? false)"
+                                        xModel="showGenderOther"
+                                        ::disabled="showGender === '0'"
+                                    />
+                                    <x-form-toggle
+                                        name="show_gender_prefer_not_to_say"
+                                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_gender_prefer_not_to_say')"
+                                        :checked="old('show_gender_prefer_not_to_say', $settings->show_gender_prefer_not_to_say ?? false)"
+                                        xModel="showGenderPreferNotToSay"
+                                        ::disabled="showGender === '0'"
+                                    />
                                 </div>
                             </div>
 
