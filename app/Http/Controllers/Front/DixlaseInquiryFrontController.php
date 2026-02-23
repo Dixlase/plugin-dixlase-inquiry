@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 
+use App\Helpers\CaptchaHelper;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -56,11 +57,16 @@ class DixlaseInquiryFrontController extends Controller
 
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
 
+        $captchaEnabled = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY);
+        $captchaWidget = $captchaEnabled ? CaptchaHelper::renderWidget(self::CAPTCHA_FORM_KEY) : null;
+
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
             'genderOptions' => $this->getGenderOptions(),
             'prefectures' => $this->getPrefectures(),
+            'captchaEnabled' => $captchaEnabled,
+            'captchaWidget' => $captchaWidget,
         ]);
     }
 
@@ -145,11 +151,16 @@ class DixlaseInquiryFrontController extends Controller
 
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);
 
+        $captchaEnabled = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY);
+        $captchaWidget = $captchaEnabled ? CaptchaHelper::renderWidget(self::CAPTCHA_FORM_KEY) : null;
+
         return view('dixlase-inquiry::front.inquiries.form', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
             'genderOptions' => $this->getGenderOptions(),
             'prefectures' => $this->getPrefectures(),
+            'captchaEnabled' => $captchaEnabled,
+            'captchaWidget' => $captchaWidget,
         ]);
     }
 

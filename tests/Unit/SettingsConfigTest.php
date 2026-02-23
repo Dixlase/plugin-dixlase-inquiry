@@ -65,6 +65,8 @@ class SettingsConfigTest extends TestCase
             'throttle_enabled',
             'throttle_max_attempts',
             'throttle_decay_minutes',
+            'completion_title',
+            'completion_message',
         ];
 
         foreach ($requiredKeys as $key) {
@@ -112,6 +114,7 @@ class SettingsConfigTest extends TestCase
 
         $this->assertStringContainsString('admin-notification.php', $seederFile);
         $this->assertStringContainsString('auto-reply.php', $seederFile);
+        $this->assertStringContainsString('completion.php', $seederFile);
         $this->assertStringNotContainsString("require \"{$seederFile}/admin.php\"", $seederFile);
     }
 
@@ -123,6 +126,34 @@ class SettingsConfigTest extends TestCase
         $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringContainsString("'form_locale'", $seederFile);
+    }
+
+    /**
+     * シーダーにcompletion_titleが含まれる
+     */
+    public function test_seeder_includes_completion_settings(): void
+    {
+        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+
+        $this->assertStringContainsString("'completion_title'", $seederFile);
+        $this->assertStringContainsString("'completion_message'", $seederFile);
+    }
+
+    /**
+     * 完了ページ翻訳ファイルにデフォルト値が含まれる
+     */
+    public function test_completion_translation_files_have_default_values(): void
+    {
+        foreach (['ja', 'en'] as $locale) {
+            $file = __DIR__ . "/../../lang/{$locale}/admin/inquiry/settings/completion.php";
+            $this->assertFileExists($file, "Missing completion translation: {$locale}");
+
+            $translations = require $file;
+            $this->assertArrayHasKey('default_title', $translations, "Missing default_title in {$locale}");
+            $this->assertArrayHasKey('default_message', $translations, "Missing default_message in {$locale}");
+            $this->assertNotEmpty($translations['default_title'], "Empty default_title in {$locale}");
+            $this->assertNotEmpty($translations['default_message'], "Empty default_message in {$locale}");
+        }
     }
 
     /**

@@ -54,6 +54,10 @@ class InquirySettingsSeeder extends Seeder
             'auto_reply_subject' => $texts['auto_reply_subject'],
             'auto_reply_body' => $texts['auto_reply_body'],
 
+            // 完了ページ設定（言語別）
+            'completion_title' => $texts['completion_title'],
+            'completion_message' => $texts['completion_message'],
+
             // フォーム表示設定
             'show_phone' => '1',
             'phone_required' => '0',
@@ -109,11 +113,20 @@ class InquirySettingsSeeder extends Seeder
         }
         $autoReply = require $autoReplyFile;
 
+        // 完了ページの翻訳ファイル読み込み
+        $completionFile = "{$langPath}/{$locale}/admin/inquiry/settings/completion.php";
+        if (!file_exists($completionFile)) {
+            $completionFile = "{$langPath}/en/admin/inquiry/settings/completion.php";
+        }
+        $completion = require $completionFile;
+
         return [
             'subject' => $adminNotification['default_subject'] ?? 'Inquiry Received',
             'body' => $adminNotification['default_body'] ?? '',
             'auto_reply_subject' => $autoReply['default_subject'] ?? 'Thank you for your inquiry',
             'auto_reply_body' => $autoReply['default_body'] ?? '',
+            'completion_title' => $completion['default_title'] ?? 'Message Sent',
+            'completion_message' => $completion['default_message'] ?? '',
         ];
     }
 }

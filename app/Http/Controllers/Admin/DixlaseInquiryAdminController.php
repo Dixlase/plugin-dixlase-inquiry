@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Admin;
 
+use App\Helpers\CaptchaHelper;
 use App\Models\BaseSetting;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
@@ -164,8 +165,11 @@ class DixlaseInquiryAdminController extends Controller
     {
         $settings = DixlaseInquirySetting::getSettings();
 
+        $captchaEnabled = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY);
+
         return view('dixlase-inquiry::admin.inquiry.settings.index', array_merge($this->viewParams, [
             'settings' => $settings,
+            'captchaEnabled' => $captchaEnabled,
         ]));
     }
 
@@ -343,6 +347,9 @@ class DixlaseInquiryAdminController extends Controller
         $formAction = route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.confirm');
         $sendAction = route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.send');
 
+        $captchaEnabled = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY);
+        $captchaWidget = $captchaEnabled ? CaptchaHelper::renderWidget(self::CAPTCHA_FORM_KEY) : null;
+
         return view('dixlase-inquiry::front.inquiries.preview', [
             'settings' => $settings,
             'privacyUrl' => $privacyUrl,
@@ -352,6 +359,8 @@ class DixlaseInquiryAdminController extends Controller
                 ? $formAction
                 : $sendAction,
             'isPreview' => true,
+            'captchaEnabled' => $captchaEnabled,
+            'captchaWidget' => $captchaWidget,
         ]);
     }
 

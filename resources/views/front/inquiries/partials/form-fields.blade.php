@@ -403,6 +403,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </fieldset>
         @endif
 
+        {{-- CAPTCHA --}}
+        <x-captcha :enabled="$captchaEnabled ?? false" :widget="$captchaWidget ?? null" />
+
         {{-- プレビュー時: hidden fields --}}
         @if($isPreview ?? false)
             <input type="hidden" name="_preview_save_to_db" :value="previewSaveToDb ? '1' : '0'">

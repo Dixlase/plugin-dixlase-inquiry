@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Requests\Front;
 
+use App\Helpers\CaptchaHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
@@ -147,6 +148,11 @@ class DixlaseInquiryEmbedSendRequest extends FormRequest
             $rules['privacy_agreed'] = ['required', 'accepted'];
         }
 
+        // CAPTCHA（CaptchaHelper経由で有効判定）
+        if (CaptchaHelper::shouldShowCaptcha('dixlase-inquiry.inquiry_contact')) {
+            $rules['g-recaptcha-response'] = 'required|captcha';
+        }
+
         return $rules;
     }
 
@@ -169,6 +175,7 @@ class DixlaseInquiryEmbedSendRequest extends FormRequest
             'gender.in' => __('dixlase-inquiry::front.validation.gender_invalid'),
             'privacy_agreed.required' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
             'privacy_agreed.accepted' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
+            'g-recaptcha-response.required' => __('dixlase-inquiry::front.validation.recaptcha_required'),
         ];
 
         // カタカナバリデーションメッセージ

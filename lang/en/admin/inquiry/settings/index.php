@@ -57,4 +57,7 @@ return [
     // 警告メッセージ
     'warning_admin_email' => 'Admin notification email address is not configured. Please set it in <a href=":url" class="font-medium underline">Admin Notification Settings</a>.',
     'warning_auto_reply_email' => 'Auto-reply is enabled but the sender email address is not configured. Please set it in <a href=":url" class="font-medium underline">Auto-Reply Settings</a>.',
+
+    // CAPTCHA案内メッセージ
+    'notice_captcha_disabled' => 'CAPTCHA is not enabled for the inquiry form. To prevent spam, we recommend enabling CAPTCHA in <a href=":url" class="font-medium underline">Security Settings &gt; CAPTCHA</a>.',
 ];
