@@ -24,14 +24,20 @@ namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class InquiryRolePermissionSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * シーダー実行
      */
     public function run(): void
     {
+        // テーブルが存在しない場合はスキップ（DixlaseUsersプラグイン未インストール時）
+        if (!Schema::hasTable('members_role_permissions')) {
+            return;
+        }
+
         $permissions = [
             [
                 'menu_key' => 'settings.inquiries',
