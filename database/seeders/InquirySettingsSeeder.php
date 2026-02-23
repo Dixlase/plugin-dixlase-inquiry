@@ -59,7 +59,7 @@ class InquirySettingsSeeder extends Seeder
             'completion_message' => $texts['completion_message'],
 
             // フォーム表示設定
-            'show_phone' => '1',
+            'show_phone' => '0',
             'phone_required' => '0',
             'show_address' => '0',
             'address_required' => '0',
