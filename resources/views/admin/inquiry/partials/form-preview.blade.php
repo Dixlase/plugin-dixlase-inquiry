@@ -94,6 +94,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <input type="email" disabled class="input-common my-2 w-full opacity-60">
     </fieldset>
 
+    {{-- メールアドレス確認フィールド（常に表示・必須） --}}
+    <fieldset>
+        <legend>
+            <span x-text="getLabel('email_confirmation')"></span>
+            <x-form-required-badge />
+        </legend>
+        <input type="email" disabled class="input-common my-2 w-full opacity-60">
+    </fieldset>
+
     {{-- 郵便番号フィールド --}}
     <div x-show="showPostalCode === '1'">
         <fieldset>

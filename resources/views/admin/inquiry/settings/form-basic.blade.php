@@ -39,6 +39,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         genderRequired: '{{ old('gender_required', $settings->gender_required ?? false) ? '1' : '0' }}',
         showGenderOther: '{{ old('show_gender_other', $settings->show_gender_other ?? false) ? '1' : '0' }}',
         showGenderPreferNotToSay: '{{ old('show_gender_prefer_not_to_say', $settings->show_gender_prefer_not_to_say ?? false) ? '1' : '0' }}',
+        emailConfirmPasteDisabled: '{{ old('email_confirm_paste_disabled', $settings->email_confirm_paste_disabled ?? true) ? '1' : '0' }}',
         showKana: '{{ old('show_kana', $settings->show_kana ?? false) ? '1' : '0' }}',
         requireKana: '{{ old('require_kana', $settings->require_kana ?? false) ? '1' : '0' }}',
         privacyConsentEnabled: '{{ old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false) ? '1' : '0' }}',
@@ -79,6 +80,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 gender_required: this.genderRequired,
                 show_gender_other: this.showGenderOther,
                 show_gender_prefer_not_to_say: this.showGenderPreferNotToSay,
+                email_confirm_paste_disabled: this.emailConfirmPasteDisabled,
                 show_kana: this.showKana,
                 require_kana: this.requireKana,
                 use_single_page: this.useSinglePage,
@@ -191,6 +193,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.required_fields_note')" textSize="text-sm" />
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                            {{-- メールアドレス確認欄：ペースト制限 --}}
+                            <div class="lg:col-span-2">
+                                <x-form-toggle
+                                    name="email_confirm_paste_disabled"
+                                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.email_confirm_paste_disabled')"
+                                    :checked="old('email_confirm_paste_disabled', $settings->email_confirm_paste_disabled ?? true)"
+                                    xModel="emailConfirmPasteDisabled"
+                                />
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.email_confirm_paste_disabled_help') }}
+                                </p>
+                            </div>
 
                             {{-- カタカナ（フリガナ）フィールド --}}
                             <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">

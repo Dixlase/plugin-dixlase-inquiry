@@ -52,6 +52,7 @@ class SettingsConfigTest extends TestCase
             'show_gender_prefer_not_to_say',
             'show_kana',
             'require_kana',
+            'email_confirm_paste_disabled',
             'auto_reply_enabled',
             'auto_reply_from_email',
             'auto_reply_subject',

@@ -60,6 +60,8 @@ return [
     'show_gender_other' => 'その他',
     'show_gender_prefer_not_to_say' => '回答しない',
     'gender_default_note' => '※ 男性・女性はデフォルトで有効です。',
+    'email_confirm_paste_disabled' => 'メール確認欄のペーストを無効にする',
+    'email_confirm_paste_disabled_help' => '有効にすると、メールアドレス確認欄へのペーストが禁止され、手入力が必要になります。',
     'show_kana' => 'フリガナ',
     'require_kana' => '必須',
     'show_kana_help' => '日本式選択時のみ使用できます。欧米式ではカタカナフィールドは表示されません。',

@@ -298,6 +298,7 @@ class DixlaseInquiryAdminController extends Controller
             'show_postal_code', 'postal_code_required', 'show_address', 'address_required',
             'show_phone', 'phone_required', 'show_gender', 'gender_required',
             'show_gender_other', 'show_gender_prefer_not_to_say',
+            'email_confirm_paste_disabled',
             'show_kana', 'require_kana', 'privacy_consent_enabled', 'throttle_enabled',
             'show_confirmation_page',
         ];

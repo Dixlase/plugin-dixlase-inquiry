@@ -118,6 +118,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             />
         </fieldset>
 
+        {{-- 2b. メールアドレス（確認） --}}
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="block w-full font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 pt-4">
+                {{ __('dixlase-inquiry::front.form.email_confirmation') }}
+                <x-form-required-badge />
+            </legend>
+            <x-form-text
+                type="email"
+                name="email_confirmation"
+                :value="old('email_confirmation')"
+                :required="true"
+                :placeholder="__('dixlase-inquiry::front.form.email_confirmation_placeholder')"
+                autocomplete="off"
+                :onpaste="($settings->email_confirm_paste_disabled ?? true) ? 'return false;' : null"
+            />
+            <x-form-help-text :text="__('dixlase-inquiry::front.form.email_confirmation_help')" />
+        </fieldset>
+
         {{-- 3. 郵便番号 --}}
         @if($settings->show_postal_code ?? false)
         <fieldset class="border-0 p-0 m-0">

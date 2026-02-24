@@ -98,6 +98,7 @@ class DixlaseInquirySetting extends Model
             'show_gender_prefer_not_to_say' => false,
             'show_kana' => false,
             'require_kana' => false,
+            'email_confirm_paste_disabled' => true,
             'auto_reply_enabled' => true,
             'auto_reply_from_email' => '',
             'auto_reply_subject' => 'お問い合わせを受け付けました',

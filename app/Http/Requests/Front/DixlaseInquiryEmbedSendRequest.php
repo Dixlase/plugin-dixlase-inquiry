@@ -51,6 +51,7 @@ class DixlaseInquiryEmbedSendRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'email_confirmation' => 'required|email|same:email',
             'message' => 'required|string|max:5000',
         ];
 
@@ -176,6 +177,8 @@ class DixlaseInquiryEmbedSendRequest extends FormRequest
             'first_name.required' => __('dixlase-inquiry::front.validation.first_name_required'),
             'email.required' => __('dixlase-inquiry::front.validation.email_required'),
             'email.email' => __('dixlase-inquiry::front.validation.email_invalid'),
+            'email_confirmation.required' => __('dixlase-inquiry::front.validation.email_confirmation_required'),
+            'email_confirmation.same' => __('dixlase-inquiry::front.validation.email_confirmation_mismatch'),
             'message.required' => __('dixlase-inquiry::front.validation.message_required'),
             'subject.required' => __('dixlase-inquiry::front.validation.subject_required'),
             'gender.required' => __('dixlase-inquiry::front.validation.gender_required'),
