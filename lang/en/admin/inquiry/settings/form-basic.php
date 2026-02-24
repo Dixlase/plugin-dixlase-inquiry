@@ -60,6 +60,8 @@ return [
     'show_gender_other' => 'Other',
     'show_gender_prefer_not_to_say' => 'Prefer not to say',
     'gender_default_note' => '* Male and Female are always enabled.',
+    'email_confirm_paste_disabled' => 'Disable paste on email confirmation field',
+    'email_confirm_paste_disabled_help' => 'When enabled, users cannot paste into the email confirmation field and must type the address manually.',
     'show_kana' => 'Katakana (Furigana)',
     'require_kana' => 'Required',
     'show_kana_help' => 'Only available when Japanese style is selected. Katakana fields are not displayed in Western style.',

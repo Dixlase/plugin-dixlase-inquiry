@@ -69,6 +69,7 @@ class InquirySettingsSeeder extends Seeder
             'show_gender_prefer_not_to_say' => '0',
             'show_postal_code' => '0',
             'postal_code_required' => '0',
+            'email_confirm_paste_disabled' => '1',
             'use_single_page' => '1',
             'show_confirmation_page' => '1',
             'inquiry_url_slug' => 'inquiry',

@@ -49,6 +49,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'email_confirmation' => 'required|email|same:email',
             'message' => 'required|string',
         ];
 
@@ -180,6 +181,8 @@ class DixlaseInquirySubmitRequest extends FormRequest
             'first_name.required' => __('dixlase-inquiry::front.validation.first_name_required'),
             'email.required' => __('dixlase-inquiry::front.validation.email_required'),
             'email.email' => __('dixlase-inquiry::front.validation.email_invalid'),
+            'email_confirmation.required' => __('dixlase-inquiry::front.validation.email_confirmation_required'),
+            'email_confirmation.same' => __('dixlase-inquiry::front.validation.email_confirmation_mismatch'),
             'message.required' => __('dixlase-inquiry::front.validation.message_required'),
             'subject.required' => __('dixlase-inquiry::front.validation.subject_required'),
             'gender.required' => __('dixlase-inquiry::front.validation.gender_required'),
@@ -230,6 +233,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
             'last_name' => __('dixlase-inquiry::front.form.last_name'),
             'first_name' => __('dixlase-inquiry::front.form.first_name'),
             'email' => __('dixlase-inquiry::front.form.email'),
+            'email_confirmation' => __('dixlase-inquiry::front.form.email_confirmation'),
             'last_name_kana' => __('dixlase-inquiry::front.form.last_name_kana'),
             'first_name_kana' => __('dixlase-inquiry::front.form.first_name_kana'),
             'message' => __('dixlase-inquiry::front.form.message'),
