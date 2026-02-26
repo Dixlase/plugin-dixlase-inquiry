@@ -86,7 +86,7 @@
             "admin": [],
             "front": []
         },
-        "contracts": [],
+        "contracts": ["RouteSlugProvider"],
         "migrations": true,
         "commands": false,
         "middleware": false
