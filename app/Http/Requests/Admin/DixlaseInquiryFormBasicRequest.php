@@ -22,6 +22,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Requests\Admin;
 
+use App\Rules\UniqueRouteSlug;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DixlaseInquiryFormBasicRequest extends FormRequest
@@ -44,7 +45,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
         return [
             'form_locale' => 'required|string|in:auto,' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
             'use_single_page' => 'boolean',
-            'inquiry_url_slug' => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
+            'inquiry_url_slug' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9\-]+$/', UniqueRouteSlug::for('dixlase-inquiry:inquiry_url_slug')],
             'name_order_western' => 'boolean',
             'show_subject' => 'boolean',
             'subject_required' => 'boolean',

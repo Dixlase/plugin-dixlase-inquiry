@@ -22,18 +22,20 @@
 
 namespace Plugins\DixlaseInquiry\App\Providers;
 
+use App\Contracts\RouteSlugProvider;
+use App\DTO\RouteSlug\RegisteredSlug;
+use App\Helpers\PluginHelper;
+use App\Traits\PluginLoaderTrait;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use App\Helpers\PluginHelper;
-use App\Traits\PluginLoaderTrait;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Shortcodes\DixlaseInquiryFormShortcode;
 
-class DixlaseInquiryServiceProvider extends ServiceProvider
+class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlugProvider
 {
     use PluginLoaderTrait;
 
@@ -58,6 +60,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // .git/info/excludeへの追加はplugin:installコマンドで自動実行されます
+
+        // ルートスラッグプロバイダーの登録
+        $this->registerRouteSlugProvider();
 
         // レートリミッター登録
         $this->registerRateLimiter();
@@ -157,6 +162,40 @@ class DixlaseInquiryServiceProvider extends ServiceProvider
         } catch (\Exception $e) {
             // データベースがまだ存在しない場合などのエラーを無視
         }
+    }
+
+    /**
+     * ルートスラッグプロバイダーを登録
+     */
+    protected function registerRouteSlugProvider(): void
+    {
+        if (app()->bound(\App\Services\RouteSlugRegistry::class)) {
+            app(\App\Services\RouteSlugRegistry::class)
+                ->registerProvider('dixlase-inquiry', $this);
+        }
+    }
+
+    /**
+     * プラグインが管理するルートスラッグを返す
+     *
+     * @return array<RegisteredSlug>
+     */
+    public function getRouteSlugs(): array
+    {
+        try {
+            $settings = DixlaseInquirySetting::getSettings();
+            $slug = $settings->inquiry_url_slug ?? 'inquiry';
+        } catch (\Exception $e) {
+            $slug = 'inquiry';
+        }
+
+        return [
+            new RegisteredSlug(
+                slug: $slug,
+                owner: 'dixlase-inquiry:inquiry_url_slug',
+                label: 'dixlase-inquiry::route-slug.owners.inquiry_url_slug',
+            ),
+        ];
     }
 
     /**
