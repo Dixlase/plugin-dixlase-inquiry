@@ -2,6 +2,6 @@
 
 return [
     'owners' => [
-        'inquiry_url_slug' => 'お問い合わせフォームURL',
+        'directory' => 'お問い合わせフォームURL',
     ],
 ];

@@ -192,8 +192,8 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
         return [
             new RegisteredSlug(
                 slug: $slug,
-                owner: 'dixlase-inquiry:inquiry_url_slug',
-                label: 'dixlase-inquiry::route-slug.owners.inquiry_url_slug',
+                owner: 'dixlase-inquiry:directory',
+                label: 'dixlase-inquiry::route-slug.owners.directory',
             ),
         ];
     }
