@@ -19,7 +19,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="window.inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})">
+<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})">
     @if(session('inquiry_success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ __('dixlase-inquiry::front.form.success_message') }}
@@ -428,6 +428,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     @endif
 </div>
 
-{{-- スタイルとスクリプトは外部ファイル化済み --}}
-{{-- SCSS: resources/src/css/components/embed-form.scss --}}
-{{-- JS: resources/src/js/components/embed-form.js --}}
+{{-- プラグインアセットの読み込み（@once で重複防止） --}}
+@once
+@push('styles')
+    {!! load_plugin_assets('DixlaseInquiry', ['css/style.scss']) !!}
+@endpush
+@push('scripts')
+    {!! load_plugin_assets('DixlaseInquiry', ['js/app.js']) !!}
+@endpush
+@endonce

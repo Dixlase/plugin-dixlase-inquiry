@@ -118,7 +118,18 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
     };
 }
 
-// グローバル関数として登録（Bladeテンプレートから呼び出せるように）
-if (typeof window !== 'undefined') {
-    window.inquiryEmbedForm = createInquiryEmbedForm;
+// Alpine.data() でコンポーネントを登録（CSP厳格モード対応）
+// このスクリプトは Alpine.start() 後に読み込まれるため、
+// 既存DOM要素を Alpine.initTree() で遅延初期化する
+if (typeof window !== 'undefined' && window.Alpine) {
+    window.Alpine.data('inquiryEmbedForm', (showConfirmationPage = true, nameOrderWestern = false) =>
+        createInquiryEmbedForm(showConfirmationPage, nameOrderWestern)
+    );
+
+    // Alpine.start() 後に読み込まれた場合、既存のDOM要素を初期化
+    document.querySelectorAll('[x-data*="inquiryEmbedForm"]').forEach(el => {
+        if (!el._x_dataStack) {
+            window.Alpine.initTree(el);
+        }
+    });
 }

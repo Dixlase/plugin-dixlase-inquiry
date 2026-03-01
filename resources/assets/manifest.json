@@ -1,0 +1,13 @@
+{
+  "plugins/DixlaseInquiry/resources/src/css/style.scss": {
+    "file": "css/style.css",
+    "src": "plugins/DixlaseInquiry/resources/src/css/style.scss",
+    "isEntry": true
+  },
+  "plugins/DixlaseInquiry/resources/src/js/app.js": {
+    "file": "js/app.js",
+    "name": "app",
+    "src": "plugins/DixlaseInquiry/resources/src/js/app.js",
+    "isEntry": true
+  }
+}
