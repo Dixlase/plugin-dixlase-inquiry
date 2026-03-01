@@ -20,12 +20,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 if (!function_exists('dls_inquiry_form')) {
     /**
      * 問い合わせフォームを表示する
-     * 
+     *
      * @param array $options オプション設定
      *   - 'class' => string 追加のCSSクラス
      *   - 'id' => string カスタムID
@@ -35,14 +36,56 @@ if (!function_exists('dls_inquiry_form')) {
     {
         try {
             $settings = DixlaseInquirySetting::getSettings();
-            
+
             if (!$settings || empty($settings->admin_email)) {
                 return null;
             }
-            
+
+            // フォームロケールを適用（'auto'時は現在のロケールを維持）
+            $formLocale = $settings->form_locale ?? 'auto';
+            if ($formLocale !== 'auto') {
+                app()->setLocale($formLocale);
+            }
+
+            // プライバシーポリシーURLを解決
+            $privacyUrl = null;
+            if (app()->bound(PrivacyPolicyProviderInterface::class)) {
+                $provider = app(PrivacyPolicyProviderInterface::class);
+                if ($provider->isPrivacyPolicyEnabled()) {
+                    $privacyUrl = $provider->getPrivacyPolicyUrl();
+                }
+            }
+            if (!$privacyUrl && !empty($settings->privacy_policy_url)) {
+                $privacyUrl = $settings->privacy_policy_url;
+            }
+
+            // 性別オプション配列
+            $genderOptions = [
+                ['value' => 'male', 'label' => __('dixlase-inquiry::front.form.gender_male'), 'icon' => 'fas fa-mars', 'color' => 'blue'],
+                ['value' => 'female', 'label' => __('dixlase-inquiry::front.form.gender_female'), 'icon' => 'fas fa-venus', 'color' => 'red'],
+            ];
+            if ($settings->show_gender_other ?? false) {
+                $genderOptions[] = ['value' => 'other', 'label' => __('dixlase-inquiry::front.form.gender_other'), 'icon' => 'fas fa-genderless', 'color' => 'purple'];
+            }
+            if ($settings->show_gender_prefer_not_to_say ?? false) {
+                $genderOptions[] = ['value' => 'prefer_not_to_say', 'label' => __('dixlase-inquiry::front.form.gender_prefer_not_to_say'), 'icon' => 'fas fa-user-secret', 'color' => 'gray'];
+            }
+
+            // 都道府県リスト
+            $prefectureList = __('dixlase-inquiry::front.prefectures');
+            $prefectures = [];
+            if (is_array($prefectureList)) {
+                foreach ($prefectureList as $name) {
+                    $prefectures[$name] = $name;
+                }
+            }
+
             return view('dixlase-inquiry::front.inquiries.embed-form', [
                 'settings' => $settings,
                 'options' => $options,
+                'privacyUrl' => $privacyUrl,
+                'genderOptions' => $genderOptions,
+                'prefectures' => $prefectures,
             ])->render();
         } catch (\Exception $e) {
             \Log::error('dls_inquiry_form error: ' . $e->getMessage());
