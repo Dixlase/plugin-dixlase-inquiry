@@ -44,7 +44,7 @@ use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
  * @property string $message
  * @property string|null $ip_address
  * @property string|null $user_agent
- * @property string $form_locale
+ * @property string $lang 言語コード
  * @property \Illuminate\Support\Carbon|null $privacy_agreed_at
  * @property \Illuminate\Support\Carbon $submitted_at
  * @property \Illuminate\Support\Carbon|null $read_at
@@ -70,7 +70,7 @@ class DixlaseInquiry extends Model
         'message',
         'ip_address',
         'user_agent',
-        'form_locale',
+        'lang',
         'privacy_agreed_at',
         'submitted_at',
         'read_at',
@@ -129,6 +129,14 @@ class DixlaseInquiry extends Model
     public function scopeUnread(Builder $query): Builder
     {
         return $query->whereNull('read_at');
+    }
+
+    /**
+     * 指定言語の問い合わせを取得
+     */
+    public function scopeForLang(Builder $query, string $lang): Builder
+    {
+        return $query->where('lang', $lang);
     }
 
     /**

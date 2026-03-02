@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 class SettingsConfigTest extends TestCase
 {
     /**
-     * form_localeがデフォルト設定に含まれる
+     * langがデフォルト設定に含まれる
      */
-    public function test_default_settings_include_form_locale(): void
+    public function test_default_settings_include_lang(): void
     {
         $defaults = \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting::getDefaultSettings();
 
-        $this->assertObjectHasProperty('form_locale', $defaults);
-        $this->assertEquals('auto', $defaults->form_locale);
+        $this->assertObjectHasProperty('lang', $defaults);
+        $this->assertEquals('auto', $defaults->lang);
     }
 
     /**
@@ -61,7 +61,7 @@ class SettingsConfigTest extends TestCase
             'show_confirmation_page',
             'inquiry_url_slug',
             'name_order_western',
-            'form_locale',
+            'lang',
             'privacy_consent_enabled',
             'privacy_policy_url',
             'privacy_consent_text',
@@ -122,13 +122,13 @@ class SettingsConfigTest extends TestCase
     }
 
     /**
-     * シーダーにform_localeが含まれる
+     * シーダーにlangが含まれる
      */
-    public function test_seeder_includes_form_locale(): void
+    public function test_seeder_includes_lang(): void
     {
         $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
 
-        $this->assertStringContainsString("'form_locale'", $seederFile);
+        $this->assertStringContainsString("'lang'", $seederFile);
     }
 
     /**

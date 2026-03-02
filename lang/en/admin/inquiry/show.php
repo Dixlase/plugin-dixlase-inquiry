@@ -30,7 +30,7 @@ return [
     'read_at' => 'Read At',
     'ip_address' => 'IP Address',
     'user_agent' => 'User Agent',
-    'form_locale' => 'Form Language',
+    'lang' => 'Form Language',
     'privacy_agreed' => 'Privacy Consent',
     'privacy_agreed_yes' => 'Agreed at :date',
     'privacy_agreed_no' => 'Not agreed',

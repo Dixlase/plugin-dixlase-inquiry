@@ -49,7 +49,7 @@ class MigrationTest extends TestCase
             'message',
             'ip_address',
             'user_agent',
-            'form_locale',
+            'lang',
             'privacy_agreed_at',
             'submitted_at',
             'read_at',

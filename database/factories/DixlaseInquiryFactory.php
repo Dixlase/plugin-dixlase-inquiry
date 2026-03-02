@@ -55,7 +55,7 @@ class DixlaseInquiryFactory extends Factory
             'message' => fake()->paragraphs(3, true),
             'ip_address' => fake()->ipv4(),
             'user_agent' => fake()->userAgent(),
-            'form_locale' => 'ja',
+            'lang' => 'ja',
             'privacy_agreed_at' => now(),
             'submitted_at' => now(),
             'read_at' => null,

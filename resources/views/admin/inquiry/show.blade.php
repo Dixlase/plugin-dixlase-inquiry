@@ -171,8 +171,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </div>
 
                     <div>
-                        <dt class="text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::admin/inquiry/show.form_locale') }}</dt>
-                        <dd class="mt-1 text-gray-900 dark:text-white">{{ $inquiry->form_locale }}</dd>
+                        <dt class="text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::admin/inquiry/show.lang') }}</dt>
+                        <dd class="mt-1 text-gray-900 dark:text-white">{{ $inquiry->lang }}</dd>
                     </div>
 
                     <div>

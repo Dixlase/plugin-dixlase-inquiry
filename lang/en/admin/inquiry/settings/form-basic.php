@@ -22,10 +22,10 @@ return [
     'section_display_settings' => 'Display Settings',
 
     // 言語設定
-    'form_locale' => 'Form Language',
-    'form_locale_auto' => 'Auto',
-    'form_locale_auto_desc' => "Use the site's default language",
-    'form_locale_help' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" will use the site\'s default language.',
+    'lang' => 'Form Language',
+    'lang_auto' => 'Auto',
+    'lang_auto_desc' => "Use the site's default language",
+    'lang_help' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" will use the site\'s default language.',
 
     // フォーム表示方式（form-displayから移動）
     'form_type' => 'Display Settings',

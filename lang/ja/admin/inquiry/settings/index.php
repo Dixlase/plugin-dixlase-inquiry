@@ -42,7 +42,7 @@ return [
         'disabled' => '無効',
         'admin_email' => '送信先',
         'auto_reply' => '自動返信',
-        'form_locale' => 'フォーム言語',
+        'lang' => 'フォーム言語',
     ],
 
     // 埋め込み方法（form-previewから移動）

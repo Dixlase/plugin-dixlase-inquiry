@@ -22,10 +22,10 @@ return [
     'section_display_settings' => 'フォーム表示設定',
 
     // 言語設定
-    'form_locale' => 'フォーム言語',
-    'form_locale_auto' => '自動',
-    'form_locale_auto_desc' => 'サイトのデフォルト言語を使用',
-    'form_locale_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。「自動」を選択すると、サイトのデフォルト言語が使用されます。',
+    'lang' => 'フォーム言語',
+    'lang_auto' => '自動',
+    'lang_auto_desc' => 'サイトのデフォルト言語を使用',
+    'lang_help' => '訪問者に表示されるお問い合わせフォームの言語を選択します。「自動」を選択すると、サイトのデフォルト言語が使用されます。',
 
     // フォーム表示方式（form-displayから移動）
     'form_type' => 'フォーム表示設定',

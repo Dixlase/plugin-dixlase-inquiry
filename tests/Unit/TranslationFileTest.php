@@ -100,8 +100,8 @@ class TranslationFileTest extends TestCase
             'separate_pages',
             'inquiry_url',
             'inquiry_url_slug_help',
-            'form_locale',
-            'form_locale_help',
+            'lang',
+            'lang_help',
         ];
 
         foreach (['en', 'ja'] as $locale) {

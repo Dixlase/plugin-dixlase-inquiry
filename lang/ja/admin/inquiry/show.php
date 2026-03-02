@@ -30,7 +30,7 @@ return [
     'read_at' => '既読日時',
     'ip_address' => 'IPアドレス',
     'user_agent' => 'ユーザーエージェント',
-    'form_locale' => 'フォーム言語',
+    'lang' => 'フォーム言語',
     'privacy_agreed' => 'プライバシー同意',
     'privacy_agreed_yes' => ':date に同意',
     'privacy_agreed_no' => '未同意',
