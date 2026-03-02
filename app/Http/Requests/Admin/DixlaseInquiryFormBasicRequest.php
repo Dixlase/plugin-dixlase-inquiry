@@ -43,7 +43,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'form_locale' => 'required|string|in:auto,' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
+            'lang' => 'required|string|in:auto,' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
             'use_single_page' => 'boolean',
             'inquiry_url_slug' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9\-]+$/', UniqueRouteSlug::for('dixlase-inquiry:directory')],
             'name_order_western' => 'boolean',

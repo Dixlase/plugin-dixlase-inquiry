@@ -44,7 +44,7 @@ return new class extends Migration
             $table->text('message');
             $table->string('ip_address')->nullable();
             $table->string('user_agent')->nullable();
-            $table->string('form_locale')->default('ja');
+            $table->string('lang', 10)->comment('言語コード');
             $table->timestamp('privacy_agreed_at')->nullable();
             $table->timestamp('submitted_at');
             $table->timestamp('read_at')->nullable();

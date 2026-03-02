@@ -44,7 +44,7 @@ trait InquiryFormDataTrait
      */
     protected function applyFormLocale(object $settings): void
     {
-        $locale = $settings->form_locale ?? 'auto';
+        $locale = $settings->lang ?? 'auto';
         if ($locale !== 'auto') {
             app()->setLocale($locale);
         }
@@ -177,7 +177,7 @@ trait InquiryFormDataTrait
             'message' => $inquiryData['message'],
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
-            'form_locale' => $settings->form_locale ?? 'ja',
+            'lang' => $settings->lang ?? 'ja',
             'privacy_agreed_at' => $request->has('privacy_agreed') ? now() : null,
             'submitted_at' => now(),
         ]);

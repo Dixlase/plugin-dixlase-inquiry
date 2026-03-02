@@ -64,8 +64,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="text-sm text-gray-600 dark:text-gray-400">
                 <p>{{ __('dixlase-inquiry::admin/inquiry/settings/index.cards.form_basic_desc') }}</p>
                 <p class="text-xs mt-2">
-                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.form_locale') }}:
-                    {{ strtoupper($settings->form_locale ?? 'ja') }}
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.lang') }}:
+                    {{ strtoupper($settings->lang ?? 'ja') }}
                     /
                     {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.name_format') }}:
                     {{ $settings->name_order_western ? __('dixlase-inquiry::admin/inquiry/settings/index.status.western') : __('dixlase-inquiry::admin/inquiry/settings/index.status.japanese') }}

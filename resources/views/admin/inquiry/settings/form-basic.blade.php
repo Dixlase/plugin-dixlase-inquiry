@@ -23,7 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @section('content')
 <div class="mx-auto">
     <form id="form-basic-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.update') }}" method="POST" x-data="{
-        selectedLocale: '{{ old('form_locale', $settings->form_locale ?? 'auto') }}',
+        selectedLocale: '{{ old('lang', $settings->lang ?? 'auto') }}',
         useSinglePage: '{{ old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0' }}',
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
         nameOrderWestern: '{{ old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0' }}',
@@ -66,7 +66,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             csrf.value = '{{ csrf_token() }}';
             form.appendChild(csrf);
             const settings = {
-                form_locale: this.selectedLocale,
+                lang: this.selectedLocale,
                 name_order_western: this.nameOrderWestern,
                 show_subject: this.showSubject,
                 subject_required: this.subjectRequired,
@@ -115,15 +115,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <section class="mb-8">
                     {{-- 言語セレクタ --}}
                     <fieldset>
-                        <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale') }}</legend>
+                        <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang') }}</legend>
 
                         <x-form-radio-card-group
-                            name="form_locale"
+                            name="lang"
                             :options="[
                                 [
                                     'value' => 'auto',
-                                    'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale_auto'),
-                                    'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale_auto_desc'),
+                                    'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
+                                    'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto_desc'),
                                     'icon' => 'fas fa-magic',
                                 ],
                                 [
@@ -139,13 +139,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                     'icon' => 'fas fa-globe',
                                 ],
                             ]"
-                            :value="old('form_locale', $settings->form_locale ?? 'auto')"
+                            :value="old('lang', $settings->lang ?? 'auto')"
                             xModel="selectedLocale"
                             :columns="3"
                             color="primary"
                         />
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.form_locale_help') }}
+                            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help') }}
                         </p>
                     </fieldset>
 

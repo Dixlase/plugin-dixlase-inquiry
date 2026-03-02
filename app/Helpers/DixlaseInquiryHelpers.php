@@ -42,7 +42,7 @@ if (!function_exists('dls_inquiry_form')) {
             }
 
             // フォームロケールを適用（'auto'時は現在のロケールを維持）
-            $formLocale = $settings->form_locale ?? 'auto';
+            $formLocale = $settings->lang ?? 'auto';
             if ($formLocale !== 'auto') {
                 app()->setLocale($formLocale);
             }
