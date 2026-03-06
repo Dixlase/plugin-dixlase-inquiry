@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Services\DixlaseInquiryDashboardProvider;
 use Plugins\DixlaseInquiry\App\Shortcodes\DixlaseInquiryFormShortcode;
 
 class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlugProvider
@@ -73,6 +74,10 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
 
         // Bladeディレクティブ登録
         $this->registerBladeDirectives();
+
+        // Dashboard notification provider registration
+        $this->app->singleton(DixlaseInquiryDashboardProvider::class);
+        $this->app->tag([DixlaseInquiryDashboardProvider::class], 'plugin.capabilities');
 
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
