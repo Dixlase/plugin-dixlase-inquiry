@@ -40,13 +40,13 @@
             "core_tables": true
         },
         "storage": {
-            "own_directory": true,
+            "own_directory": false,
             "public_uploads": false,
-            "temp_files": true
+            "temp_files": false
         },
         "settings": {
             "read_core": true,
-            "write_own": true
+            "write_own": false
         },
         "members": {
             "read": false,
@@ -86,7 +86,7 @@
             "admin": [],
             "front": []
         },
-        "contracts": ["RouteSlugProvider"],
+        "contracts": ["RouteSlugProvider", "DashboardNotificationProviderInterface"],
         "migrations": true,
         "commands": false,
         "middleware": false
