@@ -37,7 +37,8 @@
     "permissions": {
         "database": {
             "own_tables": true,
-            "core_tables": true
+            "core_tables_read": ["base_settings", "captcha_enabled_forms"],
+            "core_tables_write": []
         },
         "storage": {
             "own_directory": false,
