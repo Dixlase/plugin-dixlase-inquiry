@@ -98,6 +98,10 @@ return [
     'throttle_decay_minutes' => '制限期間（分）',
     'throttle_help' => '例: 同一IPアドレスから5分以内に最大3回まで送信を許可します。',
 
+    // サイドバー
+    'sidebar_open' => '設定サイドバーを開く',
+    'sidebar_close' => '設定サイドバーを閉じる',
+
     'confirm_title' => 'フォーム設定の保存',
     'confirm_message' => 'フォーム設定を保存してもよろしいですか？',
     'settings_updated' => 'フォーム設定が更新されました。',
