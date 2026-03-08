@@ -98,6 +98,10 @@ return [
     'throttle_decay_minutes' => 'Time Period (minutes)',
     'throttle_help' => 'Example: Allow up to 3 submissions within 5 minutes from the same IP address.',
 
+    // Sidebar
+    'sidebar_open' => 'Open settings sidebar',
+    'sidebar_close' => 'Close settings sidebar',
+
     'confirm_title' => 'Save Form Settings',
     'confirm_message' => 'Are you sure you want to save the form settings?',
     'settings_updated' => 'Form settings have been updated.',
