@@ -66,32 +66,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <div class="space-y-4">
             <div>
                 <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
-                <x-form-radio-card-group
+                <x-form-select
                     name="lang"
                     :options="[
-                        [
-                            'value' => 'auto',
-                            'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
-                            'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto_desc'),
-                            'icon' => 'fas fa-magic',
-                        ],
-                        [
-                            'value' => 'ja',
-                            'label' => '日本語',
-                            'description' => 'Japanese',
-                            'icon' => 'fas fa-flag',
-                        ],
-                        [
-                            'value' => 'en',
-                            'label' => 'English',
-                            'description' => '英語',
-                            'icon' => 'fas fa-globe',
-                        ],
+                        'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
+                        'ja' => '日本語',
+                        'en' => 'English',
                     ]"
                     :value="old('lang', $settings->lang ?? 'auto')"
                     xModel="selectedLocale"
-                    :columns="1"
-                    color="primary"
                 />
                 <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help')" />
             </div>
@@ -99,26 +82,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- Input format --}}
             <div>
                 <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
-                <x-form-radio-card-group
+                <x-form-select
                     name="name_order_western"
                     :options="[
-                        [
-                            'value' => '0',
-                            'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
-                            'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese_desc'),
-                            'icon' => 'fas fa-flag',
-                        ],
-                        [
-                            'value' => '1',
-                            'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
-                            'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western_desc'),
-                            'icon' => 'fas fa-globe',
-                        ],
+                        '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
+                        '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
                     ]"
                     :value="old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0'"
                     xModel="nameOrderWestern"
-                    :columns="1"
-                    color="primary"
                 />
                 <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
             </div>
@@ -152,7 +123,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     ::disabled="nameOrderWestern === '1'"
                 />
             </div>
-            <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700" :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
                 <x-form-toggle
                     name="require_kana"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.require_kana')"
@@ -170,13 +141,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 :checked="old('show_subject', $settings->show_subject ?? false)"
                 xModel="showSubject"
             />
-            <x-form-toggle
-                name="subject_required"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.subject_required')"
-                :checked="old('subject_required', $settings->subject_required ?? false)"
-                xBind="(showSubject === '1')"
-                xModel="subjectRequired"
-            />
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
+                <x-form-toggle
+                    name="subject_required"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.subject_required')"
+                    :checked="old('subject_required', $settings->subject_required ?? false)"
+                    xBind="(showSubject === '1')"
+                    xModel="subjectRequired"
+                />
+            </div>
 
             {{-- Postal code & Address --}}
             <x-form-toggle
@@ -186,13 +159,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 xModel="showPostalCode"
             />
             <input type="hidden" name="show_address" :value="showPostalCode">
-            <x-form-toggle
-                name="postal_code_required"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.postal_address_required')"
-                :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
-                xBind="(showPostalCode === '1')"
-                xModel="postalCodeRequired"
-            />
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
+                <x-form-toggle
+                    name="postal_code_required"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.postal_address_required')"
+                    :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
+                    xBind="(showPostalCode === '1')"
+                    xModel="postalCodeRequired"
+                />
+            </div>
             <input type="hidden" name="address_required" :value="postalCodeRequired">
 
             {{-- Phone --}}
@@ -202,13 +177,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 :checked="old('show_phone', $settings->show_phone ?? true)"
                 xModel="showPhone"
             />
-            <x-form-toggle
-                name="phone_required"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.phone_required')"
-                :checked="old('phone_required', $settings->phone_required ?? false)"
-                xBind="(showPhone === '1')"
-                xModel="phoneRequired"
-            />
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
+                <x-form-toggle
+                    name="phone_required"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.phone_required')"
+                    :checked="old('phone_required', $settings->phone_required ?? false)"
+                    xBind="(showPhone === '1')"
+                    xModel="phoneRequired"
+                />
+            </div>
 
             {{-- Gender --}}
             <x-form-toggle
@@ -217,13 +194,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 :checked="old('show_gender', $settings->show_gender ?? false)"
                 xModel="showGender"
             />
-            <x-form-toggle
-                name="gender_required"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.gender_required')"
-                :checked="old('gender_required', $settings->gender_required ?? false)"
-                xBind="(showGender === '1')"
-                xModel="genderRequired"
-            />
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
+                <x-form-toggle
+                    name="gender_required"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.gender_required')"
+                    :checked="old('gender_required', $settings->gender_required ?? false)"
+                    xBind="(showGender === '1')"
+                    xModel="genderRequired"
+                />
+            </div>
 
             {{-- Gender sub-options --}}
             <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700 space-y-2" :class="{ 'opacity-50 pointer-events-none': showGender === '0' }">
@@ -255,26 +234,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <div class="space-y-4">
             <div>
                 <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_type')" />
-                <x-form-radio-card-group
+                <x-form-select
                     name="use_single_page"
                     :options="[
-                        [
-                            'value' => '1',
-                            'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page'),
-                            'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page_desc'),
-                            'icon' => 'fas fa-file',
-                        ],
-                        [
-                            'value' => '0',
-                            'label' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages'),
-                            'description' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages_desc'),
-                            'icon' => 'fas fa-copy',
-                        ],
+                        '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page'),
+                        '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages'),
                     ]"
                     :value="old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0'"
                     xModel="useSinglePage"
-                    :columns="1"
-                    color="primary"
                 />
             </div>
 
