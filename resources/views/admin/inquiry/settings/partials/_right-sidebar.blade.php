@@ -41,6 +41,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
      }"
      :style="rightSidebarReady ? 'transition: transform 300ms ease-in-out' : ''">
 
+    {{-- Simple mode notice --}}
+    @if($isSimpleMode)
+        <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.simple_mode_notice')" textSize="text-xs" />
+    @endif
+
     {{-- Preview button --}}
     <div>
         <x-form-button
@@ -56,45 +61,50 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_page_help')" />
     </div>
 
-    {{-- Form settings section --}}
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_form_settings') }}
-        </h3>
+    {{-- Form settings section (hidden in simple mode) --}}
+    @if($isSimpleMode)
+        <input type="hidden" name="lang" value="auto">
+        <input type="hidden" name="name_order_western" value="0">
+    @else
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_form_settings') }}
+            </h3>
 
-        {{-- Language selector --}}
-        <div class="space-y-4">
-            <div>
-                <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
-                <x-form-select
-                    name="lang"
-                    :options="[
-                        'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
-                        'ja' => '日本語',
-                        'en' => 'English',
-                    ]"
-                    :value="old('lang', $settings->lang ?? 'auto')"
-                    xModel="selectedLocale"
-                />
-                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help')" />
-            </div>
+            {{-- Language selector --}}
+            <div class="space-y-4">
+                <div>
+                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
+                    <x-form-select
+                        name="lang"
+                        :options="[
+                            'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
+                            'ja' => '日本語',
+                            'en' => 'English',
+                        ]"
+                        :value="old('lang', $settings->lang ?? 'auto')"
+                        xModel="selectedLocale"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help')" />
+                </div>
 
-            {{-- Input format --}}
-            <div>
-                <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
-                <x-form-select
-                    name="name_order_western"
-                    :options="[
-                        '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
-                        '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
-                    ]"
-                    :value="old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0'"
-                    xModel="nameOrderWestern"
-                />
-                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                {{-- Input format --}}
+                <div>
+                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
+                    <x-form-select
+                        name="name_order_western"
+                        :options="[
+                            '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
+                            '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
+                        ]"
+                        :value="old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0'"
+                        xModel="nameOrderWestern"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     {{-- Field settings section --}}
     <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
@@ -105,13 +115,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.required_fields_note')" textSize="text-xs" />
 
         <div class="space-y-3">
-            {{-- Email confirmation paste prevention --}}
-            <x-form-toggle
-                name="email_confirm_paste_disabled"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.email_confirm_paste_disabled')"
-                :checked="old('email_confirm_paste_disabled', $settings->email_confirm_paste_disabled ?? true)"
-                xModel="emailConfirmPasteDisabled"
-            />
+            {{-- Email confirmation paste prevention (hidden in simple mode) --}}
+            @if($isSimpleMode)
+                <input type="hidden" name="email_confirm_paste_disabled" value="1">
+            @else
+                <x-form-toggle
+                    name="email_confirm_paste_disabled"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.email_confirm_paste_disabled')"
+                    :checked="old('email_confirm_paste_disabled', $settings->email_confirm_paste_disabled ?? true)"
+                    xModel="emailConfirmPasteDisabled"
+                />
+            @endif
 
             {{-- Katakana (Furigana) --}}
             <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
@@ -225,57 +239,63 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     </div>
 
-    {{-- Display settings section --}}
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_display_settings') }}
-        </h3>
+    {{-- Display settings section (hidden in simple mode) --}}
+    @if($isSimpleMode)
+        <input type="hidden" name="use_single_page" value="1">
+        <input type="hidden" name="inquiry_url_slug" value="{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}">
+        <input type="hidden" name="show_confirmation_page" value="1">
+    @else
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_display_settings') }}
+            </h3>
 
-        <div class="space-y-4">
-            <div>
-                <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_type')" />
-                <x-form-select
-                    name="use_single_page"
-                    :options="[
-                        '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page'),
-                        '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages'),
-                    ]"
-                    :value="old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0'"
-                    xModel="useSinglePage"
-                />
-            </div>
-
-            {{-- URL slug (when separate pages selected) --}}
-            <div x-show="useSinglePage === '0'" x-cloak>
-                <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url')" />
-                <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ url('/') }}/</span>
-                    <div class="flex-1">
-                        <input type="text"
-                               name="inquiry_url_slug"
-                               x-model="inquiryUrlSlug"
-                               placeholder="inquiry"
-                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
-                    </div>
+            <div class="space-y-4">
+                <div>
+                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_type')" />
+                    <x-form-select
+                        name="use_single_page"
+                        :options="[
+                            '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page'),
+                            '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages'),
+                        ]"
+                        :value="old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0'"
+                        xModel="useSinglePage"
+                    />
                 </div>
-                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url_slug_help')" />
-            </div>
 
-            {{-- Hidden field for URL slug when single page --}}
-            <div x-show="useSinglePage === '1'" x-cloak>
-                <input type="hidden" name="inquiry_url_slug" :value="inquiryUrlSlug">
-            </div>
+                {{-- URL slug (when separate pages selected) --}}
+                <div x-show="useSinglePage === '0'" x-cloak>
+                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url')" />
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ url('/') }}/</span>
+                        <div class="flex-1">
+                            <input type="text"
+                                   name="inquiry_url_slug"
+                                   x-model="inquiryUrlSlug"
+                                   placeholder="inquiry"
+                                   class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                        </div>
+                    </div>
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.inquiry_url_slug_help')" />
+                </div>
 
-            {{-- Confirmation page --}}
-            <x-form-toggle
-                name="show_confirmation_page"
-                :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation')"
-                :checked="old('show_confirmation_page', $settings->show_confirmation_page ?? true)"
-                xModel="showConfirmationPage"
-            />
-            <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation_help')" />
+                {{-- Hidden field for URL slug when single page --}}
+                <div x-show="useSinglePage === '1'" x-cloak>
+                    <input type="hidden" name="inquiry_url_slug" :value="inquiryUrlSlug">
+                </div>
+
+                {{-- Confirmation page --}}
+                <x-form-toggle
+                    name="show_confirmation_page"
+                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation')"
+                    :checked="old('show_confirmation_page', $settings->show_confirmation_page ?? true)"
+                    xModel="showConfirmationPage"
+                />
+                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation_help')" />
+            </div>
         </div>
-    </div>
+    @endif
 
     {{-- Privacy consent section --}}
     <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
@@ -320,48 +340,54 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     </div>
 
-    {{-- Throttle section --}}
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_throttle') }}
-        </h3>
+    {{-- Throttle section (hidden in simple mode) --}}
+    @if($isSimpleMode)
+        <input type="hidden" name="throttle_enabled" value="1">
+        <input type="hidden" name="throttle_max_attempts" value="3">
+        <input type="hidden" name="throttle_decay_minutes" value="5">
+    @else
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_throttle') }}
+            </h3>
 
-        <div class="space-y-4">
-            <div>
-                <x-form-toggle
-                    name="throttle_enabled"
-                    :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled')"
-                    :checked="old('throttle_enabled', $settings->throttle_enabled ?? true)"
-                    xModel="throttleEnabled"
-                />
-                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled_help')" />
-            </div>
-
-            <div :class="{ 'opacity-50 pointer-events-none': throttleEnabled === '0' }" class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
+            <div class="space-y-4">
                 <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_max_attempts')" />
-                    <input type="number"
-                           name="throttle_max_attempts"
-                           x-model="throttleMaxAttempts"
-                           :disabled="throttleEnabled === '0'"
-                           min="1"
-                           max="100"
-                           class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                    <x-form-toggle
+                        name="throttle_enabled"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled')"
+                        :checked="old('throttle_enabled', $settings->throttle_enabled ?? true)"
+                        xModel="throttleEnabled"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_enabled_help')" />
                 </div>
 
-                <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_decay_minutes')" />
-                    <input type="number"
-                           name="throttle_decay_minutes"
-                           x-model="throttleDecayMinutes"
-                           :disabled="throttleEnabled === '0'"
-                           min="1"
-                           max="1440"
-                           class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                <div :class="{ 'opacity-50 pointer-events-none': throttleEnabled === '0' }" class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
+                    <div>
+                        <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_max_attempts')" />
+                        <input type="number"
+                               name="throttle_max_attempts"
+                               x-model="throttleMaxAttempts"
+                               :disabled="throttleEnabled === '0'"
+                               min="1"
+                               max="100"
+                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                    </div>
+
+                    <div>
+                        <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_decay_minutes')" />
+                        <input type="number"
+                               name="throttle_decay_minutes"
+                               x-model="throttleDecayMinutes"
+                               :disabled="throttleEnabled === '0'"
+                               min="1"
+                               max="1440"
+                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
+                    </div>
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_help')" />
                 </div>
-                <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_help')" />
             </div>
         </div>
-    </div>
+    @endif
 
 </div>

@@ -45,7 +45,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <x-ui-message
             type="notice"
             icon="fas fa-shield-alt"
-            :message="__('dixlase-inquiry::admin/inquiry/settings/index.notice_captcha_disabled', ['url' => url('/admin/settings/security/captcha')])"
+            :message="__('dixlase-inquiry::admin/inquiry/settings/index.notice_captcha_disabled', ['url' => route('admin.settings.security.captcha')])"
         />
     @endif
 

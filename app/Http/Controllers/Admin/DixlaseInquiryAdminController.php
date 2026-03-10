@@ -190,10 +190,14 @@ class DixlaseInquiryAdminController extends Controller
             );
         }
 
+        // Determine admin mode (Simple=0, Advanced=1)
+        $isSimpleMode = (int) BaseSetting::getValue('admin_mode', 0) === 0;
+
         return view('dixlase-inquiry::admin.inquiry.settings.form-basic', array_merge($this->viewParams, [
             'settings' => $settings,
             'locales' => $locales,
             'formTranslations' => $formTranslations,
+            'isSimpleMode' => $isSimpleMode,
         ]));
     }
 
