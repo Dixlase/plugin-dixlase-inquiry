@@ -98,6 +98,9 @@ return [
     'throttle_decay_minutes' => 'Time Period (minutes)',
     'throttle_help' => 'Example: Allow up to 3 submissions within 5 minutes from the same IP address.',
 
+    // Simple mode
+    'simple_mode_notice' => 'Some settings are automatically configured in Simple mode. Switch to Advanced mode to customize all settings.',
+
     // Sidebar
     'sidebar_open' => 'Open settings sidebar',
     'sidebar_close' => 'Close settings sidebar',
