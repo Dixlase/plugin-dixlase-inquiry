@@ -241,7 +241,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 variant="secondary"
                 :label="__('dixlase-inquiry::front.buttons.back')"
                 icon="fas fa-arrow-left"
-                onclick="history.back()"
+                xClick="history.back()"
             />
         </div>
                         </div>

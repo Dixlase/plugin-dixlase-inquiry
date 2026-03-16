@@ -124,6 +124,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 {{ __('dixlase-inquiry::front.form.email_confirmation') }}
                 <x-form-required-badge />
             </legend>
+            @if($settings->email_confirm_paste_disabled ?? true)
+            <div x-data x-on:paste.prevent>
+            @endif
             <x-form-text
                 type="email"
                 name="email_confirmation"
@@ -131,8 +134,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 :required="true"
                 :placeholder="__('dixlase-inquiry::front.form.email_confirmation_placeholder')"
                 autocomplete="off"
-                :onpaste="($settings->email_confirm_paste_disabled ?? true) ? 'return false;' : null"
             />
+            @if($settings->email_confirm_paste_disabled ?? true)
+            </div>
+            @endif
             <x-form-help-text :text="__('dixlase-inquiry::front.form.email_confirmation_help')" />
         </fieldset>
 
