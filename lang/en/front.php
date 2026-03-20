@@ -89,6 +89,7 @@ return [
         'gender_prefer_not_to_say' => 'Prefer not to say',
         'success_message' => 'Thank you for your inquiry. We will review your message and get back to you soon.',
         'privacy_consent' => 'I agree to the <a href=":url" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">Privacy Policy</a>.',
+        'privacy_consent_default' => 'I agree to the Privacy Policy.',
     ],
 
     'placeholders' => [

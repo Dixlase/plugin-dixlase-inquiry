@@ -273,6 +273,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <textarea disabled rows="6" class="input-common my-2 w-full opacity-60"></textarea>
     </fieldset>
 
+    {{-- プライバシー同意 --}}
+    <div x-show="privacyConsentEnabled === '1'">
+        <fieldset class="mt-6">
+            <label class="flex items-start gap-2 cursor-not-allowed opacity-60">
+                <input type="checkbox" disabled
+                       class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
+                <span class="text-sm text-gray-700 dark:text-gray-300"
+                      x-text="privacyConsentText || getLabel('privacy_consent_default')"></span>
+            </label>
+        </fieldset>
+    </div>
+
     {{-- 送信ボタン --}}
     <div class="flex justify-center mt-6">
         <x-form-button type="button" variant="primary" size="lg" :disabled="true" class="opacity-60 cursor-not-allowed" icon="fas fa-paper-plane">
