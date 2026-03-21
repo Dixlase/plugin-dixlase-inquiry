@@ -276,12 +276,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     {{-- プライバシー同意 --}}
     <div x-show="privacyConsentEnabled === '1'">
         <fieldset class="mt-6">
-            <label class="flex items-start gap-2 cursor-not-allowed opacity-60">
-                <input type="checkbox" disabled
-                       class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300"
-                      x-text="privacyConsentText || getLabel('privacy_consent_default')"></span>
-            </label>
+            <div class="flex items-center space-x-3 my-3 opacity-60">
+                <label class="relative inline-flex items-center cursor-not-allowed">
+                    <input type="checkbox" disabled class="sr-only peer">
+                    <div class="w-11 h-6 rounded-full bg-gray-200 dark:bg-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500"></div>
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
+                </label>
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    <template x-if="privacyPolicyUrl">
+                        <span>
+                            <span x-text="(privacyConsentText || getLabel('privacy_consent_default')).split(getLabel('privacy_policy_label'))[0]"></span>
+                            <a :href="privacyPolicyUrl" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400" x-text="getLabel('privacy_policy_label')"></a>
+                            <span x-text="(privacyConsentText || getLabel('privacy_consent_default')).split(getLabel('privacy_policy_label'))[1]"></span>
+                        </span>
+                    </template>
+                    <template x-if="!privacyPolicyUrl">
+                        <span x-text="privacyConsentText || getLabel('privacy_consent_default')"></span>
+                    </template>
+                </span>
+            </div>
         </fieldset>
     </div>
 

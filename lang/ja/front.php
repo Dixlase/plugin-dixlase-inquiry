@@ -90,6 +90,7 @@ return [
         'success_message' => 'お問い合わせありがとうございました。内容を確認の上、担当者よりご連絡させていただきます。',
         'privacy_consent' => '<a href=":url" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">プライバシーポリシー</a>に同意します。',
         'privacy_consent_default' => 'プライバシーポリシーに同意します。',
+        'privacy_policy_label' => 'プライバシーポリシー',
     ],
 
     'prefectures' => [
