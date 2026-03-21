@@ -411,10 +411,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
                     </label>
                     <span class="text-sm text-gray-700 dark:text-gray-300">
-                        @if(!empty($privacyUrl))
-                            {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
+                        @if(!empty($settings->privacy_consent_text))
+                            @if(!empty($privacyUrl))
+                                <a href="{{ $privacyUrl }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">{{ $settings->privacy_consent_text }}</a>
+                            @else
+                                {{ $settings->privacy_consent_text }}
+                            @endif
                         @else
-                            {{ __('dixlase-inquiry::front.form.privacy_consent_default') }}
+                            @if(!empty($privacyUrl))
+                                {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
+                            @else
+                                {{ __('dixlase-inquiry::front.form.privacy_consent_default') }}
+                            @endif
                         @endif
                     </span>
                 </div>
