@@ -283,15 +283,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
                 </label>
                 <span class="text-sm text-gray-700 dark:text-gray-300">
-                    <template x-if="privacyPolicyUrl">
+                    {{-- Custom text with URL: entire text linked --}}
+                    <template x-if="privacyConsentText && privacyPolicyUrl">
+                        <a :href="privacyPolicyUrl" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400" x-text="privacyConsentText"></a>
+                    </template>
+                    {{-- Custom text without URL: plain text --}}
+                    <template x-if="privacyConsentText && !privacyPolicyUrl">
+                        <span x-text="privacyConsentText"></span>
+                    </template>
+                    {{-- Default text with URL: "Privacy Policy" part linked --}}
+                    <template x-if="!privacyConsentText && privacyPolicyUrl">
                         <span>
-                            <span x-text="(privacyConsentText || getLabel('privacy_consent_default')).split(getLabel('privacy_policy_label'))[0]"></span>
+                            <span x-text="getLabel('privacy_consent_default').split(getLabel('privacy_policy_label'))[0]"></span>
                             <a :href="privacyPolicyUrl" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400" x-text="getLabel('privacy_policy_label')"></a>
-                            <span x-text="(privacyConsentText || getLabel('privacy_consent_default')).split(getLabel('privacy_policy_label'))[1]"></span>
+                            <span x-text="getLabel('privacy_consent_default').split(getLabel('privacy_policy_label'))[1]"></span>
                         </span>
                     </template>
-                    <template x-if="!privacyPolicyUrl">
-                        <span x-text="privacyConsentText || getLabel('privacy_consent_default')"></span>
+                    {{-- Default text without URL: plain text --}}
+                    <template x-if="!privacyConsentText && !privacyPolicyUrl">
+                        <span x-text="getLabel('privacy_consent_default')"></span>
                     </template>
                 </span>
             </div>
