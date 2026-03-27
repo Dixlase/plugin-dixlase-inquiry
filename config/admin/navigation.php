@@ -23,6 +23,7 @@
 return [
     // 問い合わせ管理
     'inquiry' => [
+        '_insert_before' => 'profile',
         'text' => 'dixlase-inquiry::admin/navigation.inquiry',
         'icon' => 'fas fa-fw fa-envelope',
         'can' => 'admin',
