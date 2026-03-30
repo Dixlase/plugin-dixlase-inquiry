@@ -127,36 +127,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             required: true, order: $order++,
         );
 
-        // Subject (conditional)
-        if ($bool('show_subject')) {
-            $fields[] = new PreviewFieldDTO(
-                name: 'subject', type: 'text',
-                label: __('dixlase-inquiry::front.form.subject'),
-                required: $bool('subject_required'), order: $order++,
-            );
-        }
-
-        // Gender (conditional)
-        if ($bool('show_gender')) {
-            $genderOptions = [
-                'male' => __('dixlase-inquiry::front.form.gender_male'),
-                'female' => __('dixlase-inquiry::front.form.gender_female'),
-            ];
-            if ($bool('show_gender_other')) {
-                $genderOptions['other'] = __('dixlase-inquiry::front.form.gender_other');
-            }
-            if ($bool('show_gender_prefer_not_to_say')) {
-                $genderOptions['prefer_not_to_say'] = __('dixlase-inquiry::front.form.gender_prefer_not_to_say');
-            }
-            $fields[] = new PreviewFieldDTO(
-                name: 'gender', type: 'radio_card',
-                label: __('dixlase-inquiry::front.form.gender'),
-                required: $bool('gender_required'), order: $order++,
-                options: $genderOptions,
-            );
-        }
-
-        // Postal code (conditional)
+        // Postal code (conditional) — before address, matching actual form order
         if ($bool('show_postal_code', true)) {
             $fields[] = new PreviewFieldDTO(
                 name: 'postal_code_1', type: 'text',
@@ -238,6 +209,35 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
                 );
             }
             $order++;
+        }
+
+        // Gender (conditional)
+        if ($bool('show_gender')) {
+            $genderOptions = [
+                'male' => __('dixlase-inquiry::front.form.gender_male'),
+                'female' => __('dixlase-inquiry::front.form.gender_female'),
+            ];
+            if ($bool('show_gender_other')) {
+                $genderOptions['other'] = __('dixlase-inquiry::front.form.gender_other');
+            }
+            if ($bool('show_gender_prefer_not_to_say')) {
+                $genderOptions['prefer_not_to_say'] = __('dixlase-inquiry::front.form.gender_prefer_not_to_say');
+            }
+            $fields[] = new PreviewFieldDTO(
+                name: 'gender', type: 'radio_card',
+                label: __('dixlase-inquiry::front.form.gender'),
+                required: $bool('gender_required'), order: $order++,
+                options: $genderOptions,
+            );
+        }
+
+        // Subject (conditional)
+        if ($bool('show_subject')) {
+            $fields[] = new PreviewFieldDTO(
+                name: 'subject', type: 'text',
+                label: __('dixlase-inquiry::front.form.subject'),
+                required: $bool('subject_required'), order: $order++,
+            );
         }
 
         // Message
