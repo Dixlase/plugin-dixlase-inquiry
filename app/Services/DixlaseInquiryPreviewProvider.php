@@ -78,111 +78,173 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
 
         $fields = [];
         $order = 0;
+        $bool = fn ($key, $default = false) => filter_var($settings->$key ?? $default, FILTER_VALIDATE_BOOLEAN);
+        $nameWestern = $bool('name_order_western');
 
         // Name fields (order depends on locale setting)
-        $nameWestern = filter_var($settings->name_order_western ?? false, FILTER_VALIDATE_BOOLEAN);
         $firstField = new PreviewFieldDTO(
-            name: 'first_name',
-            type: 'text',
+            name: 'first_name', type: 'text',
             label: __('dixlase-inquiry::front.form.first_name'),
-            required: true,
-            placeholder: __('dixlase-inquiry::front.form.first_name_placeholder'),
-            group: 'name',
-            order: $order,
+            required: true, group: 'name', order: $order,
         );
         $lastField = new PreviewFieldDTO(
-            name: 'last_name',
-            type: 'text',
+            name: 'last_name', type: 'text',
             label: __('dixlase-inquiry::front.form.last_name'),
-            required: true,
-            placeholder: __('dixlase-inquiry::front.form.last_name_placeholder'),
-            group: 'name',
-            order: $order,
+            required: true, group: 'name', order: $order,
         );
-        if ($nameWestern) {
-            $fields[] = $firstField;
-            $fields[] = $lastField;
-        } else {
-            $fields[] = $lastField;
-            $fields[] = $firstField;
-        }
+        $fields = $nameWestern ? [$firstField, $lastField] : [$lastField, $firstField];
         $order++;
 
         // Kana fields (conditional)
-        if (filter_var($settings->show_kana ?? false, FILTER_VALIDATE_BOOLEAN)) {
-            $fields[] = new PreviewFieldDTO(
-                name: 'last_name_kana',
-                type: 'text',
+        if ($bool('show_kana')) {
+            $kanaRequired = $bool('require_kana');
+            $kanaLast = new PreviewFieldDTO(
+                name: 'last_name_kana', type: 'text',
                 label: __('dixlase-inquiry::front.form.last_name').'（カナ）',
-                required: false,
-                group: 'kana',
-                order: $order,
+                required: $kanaRequired, group: 'kana', order: $order,
             );
-            $fields[] = new PreviewFieldDTO(
-                name: 'first_name_kana',
-                type: 'text',
+            $kanaFirst = new PreviewFieldDTO(
+                name: 'first_name_kana', type: 'text',
                 label: __('dixlase-inquiry::front.form.first_name').'（カナ）',
-                required: false,
-                group: 'kana',
-                order: $order,
+                required: $kanaRequired, group: 'kana', order: $order,
             );
+            $fields[] = $nameWestern ? $kanaFirst : $kanaLast;
+            $fields[] = $nameWestern ? $kanaLast : $kanaFirst;
             $order++;
         }
 
         // Email
         $fields[] = new PreviewFieldDTO(
-            name: 'email',
-            type: 'email',
+            name: 'email', type: 'email',
             label: __('dixlase-inquiry::front.form.email'),
-            required: true,
-            placeholder: __('dixlase-inquiry::front.form.email_placeholder'),
-            order: $order++,
+            required: true, order: $order++,
+        );
+
+        // Email confirmation
+        $fields[] = new PreviewFieldDTO(
+            name: 'email_confirmation', type: 'email',
+            label: __('dixlase-inquiry::front.form.email_confirmation'),
+            required: true, order: $order++,
         );
 
         // Subject (conditional)
-        if (filter_var($settings->show_subject ?? false, FILTER_VALIDATE_BOOLEAN)) {
+        if ($bool('show_subject')) {
             $fields[] = new PreviewFieldDTO(
-                name: 'subject',
-                type: 'text',
+                name: 'subject', type: 'text',
                 label: __('dixlase-inquiry::front.form.subject'),
-                required: filter_var($settings->subject_required ?? false, FILTER_VALIDATE_BOOLEAN),
-                placeholder: __('dixlase-inquiry::front.form.subject_placeholder'),
-                order: $order++,
+                required: $bool('subject_required'), order: $order++,
             );
         }
 
-        // Phone (conditional)
-        if (filter_var($settings->show_phone ?? true, FILTER_VALIDATE_BOOLEAN)) {
+        // Gender (conditional)
+        if ($bool('show_gender')) {
+            $genderOptions = [
+                'male' => __('dixlase-inquiry::front.form.gender_male'),
+                'female' => __('dixlase-inquiry::front.form.gender_female'),
+            ];
+            if ($bool('show_gender_other')) {
+                $genderOptions['other'] = __('dixlase-inquiry::front.form.gender_other');
+            }
+            if ($bool('show_gender_prefer_not_to_say')) {
+                $genderOptions['prefer_not_to_say'] = __('dixlase-inquiry::front.form.gender_prefer_not_to_say');
+            }
             $fields[] = new PreviewFieldDTO(
-                name: 'phone',
-                type: 'tel',
-                label: __('dixlase-inquiry::front.form.phone'),
-                required: filter_var($settings->phone_required ?? false, FILTER_VALIDATE_BOOLEAN),
-                placeholder: __('dixlase-inquiry::front.form.phone_placeholder'),
-                order: $order++,
+                name: 'gender', type: 'radio_card',
+                label: __('dixlase-inquiry::front.form.gender'),
+                required: $bool('gender_required'), order: $order++,
+                options: $genderOptions,
             );
         }
 
-        // Address (conditional)
-        if (filter_var($settings->show_address ?? false, FILTER_VALIDATE_BOOLEAN)) {
+        // Postal code (conditional)
+        if ($bool('show_postal_code', true)) {
             $fields[] = new PreviewFieldDTO(
-                name: 'address',
-                type: 'text',
-                label: __('dixlase-inquiry::front.form.address'),
-                required: filter_var($settings->address_required ?? false, FILTER_VALIDATE_BOOLEAN),
-                placeholder: __('dixlase-inquiry::front.form.address_placeholder'),
-                order: $order++,
+                name: 'postal_code_1', type: 'text',
+                label: __('dixlase-inquiry::front.form.postal_code'),
+                required: $bool('postal_code_required'), group: 'postal_code', order: $order,
+                meta: ['width' => 'narrow'],
             );
+            $fields[] = new PreviewFieldDTO(
+                name: 'postal_code_2', type: 'text',
+                label: '-', required: $bool('postal_code_required'),
+                group: 'postal_code', order: $order,
+                meta: ['width' => 'narrow'],
+            );
+            $order++;
+        }
+
+        // Address (conditional - Japanese style with separate fields)
+        if ($bool('show_address', true)) {
+            $addrRequired = $bool('address_required');
+            if (! $nameWestern) {
+                // Japanese address format: prefecture, city, street, building
+                $fields[] = new PreviewFieldDTO(
+                    name: 'prefecture', type: 'select',
+                    label: __('dixlase-inquiry::front.form.prefecture'),
+                    required: $addrRequired, order: $order++,
+                );
+                $fields[] = new PreviewFieldDTO(
+                    name: 'city', type: 'text',
+                    label: __('dixlase-inquiry::front.form.city'),
+                    required: $addrRequired, order: $order++,
+                );
+                $fields[] = new PreviewFieldDTO(
+                    name: 'street_address', type: 'text',
+                    label: __('dixlase-inquiry::front.form.street_address'),
+                    required: $addrRequired, order: $order++,
+                );
+                $fields[] = new PreviewFieldDTO(
+                    name: 'building', type: 'text',
+                    label: __('dixlase-inquiry::front.form.building'),
+                    required: false, order: $order++,
+                );
+            } else {
+                // Western address format: single address line
+                $fields[] = new PreviewFieldDTO(
+                    name: 'address', type: 'text',
+                    label: __('dixlase-inquiry::front.form.address'),
+                    required: $addrRequired, order: $order++,
+                );
+            }
+        }
+
+        // Phone (conditional - Japanese style with 3 split fields)
+        if ($bool('show_phone', true)) {
+            $phoneRequired = $bool('phone_required');
+            if (! $nameWestern) {
+                $fields[] = new PreviewFieldDTO(
+                    name: 'phone_1', type: 'tel',
+                    label: __('dixlase-inquiry::front.form.phone'),
+                    required: $phoneRequired, group: 'phone', order: $order,
+                    meta: ['width' => 'narrow'],
+                );
+                $fields[] = new PreviewFieldDTO(
+                    name: 'phone_2', type: 'tel',
+                    label: '-', required: $phoneRequired,
+                    group: 'phone', order: $order,
+                    meta: ['width' => 'narrow'],
+                );
+                $fields[] = new PreviewFieldDTO(
+                    name: 'phone_3', type: 'tel',
+                    label: '-', required: $phoneRequired,
+                    group: 'phone', order: $order,
+                    meta: ['width' => 'narrow'],
+                );
+            } else {
+                $fields[] = new PreviewFieldDTO(
+                    name: 'phone', type: 'tel',
+                    label: __('dixlase-inquiry::front.form.phone'),
+                    required: $phoneRequired, order: $order,
+                );
+            }
+            $order++;
         }
 
         // Message
         $fields[] = new PreviewFieldDTO(
-            name: 'message',
-            type: 'textarea',
+            name: 'message', type: 'textarea',
             label: __('dixlase-inquiry::front.form.message'),
-            required: true,
-            placeholder: __('dixlase-inquiry::front.form.message_placeholder'),
-            order: $order++,
+            required: true, order: $order++,
             meta: ['rows' => 6],
         );
 
