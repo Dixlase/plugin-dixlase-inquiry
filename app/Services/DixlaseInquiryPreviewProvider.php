@@ -144,8 +144,9 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             $order++;
         }
 
-        // Address (conditional - Japanese style with separate fields)
-        if ($bool('show_address', true)) {
+        // Address (conditional - linked to postal code toggle in settings UI)
+        $showAddress = $bool('show_address') || $bool('show_postal_code', true);
+        if ($showAddress) {
             $addrRequired = $bool('address_required');
             if (! $nameWestern) {
                 // Japanese address format: prefecture, city, street, building
