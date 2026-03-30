@@ -22,7 +22,6 @@
 
 return [
     'plugin' => [
-        'name' => 'Dixlase Contact Form',
         'description' => 'Adds comprehensive contact form functionality to your website. Features customizable form fields, auto-reply, admin notifications, reCAPTCHA support, and more.',
     ],
 
