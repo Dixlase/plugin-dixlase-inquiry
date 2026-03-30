@@ -240,7 +240,7 @@ return [
 - **Tailwind CSS**: スタイリングに使用
 - **Font Awesome**: アイコンに使用
 
-これらはDixlaseDefaultThemeに含まれています。
+これらはDixlaseOnePageに含まれています。
 
 ## トラブルシューティング
 
