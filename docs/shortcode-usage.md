@@ -64,7 +64,7 @@ DixlaseInquiryプラグインは `[inquiry]` ショートコードを提供し�
 フロントページの編集可能コンテンツ内でも使用できます。
 
 ```blade
-{{-- themes/DixlaseDefaultTheme/resources/views/index.blade.php --}}
+{{-- themes/DixlaseOnePage/resources/views/index.blade.php --}}
 {!! shortcode_parse($frontPageContent) !!}
 ```
 

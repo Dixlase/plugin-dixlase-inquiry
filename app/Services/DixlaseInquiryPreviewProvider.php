@@ -80,16 +80,20 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         $order = 0;
         $bool = fn ($key, $default = false) => filter_var($settings->$key ?? $default, FILTER_VALIDATE_BOOLEAN);
         $nameWestern = $bool('name_order_western');
+        $locale = $this->resolveLocale($settings->lang ?? 'auto');
+
+        /** @var \Closure(string, array<string, string>): string $t ロケール指定付き翻訳ヘルパー */
+        $t = fn (string $key, array $replace = []): string => __($key, $replace, $locale);
 
         // Name fields (order depends on locale setting)
         $firstField = new PreviewFieldDTO(
             name: 'first_name', type: 'text',
-            label: __('dixlase-inquiry::front.form.first_name'),
+            label: $t('dixlase-inquiry::front.form.first_name'),
             required: true, group: 'name', order: $order,
         );
         $lastField = new PreviewFieldDTO(
             name: 'last_name', type: 'text',
-            label: __('dixlase-inquiry::front.form.last_name'),
+            label: $t('dixlase-inquiry::front.form.last_name'),
             required: true, group: 'name', order: $order,
         );
         $fields = $nameWestern ? [$firstField, $lastField] : [$lastField, $firstField];
@@ -100,12 +104,12 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             $kanaRequired = $bool('require_kana');
             $kanaLast = new PreviewFieldDTO(
                 name: 'last_name_kana', type: 'text',
-                label: __('dixlase-inquiry::front.form.last_name').'（カナ）',
+                label: $t('dixlase-inquiry::front.form.last_name').'（カナ）',
                 required: $kanaRequired, group: 'kana', order: $order,
             );
             $kanaFirst = new PreviewFieldDTO(
                 name: 'first_name_kana', type: 'text',
-                label: __('dixlase-inquiry::front.form.first_name').'（カナ）',
+                label: $t('dixlase-inquiry::front.form.first_name').'（カナ）',
                 required: $kanaRequired, group: 'kana', order: $order,
             );
             $fields[] = $nameWestern ? $kanaFirst : $kanaLast;
@@ -116,14 +120,14 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         // Email
         $fields[] = new PreviewFieldDTO(
             name: 'email', type: 'email',
-            label: __('dixlase-inquiry::front.form.email'),
+            label: $t('dixlase-inquiry::front.form.email'),
             required: true, order: $order++,
         );
 
         // Email confirmation
         $fields[] = new PreviewFieldDTO(
             name: 'email_confirmation', type: 'email',
-            label: __('dixlase-inquiry::front.form.email_confirmation'),
+            label: $t('dixlase-inquiry::front.form.email_confirmation'),
             required: true, order: $order++,
         );
 
@@ -131,7 +135,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         if ($bool('show_postal_code', true)) {
             $fields[] = new PreviewFieldDTO(
                 name: 'postal_code_1', type: 'text',
-                label: __('dixlase-inquiry::front.form.postal_code'),
+                label: $t('dixlase-inquiry::front.form.postal_code'),
                 required: $bool('postal_code_required'), group: 'postal_code', order: $order,
                 meta: ['width' => 'narrow'],
             );
@@ -152,29 +156,29 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
                 // Japanese address format: prefecture, city, street, building
                 $fields[] = new PreviewFieldDTO(
                     name: 'prefecture', type: 'select',
-                    label: __('dixlase-inquiry::front.form.prefecture'),
+                    label: $t('dixlase-inquiry::front.form.prefecture'),
                     required: $addrRequired, order: $order++,
                 );
                 $fields[] = new PreviewFieldDTO(
                     name: 'city', type: 'text',
-                    label: __('dixlase-inquiry::front.form.city'),
+                    label: $t('dixlase-inquiry::front.form.city'),
                     required: $addrRequired, order: $order++,
                 );
                 $fields[] = new PreviewFieldDTO(
                     name: 'street_address', type: 'text',
-                    label: __('dixlase-inquiry::front.form.street_address'),
+                    label: $t('dixlase-inquiry::front.form.street_address'),
                     required: $addrRequired, order: $order++,
                 );
                 $fields[] = new PreviewFieldDTO(
                     name: 'building', type: 'text',
-                    label: __('dixlase-inquiry::front.form.building'),
+                    label: $t('dixlase-inquiry::front.form.building'),
                     required: false, order: $order++,
                 );
             } else {
                 // Western address format: single address line
                 $fields[] = new PreviewFieldDTO(
                     name: 'address', type: 'text',
-                    label: __('dixlase-inquiry::front.form.address'),
+                    label: $t('dixlase-inquiry::front.form.address'),
                     required: $addrRequired, order: $order++,
                 );
             }
@@ -186,7 +190,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             if (! $nameWestern) {
                 $fields[] = new PreviewFieldDTO(
                     name: 'phone_1', type: 'tel',
-                    label: __('dixlase-inquiry::front.form.phone'),
+                    label: $t('dixlase-inquiry::front.form.phone'),
                     required: $phoneRequired, group: 'phone', order: $order,
                     meta: ['width' => 'narrow'],
                 );
@@ -205,7 +209,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             } else {
                 $fields[] = new PreviewFieldDTO(
                     name: 'phone', type: 'tel',
-                    label: __('dixlase-inquiry::front.form.phone'),
+                    label: $t('dixlase-inquiry::front.form.phone'),
                     required: $phoneRequired, order: $order,
                 );
             }
@@ -215,18 +219,18 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         // Gender (conditional)
         if ($bool('show_gender')) {
             $genderOptions = [
-                'male' => __('dixlase-inquiry::front.form.gender_male'),
-                'female' => __('dixlase-inquiry::front.form.gender_female'),
+                'male' => $t('dixlase-inquiry::front.form.gender_male'),
+                'female' => $t('dixlase-inquiry::front.form.gender_female'),
             ];
             if ($bool('show_gender_other')) {
-                $genderOptions['other'] = __('dixlase-inquiry::front.form.gender_other');
+                $genderOptions['other'] = $t('dixlase-inquiry::front.form.gender_other');
             }
             if ($bool('show_gender_prefer_not_to_say')) {
-                $genderOptions['prefer_not_to_say'] = __('dixlase-inquiry::front.form.gender_prefer_not_to_say');
+                $genderOptions['prefer_not_to_say'] = $t('dixlase-inquiry::front.form.gender_prefer_not_to_say');
             }
             $fields[] = new PreviewFieldDTO(
                 name: 'gender', type: 'radio_card',
-                label: __('dixlase-inquiry::front.form.gender'),
+                label: $t('dixlase-inquiry::front.form.gender'),
                 required: $bool('gender_required'), order: $order++,
                 options: $genderOptions,
             );
@@ -236,7 +240,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         if ($bool('show_subject')) {
             $fields[] = new PreviewFieldDTO(
                 name: 'subject', type: 'text',
-                label: __('dixlase-inquiry::front.form.subject'),
+                label: $t('dixlase-inquiry::front.form.subject'),
                 required: $bool('subject_required'), order: $order++,
             );
         }
@@ -244,27 +248,60 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         // Message
         $fields[] = new PreviewFieldDTO(
             name: 'message', type: 'textarea',
-            label: __('dixlase-inquiry::front.form.message'),
+            label: $t('dixlase-inquiry::front.form.message'),
             required: true, order: $order++,
             meta: ['rows' => 6],
         );
+
+        // Privacy consent checkbox (conditional)
+        if ($bool('privacy_consent_enabled')) {
+            $privacyUrl = $settings->privacy_policy_url ?? '';
+            $customText = $settings->privacy_consent_text ?? '';
+            $consentLabel = $customText ?: (
+                $privacyUrl
+                    ? $t('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl])
+                    : $t('dixlase-inquiry::front.form.privacy_consent_default')
+            );
+
+            $fields[] = new PreviewFieldDTO(
+                name: 'privacy_agreed', type: 'checkbox',
+                label: $consentLabel,
+                required: true, order: $order++,
+                meta: [
+                    'privacy_policy_url' => $privacyUrl,
+                    'custom_text' => $customText,
+                ],
+            );
+        }
 
         $showConfirmation = filter_var($settings->show_confirmation_page ?? true, FILTER_VALIDATE_BOOLEAN);
 
         return new PreviewDTO(
             key: 'inquiry_form',
             type: PreviewProviderInterface::TYPE_FORM,
-            title: __('dixlase-inquiry::front.form.heading'),
+            title: $t('dixlase-inquiry::front.form.heading'),
             source: 'dixlase-inquiry',
             fields: $fields,
             submitLabel: $showConfirmation
-                ? __('dixlase-inquiry::front.buttons.confirm')
-                : __('dixlase-inquiry::front.form.submit'),
+                ? $t('dixlase-inquiry::front.buttons.confirm')
+                : $t('dixlase-inquiry::front.form.submit'),
             submitIcon: 'fas fa-paper-plane',
             meta: [
                 'name_order_western' => $nameWestern,
                 'show_confirmation_page' => $showConfirmation,
             ],
         );
+    }
+
+    /**
+     * lang設定値からロケールを解決する
+     */
+    private function resolveLocale(string $lang): string
+    {
+        if ($lang === 'auto' || $lang === '') {
+            return app()->getLocale();
+        }
+
+        return $lang;
     }
 }
