@@ -118,18 +118,28 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
     };
 }
 
-// Alpine.data() でコンポーネントを登録（CSP厳格モード対応）
-// このスクリプトは Alpine.start() 後に読み込まれるため、
-// 既存DOM要素を Alpine.initTree() で遅延初期化する
-if (typeof window !== 'undefined' && window.Alpine) {
+/**
+ * Alpineにコンポーネントを登録し、必要に応じて既存DOM要素を初期化する
+ */
+function registerComponent() {
     window.Alpine.data('inquiryEmbedForm', (showConfirmationPage = true, nameOrderWestern = false) =>
         createInquiryEmbedForm(showConfirmationPage, nameOrderWestern)
     );
 
-    // Alpine.start() 後に読み込まれた場合、既存のDOM要素を初期化
+    // Alpine.start() 後に読み込まれた場合、既存のDOM要素を遅延初期化する
     document.querySelectorAll('[x-data*="inquiryEmbedForm"]').forEach(el => {
         if (!el._x_dataStack) {
             window.Alpine.initTree(el);
         }
     });
+}
+
+// Alpine.data() でコンポーネントを登録（CSP厳格モード対応）
+// Alpine が既にロード済みの場合は即座に登録、未ロードの場合は alpine:init イベントで登録
+if (typeof window !== 'undefined') {
+    if (window.Alpine) {
+        registerComponent();
+    } else {
+        document.addEventListener('alpine:init', registerComponent);
+    }
 }
