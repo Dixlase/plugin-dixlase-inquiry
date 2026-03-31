@@ -217,8 +217,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </div>
             @endif
 
-            {{-- 4. 住所 --}}
-            @if($settings->show_address ?? false)
+            {{-- 4. 住所（郵便番号と連動） --}}
+            @if(($settings->show_address ?? false) || ($settings->show_postal_code ?? false))
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.address') }}
