@@ -44,7 +44,6 @@ class SettingsConfigTest extends TestCase
             'address_required',
             'show_subject',
             'subject_required',
-            'show_postal_code',
             'postal_code_required',
             'show_gender',
             'gender_required',
@@ -82,7 +81,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_inquiry_config_file_has_correct_structure(): void
     {
-        $config = require __DIR__ . '/../../config/inquiry.php';
+        $config = require __DIR__.'/../../config/inquiry.php';
 
         $this->assertIsArray($config);
         $this->assertArrayHasKey('locales', $config);
@@ -96,7 +95,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_seeder_uses_correct_model_class(): void
     {
-        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringContainsString(
             'use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;',
@@ -113,7 +112,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_seeder_references_individual_translation_files(): void
     {
-        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringContainsString('admin-notification.php', $seederFile);
         $this->assertStringContainsString('auto-reply.php', $seederFile);
@@ -126,7 +125,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_seeder_includes_lang(): void
     {
-        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringContainsString("'lang'", $seederFile);
     }
@@ -136,7 +135,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_seeder_includes_completion_settings(): void
     {
-        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringContainsString("'completion_title'", $seederFile);
         $this->assertStringContainsString("'completion_message'", $seederFile);
@@ -148,7 +147,7 @@ class SettingsConfigTest extends TestCase
     public function test_completion_translation_files_have_default_values(): void
     {
         foreach (['ja', 'en'] as $locale) {
-            $file = __DIR__ . "/../../lang/{$locale}/admin/inquiry/settings/completion.php";
+            $file = __DIR__."/../../lang/{$locale}/admin/inquiry/settings/completion.php";
             $this->assertFileExists($file, "Missing completion translation: {$locale}");
 
             $translations = require $file;
@@ -164,7 +163,7 @@ class SettingsConfigTest extends TestCase
      */
     public function test_seeder_does_not_include_use_recaptcha(): void
     {
-        $seederFile = file_get_contents(__DIR__ . '/../../database/seeders/InquirySettingsSeeder.php');
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
 
         $this->assertStringNotContainsString("'use_recaptcha'", $seederFile);
     }

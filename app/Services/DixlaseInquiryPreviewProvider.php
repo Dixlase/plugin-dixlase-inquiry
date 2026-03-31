@@ -131,8 +131,8 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             required: true, order: $order++,
         );
 
-        // Postal code (conditional) — before address, matching actual form order
-        if ($bool('show_postal_code', true)) {
+        // Postal code (conditional) — controlled by show_address
+        if ($bool('show_address')) {
             $fields[] = new PreviewFieldDTO(
                 name: 'postal_code_1', type: 'text',
                 label: $t('dixlase-inquiry::front.form.postal_code'),
@@ -148,9 +148,8 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
             $order++;
         }
 
-        // Address (conditional - linked to postal code toggle in settings UI)
-        $showAddress = $bool('show_address') || $bool('show_postal_code', true);
-        if ($showAddress) {
+        // Address (conditional)
+        if ($bool('show_address')) {
             $addrRequired = $bool('address_required');
             if (! $nameWestern) {
                 // Japanese address format: prefecture, city, street, building

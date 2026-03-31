@@ -186,7 +186,6 @@ class PrepareInquiryDataTest extends TestCase
         $settings = (object) [
             'name_order_western' => false,
             'show_kana' => true,
-            'show_postal_code' => false,
             'show_address' => false,
             'show_phone' => false,
             'show_gender' => false,
@@ -217,7 +216,6 @@ class PrepareInquiryDataTest extends TestCase
         $settings = (object) [
             'name_order_western' => true,
             'show_kana' => true,
-            'show_postal_code' => false,
             'show_address' => false,
             'show_phone' => false,
             'show_gender' => false,
@@ -246,7 +244,6 @@ class PrepareInquiryDataTest extends TestCase
         $settings = (object) [
             'name_order_western' => false,
             'show_kana' => false,
-            'show_postal_code' => false,
             'show_address' => false,
             'show_phone' => false,
             'show_gender' => false,
@@ -269,6 +266,6 @@ class PrepareInquiryDataTest extends TestCase
      */
     private function createController(): object
     {
-        return new \Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController();
+        return new \Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController;
     }
 }

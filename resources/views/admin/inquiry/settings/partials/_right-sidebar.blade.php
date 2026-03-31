@@ -167,22 +167,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
             {{-- Postal code & Address --}}
             <x-form-toggle
-                name="show_postal_code"
+                name="show_address"
                 :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_postal_address')"
-                :checked="old('show_postal_code', $settings->show_postal_code ?? false)"
-                xModel="showPostalCode"
+                :checked="old('show_address', $settings->show_address ?? false)"
+                xModel="showAddress"
             />
-            <input type="hidden" name="show_address" :value="showPostalCode">
             <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
                 <x-form-toggle
                     name="postal_code_required"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.postal_address_required')"
                     :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
-                    xBind="(showPostalCode === '1')"
+                    xBind="(showAddress === '1')"
                     xModel="postalCodeRequired"
                 />
             </div>
-            <input type="hidden" name="address_required" :value="postalCodeRequired">
 
             {{-- Phone --}}
             <x-form-toggle
