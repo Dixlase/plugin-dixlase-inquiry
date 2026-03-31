@@ -120,7 +120,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 1. 名前（2カラム） --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.name') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.name') }}<x-form-required-badge />
                 </label>
                 @if($settings->name_order_western ?? false)
                 {{-- 欧米式（名・姓） --}}
@@ -158,7 +158,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.kana') }}
-                    @if($settings->require_kana ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->require_kana ?? false)<x-form-required-badge />@endif
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -180,11 +180,23 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 2. メールアドレス --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.email') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.email') }}<x-form-required-badge />
                 </label>
                 <input type="email" name="email" value="{{ old('email') }}"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.email_placeholder') }}" required>
+            </div>
+
+            {{-- 2b. メールアドレス（確認） --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {{ __('dixlase-inquiry::front.form.email_confirmation') }}<x-form-required-badge />
+                </label>
+                <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="{{ __('dixlase-inquiry::front.form.email_confirmation_placeholder') }}" required
+                    @if($settings->email_confirm_paste_disabled ?? true) onpaste="return false;" @endif>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('dixlase-inquiry::front.form.email_confirmation_help') }}</p>
             </div>
 
             {{-- 3. 郵便番号 --}}
@@ -192,7 +204,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.postal_code') }}
-                    @if($settings->postal_code_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->postal_code_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
@@ -222,7 +234,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.address') }}
-                    @if($settings->address_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->address_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式住所 --}}
@@ -322,7 +334,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.phone') }}
-                    @if($settings->phone_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->phone_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
@@ -357,7 +369,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.gender') }}
-                    @if($settings->gender_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->gender_required ?? false)<x-form-required-badge />@endif
                 </label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3" x-data="{ selectedGender: '{{ old('gender', '') }}' }">
                     @foreach($genderOptions as $option)
@@ -379,7 +391,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.subject') }}
-                    @if($settings->subject_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->subject_required ?? false)<x-form-required-badge />@endif
                 </label>
                 <input type="text" name="subject" value="{{ old('subject') }}"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
@@ -391,7 +403,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 8. 問い合わせ内容 --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.message') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.message') }}<x-form-required-badge />
                 </label>
                 <textarea name="message" rows="6"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
