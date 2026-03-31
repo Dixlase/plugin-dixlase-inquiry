@@ -401,31 +401,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 9. プライバシー同意 --}}
             @if($settings->privacy_consent_enabled ?? false)
             <div>
-                <div class="flex items-center space-x-3 my-3">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="privacy_agreed" value="0">
-                        <input type="checkbox" name="privacy_agreed" value="1" required
-                               {{ old('privacy_agreed') ? 'checked' : '' }}
-                               class="sr-only peer">
-                        <div class="w-11 h-6 rounded-full bg-gray-300 dark:bg-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-blue-500 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                    </label>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">
-                        @if(!empty($settings->privacy_consent_text))
-                            @if(!empty($privacyUrl))
-                                <a href="{{ $privacyUrl }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">{{ $settings->privacy_consent_text }}</a>
-                            @else
-                                {{ $settings->privacy_consent_text }}
-                            @endif
-                        @else
-                            @if(!empty($privacyUrl))
-                                {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
-                            @else
-                                {{ __('dixlase-inquiry::front.form.privacy_consent_default') }}
-                            @endif
-                        @endif
-                    </span>
-                </div>
+                <x-form-toggle
+                    name="privacy_agreed"
+                    :checked="(bool) old('privacy_agreed')"
+                    :required="true"
+                    :rawLabel="true"
+                    :label="!empty($settings->privacy_consent_text)
+                        ? (!empty($privacyUrl)
+                            ? '<a href=\'' . e($privacyUrl) . '\' target=\'_blank\' class=\'text-blue-600 hover:underline dark:text-blue-400\'>' . e($settings->privacy_consent_text) . '</a>'
+                            : e($settings->privacy_consent_text))
+                        : (!empty($privacyUrl)
+                            ? __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl])
+                            : __('dixlase-inquiry::front.form.privacy_consent_default'))"
+                />
             </div>
             @endif
 
