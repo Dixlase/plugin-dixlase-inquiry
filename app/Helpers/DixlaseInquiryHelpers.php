@@ -41,8 +41,9 @@ if (! function_exists('dls_inquiry_form')) {
                 return null;
             }
 
-            // フォームロケールを適用（'auto'時は現在のロケールを維持）
+            // フォームロケールを一時的に適用（レンダリング後に元に戻す）
             $formLocale = $settings->lang ?? 'auto';
+            $originalLocale = app()->getLocale();
             if ($formLocale !== 'auto') {
                 app()->setLocale($formLocale);
             }
@@ -88,12 +89,16 @@ if (! function_exists('dls_inquiry_form')) {
                 'prefectures' => $prefectures,
             ])->render();
 
+            // フォームレンダリング後にロケールを元に戻す
+            app()->setLocale($originalLocale);
+
             // render() で文字列化すると @push が親レイアウトに届かないため、
             // アセットタグをフォームHTML出力に直接追加する
             $assets = load_plugin_assets('DixlaseInquiry', ['css/style.scss', 'js/app.js']);
 
             return $formHtml.$assets;
         } catch (\Exception $e) {
+            app()->setLocale($originalLocale ?? app()->getLocale());
             \Log::error('dls_inquiry_form error: '.$e->getMessage());
 
             return null;
