@@ -61,7 +61,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
         }
 
         // 郵便番号（設定により必須/任意、形式は日本式/欧米式で異なる）
-        if ($settings->show_postal_code ?? false) {
+        if ($settings->show_address ?? false) {
             if ($isWestern) {
                 // 欧米式: 単一フィールド
                 $postalCodeRule = 'regex:/^[A-Za-z0-9\s\-]{3,10}$/';
@@ -130,7 +130,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
         }
 
         // カタカナ（日本式かつshow_kana有効時のみ）
-        if (!$isWestern && ($settings->show_kana ?? false)) {
+        if (! $isWestern && ($settings->show_kana ?? false)) {
             $kanaRule = 'regex:/^[ァ-ヶー]+$/u';
             $rules['last_name_kana'] = ($settings->require_kana ?? false)
                 ? ['required', 'string', 'max:50', $kanaRule]
@@ -149,7 +149,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
             if ($settings->show_gender_prefer_not_to_say ?? false) {
                 $genderValues[] = 'prefer_not_to_say';
             }
-            $genderOptions = 'in:' . implode(',', $genderValues);
+            $genderOptions = 'in:'.implode(',', $genderValues);
             $rules['gender'] = ($settings->gender_required ?? false)
                 ? ['required', 'string', $genderOptions]
                 : ['nullable', 'string', $genderOptions];

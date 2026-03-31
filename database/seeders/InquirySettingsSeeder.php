@@ -63,12 +63,11 @@ class InquirySettingsSeeder extends Seeder
             'phone_required' => '0',
             'show_address' => '0',
             'address_required' => '0',
+            'postal_code_required' => '0',
             'show_subject' => '0',
             'subject_required' => '0',
             'show_gender_other' => '0',
             'show_gender_prefer_not_to_say' => '0',
-            'show_postal_code' => '0',
-            'postal_code_required' => '0',
             'email_confirm_paste_disabled' => '1',
             'use_single_page' => '1',
             'show_confirmation_page' => '1',
@@ -100,25 +99,25 @@ class InquirySettingsSeeder extends Seeder
      */
     protected function getLocalizedTexts(string $locale): array
     {
-        $langPath = dirname(__DIR__, 2) . '/lang';
+        $langPath = dirname(__DIR__, 2).'/lang';
 
         // 管理者通知の翻訳ファイル読み込み
         $adminNotificationFile = "{$langPath}/{$locale}/admin/inquiry/settings/admin-notification.php";
-        if (!file_exists($adminNotificationFile)) {
+        if (! file_exists($adminNotificationFile)) {
             $adminNotificationFile = "{$langPath}/en/admin/inquiry/settings/admin-notification.php";
         }
         $adminNotification = require $adminNotificationFile;
 
         // 自動返信の翻訳ファイル読み込み
         $autoReplyFile = "{$langPath}/{$locale}/admin/inquiry/settings/auto-reply.php";
-        if (!file_exists($autoReplyFile)) {
+        if (! file_exists($autoReplyFile)) {
             $autoReplyFile = "{$langPath}/en/admin/inquiry/settings/auto-reply.php";
         }
         $autoReply = require $autoReplyFile;
 
         // 完了ページの翻訳ファイル読み込み
         $completionFile = "{$langPath}/{$locale}/admin/inquiry/settings/completion.php";
-        if (!file_exists($completionFile)) {
+        if (! file_exists($completionFile)) {
             $completionFile = "{$langPath}/en/admin/inquiry/settings/completion.php";
         }
         $completion = require $completionFile;

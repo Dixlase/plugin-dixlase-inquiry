@@ -58,7 +58,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.email') }}</dt>
                     <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.email"></dd>
                 </div>
-                @if($settings->show_postal_code ?? false)
+                @if($settings->show_address ?? false)
                 <div x-show="formData.postal_code" class="border-b border-gray-200 dark:border-gray-700 pb-2">
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.postal_code') }}</dt>
                     <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.postal_code"></dd>
@@ -188,7 +188,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </div>
 
             {{-- 3. 郵便番号 --}}
-            @if($settings->show_postal_code ?? false)
+            @if($settings->show_address ?? false)
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.postal_code') }}
@@ -217,8 +217,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </div>
             @endif
 
-            {{-- 4. 住所（郵便番号と連動） --}}
-            @if(($settings->show_address ?? false) || ($settings->show_postal_code ?? false))
+            {{-- 4. 住所 --}}
+            @if($settings->show_address ?? false)
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.address') }}
@@ -407,7 +407,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <input type="checkbox" name="privacy_agreed" value="1" required
                                {{ old('privacy_agreed') ? 'checked' : '' }}
                                class="sr-only peer">
-                        <div class="w-11 h-6 rounded-full bg-gray-200 dark:bg-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-blue-500 transition-colors"></div>
+                        <div class="w-11 h-6 rounded-full bg-gray-300 dark:bg-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-blue-500 transition-colors"></div>
                         <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
                     </label>
                     <span class="text-sm text-gray-700 dark:text-gray-300">

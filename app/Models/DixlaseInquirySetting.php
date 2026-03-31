@@ -39,6 +39,7 @@ class DixlaseInquirySetting extends Model
     public static function get(string $name, $default = null)
     {
         $setting = self::where('name', $name)->first();
+
         return $setting ? $setting->value : $default;
     }
 
@@ -59,11 +60,11 @@ class DixlaseInquirySetting extends Model
     public static function getSettings()
     {
         $defaults = self::getDefaultSettings();
-        $settings = new \stdClass();
-        
+        $settings = new \stdClass;
+
         foreach ($defaults as $key => $defaultValue) {
             $value = self::get($key, $defaultValue);
-            
+
             // boolean型の設定値を適切に変換
             if (is_bool($defaultValue)) {
                 $settings->$key = filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -71,7 +72,7 @@ class DixlaseInquirySetting extends Model
                 $settings->$key = $value;
             }
         }
-        
+
         return $settings;
     }
 
@@ -80,7 +81,7 @@ class DixlaseInquirySetting extends Model
      */
     public static function getDefaultSettings()
     {
-        return (object)[
+        return (object) [
             'admin_email' => '',
             'subject' => 'お問い合わせありがとうございます',
             'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
@@ -90,7 +91,6 @@ class DixlaseInquirySetting extends Model
             'address_required' => false,
             'show_subject' => true,
             'subject_required' => false,
-            'show_postal_code' => true,
             'postal_code_required' => false,
             'show_gender' => false,
             'gender_required' => false,
@@ -129,10 +129,10 @@ class DixlaseInquirySetting extends Model
             if (is_bool($value)) {
                 $value = $value ? '1' : '0';
             }
-            
+
             self::set($name, $value);
         }
-        
+
         return true;
     }
 }
