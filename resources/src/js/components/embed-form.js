@@ -62,22 +62,25 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
 
             async transitionTo(view) {
                 const container = this.$refs.heightContainer;
+                const oldH = container ? container.scrollHeight : 0;
                 if (container) {
-                    container.style.height = container.scrollHeight + 'px';
+                    container.style.height = oldH + 'px';
                 }
                 this.isTransitioning = true;
                 await this.sleep(300);
                 if (container) {
-                    container.style.transition = 'none';
+                    container.classList.remove('transition-[height]');
+                    container.style.height = '0px';
                 }
                 this.currentView = view;
                 await this.$nextTick();
                 await this.nextFrame();
                 if (container) {
-                    const newHeight = container.scrollHeight;
-                    container.style.transition = '';
+                    const newH = container.scrollHeight;
+                    container.style.height = oldH + 'px';
+                    container.classList.add('transition-[height]');
                     await this.nextFrame();
-                    container.style.height = newHeight + 'px';
+                    container.style.height = newH + 'px';
                     await this.sleep(300);
                     container.style.height = 'auto';
                 }
@@ -128,30 +131,34 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
          */
         async transitionTo(view) {
             const container = this.$refs.heightContainer;
+            const oldHeight = container ? container.scrollHeight : 0;
 
             // 現在の高さを固定（auto → 具体的なpx値）
             if (container) {
-                container.style.height = container.scrollHeight + 'px';
+                container.style.height = oldHeight + 'px';
             }
 
             // フェードアウト
             this.isTransitioning = true;
             await this.sleep(300);
 
-            // 高さアニメーションを一時停止してビュー切り替え
+            // トランジション無効 + 高さを解除してビュー切り替え
             if (container) {
-                container.style.transition = 'none';
+                container.classList.remove('transition-[height]');
+                container.style.height = '0px';
             }
             this.currentView = view;
             await this.$nextTick();
             await this.nextFrame();
 
-            // 新しいコンテンツの高さを取得
             if (container) {
+                // overflow-hidden + height:0 の状態で正確なコンテンツ高さを取得
                 const newHeight = container.scrollHeight;
-                // トランジションを再有効化して高さアニメーション
-                container.style.transition = '';
+                // 旧高さに戻してからトランジションを再有効化
+                container.style.height = oldHeight + 'px';
+                container.classList.add('transition-[height]');
                 await this.nextFrame();
+                // 新しい高さにアニメーション
                 container.style.height = newHeight + 'px';
                 await this.sleep(300);
                 container.style.height = 'auto';
