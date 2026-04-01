@@ -61,16 +61,37 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             },
 
             async transitionTo(view) {
+                const container = this.$refs.heightContainer;
+                if (container) {
+                    container.style.height = container.scrollHeight + 'px';
+                }
                 this.isTransitioning = true;
-                await this.sleep(250);
+                await this.sleep(300);
+                if (container) {
+                    container.style.transition = 'none';
+                }
                 this.currentView = view;
                 await this.$nextTick();
+                await this.nextFrame();
+                if (container) {
+                    const newHeight = container.scrollHeight;
+                    container.style.transition = '';
+                    await this.nextFrame();
+                    container.style.height = newHeight + 'px';
+                    await this.sleep(300);
+                    container.style.height = 'auto';
+                }
+                await this.nextFrame();
                 this.isTransitioning = false;
                 this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             },
 
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
+            },
+
+            nextFrame() {
+                return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
             },
         };
     }
@@ -103,21 +124,51 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
         },
 
         /**
-         * ビュー切り替え（フェードアウト→フェードイン＋高さアニメーション）
+         * ビュー切り替え（フェードアウト→高さアニメーション→フェードイン）
          */
         async transitionTo(view) {
+            const container = this.$refs.heightContainer;
+
+            // 現在の高さを固定（auto → 具体的なpx値）
+            if (container) {
+                container.style.height = container.scrollHeight + 'px';
+            }
+
+            // フェードアウト
             this.isTransitioning = true;
-            // フェードアウト待ち
-            await this.sleep(250);
+            await this.sleep(300);
+
+            // 高さアニメーションを一時停止してビュー切り替え
+            if (container) {
+                container.style.transition = 'none';
+            }
             this.currentView = view;
             await this.$nextTick();
+            await this.nextFrame();
+
+            // 新しいコンテンツの高さを取得
+            if (container) {
+                const newHeight = container.scrollHeight;
+                // トランジションを再有効化して高さアニメーション
+                container.style.transition = '';
+                await this.nextFrame();
+                container.style.height = newHeight + 'px';
+                await this.sleep(300);
+                container.style.height = 'auto';
+            }
+
             // フェードイン開始
+            await this.nextFrame();
             this.isTransitioning = false;
             this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        },
+
+        nextFrame() {
+            return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         },
 
         showConfirm() {

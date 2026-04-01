@@ -134,6 +134,7 @@ return [
         'submitted_at' => '送信日時',
         'auto_reply_notice' => '確認メールを送信しました。メールが届かない場合は、迷惑メールフォルダをご確認ください。',
         'back_to_home' => 'トップページへ戻る',
+        'back_to_form' => 'フォームに戻る',
     ],
 
     'validation' => [

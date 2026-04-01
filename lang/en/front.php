@@ -123,6 +123,7 @@ return [
         'submitted_at' => 'Submitted At',
         'auto_reply_notice' => 'A confirmation email has been sent. If you do not receive it, please check your spam folder.',
         'back_to_home' => 'Back to Home',
+        'back_to_form' => 'Back to Form',
     ],
 
     'validation' => [
