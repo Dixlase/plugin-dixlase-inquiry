@@ -19,12 +19,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 <div class="inquiry-form-preview">
-    {{-- 見出し・説明（リアルタイム反映） --}}
-    <div class="text-center mb-6">
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"
-            x-text="formHeading || '{{ __('dixlase-inquiry::front.form.heading') }}'"></h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400"
-            x-text="formDescription || '{{ __('dixlase-inquiry::front.form.default_description') }}'"></p>
+    {{-- 見出し・説明（リアルタイム反映、空なら非表示） --}}
+    <div class="text-center mb-6" x-show="formHeading || formDescription">
+        <h3 x-show="formHeading" class="text-xl font-bold text-gray-900 dark:text-white mb-2"
+            x-text="formHeading"></h3>
+        <p x-show="formDescription" class="text-sm text-gray-600 dark:text-gray-400"
+            x-text="formDescription"></p>
     </div>
 
     {{-- 名前フィールド（常に表示・必須） --}}

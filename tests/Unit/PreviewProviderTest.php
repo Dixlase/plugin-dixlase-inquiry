@@ -111,15 +111,23 @@ class PreviewProviderTest extends TestCase
     /**
      * lang設定による翻訳がプレビュータイトルにも適用される
      */
-    public function test_preview_title_respects_lang_setting(): void
+    public function test_preview_title_respects_form_heading_setting(): void
     {
-        DixlaseInquirySetting::set('lang', 'en');
-        $previewEn = $this->provider->getPreview('inquiry_form');
+        DixlaseInquirySetting::set('form_heading', 'カスタム見出し');
 
-        DixlaseInquirySetting::set('lang', 'ja');
-        $previewJa = (new DixlaseInquiryPreviewProvider)->getPreview('inquiry_form');
+        $preview = $this->provider->getPreview('inquiry_form');
 
-        $this->assertNotSame($previewEn->title, $previewJa->title);
+        $this->assertSame('カスタム見出し', $preview->title);
+    }
+
+    /**
+     * form_headingが空の場合、タイトルが空文字列になる
+     */
+    public function test_preview_title_empty_when_form_heading_not_set(): void
+    {
+        $preview = $this->provider->getPreview('inquiry_form');
+
+        $this->assertSame('', $preview->title);
     }
 
     /**

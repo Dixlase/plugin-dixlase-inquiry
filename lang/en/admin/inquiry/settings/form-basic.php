@@ -23,9 +23,9 @@ return [
 
     // Form heading & description
     'form_heading' => 'Form Heading',
-    'form_heading_help' => 'Leave empty to use the default heading.',
+    'form_heading_help' => 'Leave empty to hide the heading.',
     'form_description' => 'Form Description',
-    'form_description_help' => 'Displayed below the form heading. Leave empty to use the default description.',
+    'form_description_help' => 'Displayed below the form heading. Leave empty to hide the description.',
 
     // 言語設定
     'lang' => 'Form Language',
