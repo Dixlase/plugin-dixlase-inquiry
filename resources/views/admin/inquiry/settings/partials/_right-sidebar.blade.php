@@ -74,9 +74,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- Language selector --}}
             <div class="space-y-4">
                 <div>
+                    <x-form-label for="lang" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
                     <x-form-select
                         name="lang"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')"
                         :options="[
                             'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
                             'ja' => '日本語',
@@ -90,9 +90,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 {{-- Input format --}}
                 <div>
+                    <x-form-label for="name_order_western" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
                     <x-form-select
                         name="name_order_western"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')"
                         :options="[
                             '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
                             '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
@@ -105,9 +105,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 {{-- Form heading --}}
                 <div>
+                    <x-form-label for="form_heading" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')" />
                     <x-form-text
                         name="form_heading"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')"
                         :value="old('form_heading', $settings->form_heading ?? '')"
                         xModel="formHeading"
                         x-on:input="formHeadingUserEdited = true"
@@ -117,9 +117,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 {{-- Form description --}}
                 <div>
+                    <x-form-label for="form_description" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')" />
                     <x-form-text
                         name="form_description"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')"
                         :value="old('form_description', $settings->form_description ?? '')"
                         xModel="formDescription"
                         x-on:input="formDescriptionUserEdited = true"
