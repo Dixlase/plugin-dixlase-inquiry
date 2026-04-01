@@ -18,12 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
+<style @cspNonce>
+.inquiry-preview-heading { font-size: 1.875rem !important; line-height: 2.25rem !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }
+.inquiry-preview-description { font-size: 1rem !important; line-height: 1.5rem !important; margin-top: 0 !important; }
+</style>
 <div class="inquiry-form-preview">
     {{-- 見出し・説明（リアルタイム反映、空なら非表示） --}}
     <div class="text-center mb-6" x-show="formHeading || formDescription">
-        <h3 x-show="formHeading" class="text-xl font-bold text-gray-900 dark:text-white mb-2"
+        <h3 x-show="formHeading" class="inquiry-preview-heading text-gray-900 dark:text-white"
             x-text="formHeading"></h3>
-        <p x-show="formDescription" class="text-sm text-gray-600 dark:text-gray-400"
+        <p x-show="formDescription" class="inquiry-preview-description text-gray-600 dark:text-gray-400"
             x-text="formDescription"></p>
     </div>
 
