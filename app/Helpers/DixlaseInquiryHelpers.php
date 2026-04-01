@@ -117,7 +117,7 @@ if (! function_exists('dls_inquiry_settings')) {
     /**
      * 問い合わせ設定を取得する
      */
-    function dls_inquiry_settings(): ?DixlaseInquirySetting
+    function dls_inquiry_settings(): ?object
     {
         try {
             return DixlaseInquirySetting::getSettings();
