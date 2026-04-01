@@ -70,12 +70,12 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 await this.sleep(300);
                 if (container) {
                     container.classList.remove('transition-[height]');
-                    container.style.height = '0px';
                 }
                 this.currentView = view;
                 await this.$nextTick();
                 await this.nextFrame();
                 if (container) {
+                    container.style.height = 'auto';
                     const newH = container.scrollHeight;
                     container.style.height = oldH + 'px';
                     container.classList.add('transition-[height]');
@@ -142,23 +142,23 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             this.isTransitioning = true;
             await this.sleep(300);
 
-            // トランジション無効 + 高さを解除してビュー切り替え
+            // トランジション無効化してビュー切り替え
             if (container) {
                 container.classList.remove('transition-[height]');
-                container.style.height = '0px';
             }
             this.currentView = view;
             await this.$nextTick();
             await this.nextFrame();
 
             if (container) {
-                // overflow-hidden + height:0 の状態で正確なコンテンツ高さを取得
+                // 同期的に: auto→測定→旧高さに戻す（フレームをまたがないのでFOUC無し）
+                container.style.height = 'auto';
                 const newHeight = container.scrollHeight;
-                // 旧高さに戻してからトランジションを再有効化
                 container.style.height = oldHeight + 'px';
+
+                // トランジションを再有効化してアニメーション
                 container.classList.add('transition-[height]');
                 await this.nextFrame();
-                // 新しい高さにアニメーション
                 container.style.height = newHeight + 'px';
                 await this.sleep(300);
                 container.style.height = 'auto';
