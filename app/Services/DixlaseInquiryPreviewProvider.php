@@ -275,10 +275,18 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
 
         $showConfirmation = filter_var($settings->show_confirmation_page ?? true, FILTER_VALIDATE_BOOLEAN);
 
+        $formHeading = ! empty($settings->form_heading)
+            ? $settings->form_heading
+            : $t('dixlase-inquiry::front.form.heading');
+        $formDescription = ! empty($settings->form_description)
+            ? $settings->form_description
+            : $t('dixlase-inquiry::front.form.default_description');
+
         return new PreviewDTO(
             key: 'inquiry_form',
             type: PreviewProviderInterface::TYPE_FORM,
-            title: $t('dixlase-inquiry::front.form.heading'),
+            title: $formHeading,
+            description: $formDescription,
             source: 'dixlase-inquiry',
             fields: $fields,
             submitLabel: $showConfirmation

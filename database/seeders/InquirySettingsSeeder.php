@@ -41,6 +41,10 @@ class InquirySettingsSeeder extends Seeder
         $texts = $this->getLocalizedTexts($locale);
 
         $defaults = [
+            // フォーム見出し・説明（空の場合は翻訳ファイルのデフォルト値を使用）
+            'form_heading' => '',
+            'form_description' => '',
+
             // メールアドレス設定（基本設定のシステム管理者メールアドレスを使用）
             'admin_email' => $systemAdminEmail,
             'auto_reply_from_email' => $systemAdminEmail,
