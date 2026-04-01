@@ -23,6 +23,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
     @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
 
+    {{-- 高さアニメーション用ラッパー --}}
+    <div x-ref="heightContainer" class="overflow-hidden transition-[height] duration-300 ease-out" style="height: auto;">
+
     {{-- エラー表示エリア（AJAX用） --}}
     <div class="inquiry-errors hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
 
@@ -44,6 +47,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div class="text-green-600 dark:text-green-400 mb-3"><i class="fas fa-check-circle text-3xl"></i></div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.complete.title') }}</h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.complete.message') !!}</p>
+            <div class="mt-6">
+                <button type="button" @click="transitionTo('form')"
+                    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    {{ __('dixlase-inquiry::front.complete.back_to_form') }}
+                </button>
+            </div>
         </div>
     </div>
 
@@ -466,6 +476,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </button>
             </div>
         </form>
+
+    </div>{{-- /heightContainer --}}
 </div>
 
 {{-- プラグインアセットの読み込み（@once で重複防止） --}}
