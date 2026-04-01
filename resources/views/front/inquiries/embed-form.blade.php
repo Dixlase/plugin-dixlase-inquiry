@@ -204,7 +204,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.email_confirmation_placeholder') }}" required
-                    @if($settings->email_confirm_paste_disabled ?? true) onpaste="return false;" @endif>
+                    @if($settings->email_confirm_paste_disabled ?? true) @paste.prevent @endif>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('dixlase-inquiry::front.form.email_confirmation_help') }}</p>
             </div>
 
