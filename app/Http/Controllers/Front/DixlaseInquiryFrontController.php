@@ -37,9 +37,7 @@ class DixlaseInquiryFrontController extends Controller
 {
     use InquiryFormDataTrait;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * 問い合わせフォーム表示（別ページモード）
@@ -83,7 +81,7 @@ class DixlaseInquiryFrontController extends Controller
         }
 
         // 確認画面が無効の場合は404
-        if (!$settings->show_confirmation_page) {
+        if (! $settings->show_confirmation_page) {
             abort(404);
         }
 
@@ -122,11 +120,11 @@ class DixlaseInquiryFrontController extends Controller
         try {
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
 
-            if ($settings->auto_reply_enabled && !empty($validated['email'])) {
+            if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
                 Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
             }
         } catch (\Exception $e) {
-            \Log::error('Inquiry mail send failed: ' . $e->getMessage());
+            \Log::error('Inquiry mail send failed: '.$e->getMessage());
         }
 
         return view('dixlase-inquiry::front.inquiries.complete', [
@@ -141,7 +139,7 @@ class DixlaseInquiryFrontController extends Controller
     {
         $settings = DixlaseInquirySetting::getSettings();
 
-        if (!$settings || empty($settings->admin_email)) {
+        if (! $settings || empty($settings->admin_email)) {
             return view('dixlase-inquiry::front.inquiries.error', [
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable'),
             ]);
@@ -168,7 +166,7 @@ class DixlaseInquiryFrontController extends Controller
     {
         $settings = DixlaseInquirySetting::getSettings();
 
-        if (!$settings || empty($settings['admin_email'])) {
+        if (! $settings || empty($settings['admin_email'])) {
             return response()->json([
                 'success' => false,
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable'),
@@ -189,23 +187,23 @@ class DixlaseInquiryFrontController extends Controller
         try {
             $emailBody = $settings['body'];
             foreach ($validated as $key => $value) {
-                $emailBody = str_replace('{{' . $key . '}}', $value, $emailBody);
+                $emailBody = str_replace('{{'.$key.'}}', $value, $emailBody);
             }
 
-            \Mail::raw($emailBody, function ($message) use ($settings, $validated) {
+            \Mail::raw($emailBody, function ($message) use ($settings) {
                 $message->to($settings['admin_email'])
-                        ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
+                    ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
             });
 
-            if ($settings['auto_reply_enabled'] && !empty($settings['auto_reply_subject']) && !empty($settings['auto_reply_body'])) {
+            if ($settings['auto_reply_enabled'] && ! empty($settings['auto_reply_subject']) && ! empty($settings['auto_reply_body'])) {
                 $replyBody = $settings['auto_reply_body'];
                 foreach ($validated as $key => $value) {
-                    $replyBody = str_replace('{{' . $key . '}}', $value, $replyBody);
+                    $replyBody = str_replace('{{'.$key.'}}', $value, $replyBody);
                 }
 
                 \Mail::raw($replyBody, function ($message) use ($settings, $validated) {
                     $message->to($validated['email'])
-                            ->subject($settings['auto_reply_subject']);
+                        ->subject($settings['auto_reply_subject']);
                 });
             }
 
@@ -215,7 +213,7 @@ class DixlaseInquiryFrontController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Inquiry send failed: ' . $e->getMessage());
+            \Log::error('Inquiry send failed: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -246,14 +244,23 @@ class DixlaseInquiryFrontController extends Controller
         try {
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
 
-            if ($settings->auto_reply_enabled && !empty($validated['email'])) {
+            if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
                 Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
+            }
+
+            // AJAXリクエストの場合はJSONレスポンスを返す
+            if ($request->ajax()) {
+                return response()->json(['success' => true]);
             }
 
             return redirect($redirectUrl)->with('inquiry_success', true);
 
         } catch (\Exception $e) {
-            \Log::error('Inquiry embed send failed: ' . $e->getMessage());
+            \Log::error('Inquiry embed send failed: '.$e->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json(['error' => __('dixlase-inquiry::front.messages.submit_error')], 500);
+            }
 
             return redirect($redirectUrl)
                 ->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])

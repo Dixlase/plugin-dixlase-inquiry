@@ -8,12 +8,77 @@
  */
 export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWestern = false) {
     if (!showConfirmationPage) {
-        // 確認画面なしの場合は空のオブジェクトを返す
-        return {};
+        // 確認画面なしの場合は最低限のAJAX送信機能のみ
+        return {
+            currentView: 'form',
+            isTransitioning: false,
+            isSubmitting: false,
+
+            async submitFormAjax() {
+                if (this.isSubmitting) {
+                    return;
+                }
+                const form = this.$refs.inquiryForm;
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                this.isSubmitting = true;
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+                    if (response.ok) {
+                        await this.transitionTo('complete');
+                    } else {
+                        const data = await response.json().catch(() => null);
+                        if (data && data.errors) {
+                            this.showValidationErrors(data.errors);
+                        } else {
+                            form.submit();
+                        }
+                    }
+                } catch {
+                    form.submit();
+                } finally {
+                    this.isSubmitting = false;
+                }
+            },
+
+            showValidationErrors(errors) {
+                const container = this.$el.querySelector('.inquiry-errors');
+                if (!container) {
+                    return;
+                }
+                const messages = Object.values(errors).flat();
+                container.innerHTML = '<ul class="list-disc list-inside">' +
+                    messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+                container.classList.remove('hidden');
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            async transitionTo(view) {
+                this.isTransitioning = true;
+                await this.sleep(250);
+                this.currentView = view;
+                await this.$nextTick();
+                this.isTransitioning = false;
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            },
+        };
     }
 
     return {
-        showConfirmation: false,
+        currentView: 'form',
+        isTransitioning: false,
+        isSubmitting: false,
         formData: {
             subject: '',
             first_name: '',
@@ -35,6 +100,24 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 return (this.formData.first_name + ' ' + this.formData.last_name).trim();
             }
             return (this.formData.last_name + ' ' + this.formData.first_name).trim();
+        },
+
+        /**
+         * ビュー切り替え（フェードアウト→フェードイン＋高さアニメーション）
+         */
+        async transitionTo(view) {
+            this.isTransitioning = true;
+            // フェードアウト待ち
+            await this.sleep(250);
+            this.currentView = view;
+            await this.$nextTick();
+            // フェードイン開始
+            this.isTransitioning = false;
+            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+
+        sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         },
 
         showConfirm() {
@@ -106,15 +189,59 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 this.formData.genderLabel = '';
             }
 
-            this.showConfirmation = true;
-
-            // スクロールして確認画面を表示
-            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            this.transitionTo('confirmation');
         },
 
-        submitForm() {
-            this.$refs.inquiryForm.submit();
-        }
+        goBack() {
+            this.transitionTo('form');
+        },
+
+        /**
+         * AJAX送信でフォームを送信し、完了画面にフェード遷移する
+         */
+        async submitForm() {
+            if (this.isSubmitting) {
+                return;
+            }
+            const form = this.$refs.inquiryForm;
+            this.isSubmitting = true;
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (response.ok) {
+                    await this.transitionTo('complete');
+                } else {
+                    const data = await response.json().catch(() => null);
+                    if (data && data.errors) {
+                        this.showValidationErrors(data.errors);
+                        await this.transitionTo('form');
+                    } else {
+                        // フォールバック: 通常の送信
+                        form.submit();
+                    }
+                }
+            } catch {
+                // ネットワークエラー時はフォールバック
+                form.submit();
+            } finally {
+                this.isSubmitting = false;
+            }
+        },
+
+        showValidationErrors(errors) {
+            const container = this.$el.querySelector('.inquiry-errors');
+            if (!container) {
+                return;
+            }
+            const messages = Object.values(errors).flat();
+            container.innerHTML = '<ul class="list-disc list-inside">' +
+                messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+            container.classList.remove('hidden');
+        },
     };
 }
 
