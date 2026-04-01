@@ -110,7 +110,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         name="form_heading"
                         :value="old('form_heading', $settings->form_heading ?? '')"
                         xModel="formHeading"
-                        x-on:input="formHeadingUserEdited = true"
                     />
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading_help')" />
                 </div>
@@ -122,7 +121,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         name="form_description"
                         :value="old('form_description', $settings->form_description ?? '')"
                         xModel="formDescription"
-                        x-on:input="formDescriptionUserEdited = true"
                     />
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
                 </div>

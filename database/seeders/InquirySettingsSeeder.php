@@ -41,9 +41,9 @@ class InquirySettingsSeeder extends Seeder
         $texts = $this->getLocalizedTexts($locale);
 
         $defaults = [
-            // フォーム見出し・説明（空の場合は翻訳ファイルのデフォルト値を使用）
-            'form_heading' => '',
-            'form_description' => '',
+            // フォーム見出し・説明（インストール時のロケールに基づくデフォルト値）
+            'form_heading' => $texts['form_heading'],
+            'form_description' => $texts['form_description'],
 
             // メールアドレス設定（基本設定のシステム管理者メールアドレスを使用）
             'admin_email' => $systemAdminEmail,
@@ -119,6 +119,13 @@ class InquirySettingsSeeder extends Seeder
         }
         $autoReply = require $autoReplyFile;
 
+        // フロント翻訳ファイル読み込み（見出し・説明）
+        $frontFile = "{$langPath}/{$locale}/front.php";
+        if (! file_exists($frontFile)) {
+            $frontFile = "{$langPath}/en/front.php";
+        }
+        $front = require $frontFile;
+
         // 完了ページの翻訳ファイル読み込み
         $completionFile = "{$langPath}/{$locale}/admin/inquiry/settings/completion.php";
         if (! file_exists($completionFile)) {
@@ -127,6 +134,8 @@ class InquirySettingsSeeder extends Seeder
         $completion = require $completionFile;
 
         return [
+            'form_heading' => $front['form']['heading'] ?? 'Contact Us',
+            'form_description' => $front['form']['default_description'] ?? '',
             'subject' => $adminNotification['default_subject'] ?? 'Inquiry Received',
             'body' => $adminNotification['default_body'] ?? '',
             'auto_reply_subject' => $autoReply['default_subject'] ?? 'Thank you for your inquiry',

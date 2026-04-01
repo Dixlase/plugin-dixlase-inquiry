@@ -26,8 +26,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         isSimpleMode: {{ $isSimpleMode ? 'true' : 'false' }},
         formHeading: '{{ old('form_heading', $settings->form_heading ?? '') }}',
         formDescription: '{{ old('form_description', $settings->form_description ?? '') }}',
-        formHeadingUserEdited: {{ !empty(old('form_heading', $settings->form_heading ?? '')) ? 'true' : 'false' }},
-        formDescriptionUserEdited: {{ !empty(old('form_description', $settings->form_description ?? '')) ? 'true' : 'false' }},
         selectedLocale: {{ $isSimpleMode ? "'auto'" : "'" . old('lang', $settings->lang ?? 'auto') . "'" }},
         useSinglePage: {{ $isSimpleMode ? "'1'" : "'" . (old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0') . "'" }},
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
@@ -59,19 +57,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
             return this.labels[locale]?.[key] ?? key;
         },
-        updatePresetTexts() {
-            if (!this.formHeadingUserEdited) {
+        fillEmptyWithDefaults() {
+            if (!this.formHeading.trim()) {
                 this.formHeading = this.getLabel('heading');
             }
-            if (!this.formDescriptionUserEdited) {
+            if (!this.formDescription.trim()) {
                 this.formDescription = this.getLabel('default_description');
             }
         },
         init() {
-            // 初期プリセット反映
-            this.updatePresetTexts();
-            // 言語切替時にプリセットテキストを自動更新
-            this.$watch('selectedLocale', () => this.updatePresetTexts());
+            // 言語切替時に空のフィールドにデフォルト値を自動入力
+            this.$watch('selectedLocale', () => this.fillEmptyWithDefaults());
         },
         openPreview() {
             const form = document.createElement('form');
