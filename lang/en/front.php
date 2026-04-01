@@ -112,7 +112,7 @@ return [
 
     'confirmation' => [
         'title' => 'Confirm Your Information',
-        'message' => 'Please confirm the information below is correct:',
+        'message' => 'Please confirm the information below is correct.<br>If everything looks good, press the submit button.',
     ],
 
     'complete' => [
