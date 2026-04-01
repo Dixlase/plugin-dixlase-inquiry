@@ -19,6 +19,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 <div class="inquiry-form-preview">
+    {{-- 見出し・説明（リアルタイム反映） --}}
+    <div class="text-center mb-6">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2"
+            x-text="formHeading || '{{ __('dixlase-inquiry::front.form.heading') }}'"></h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400"
+            x-text="formDescription || '{{ __('dixlase-inquiry::front.form.default_description') }}'"></p>
+    </div>
+
     {{-- 名前フィールド（常に表示・必須） --}}
     <fieldset>
         <legend>
@@ -104,7 +112,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </fieldset>
 
     {{-- 郵便番号フィールド --}}
-    <div x-show="showPostalCode === '1'">
+    <div x-show="showAddress === '1'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('postal_code')"></span>

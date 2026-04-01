@@ -71,36 +71,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_form_settings') }}
             </h3>
 
-            {{-- Form heading & description --}}
-            <div class="space-y-4 mb-4">
-                <div>
-                    <x-form-text
-                        name="form_heading"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')"
-                        :value="old('form_heading', $settings->form_heading ?? '')"
-                        :placeholder="__('dixlase-inquiry::front.form.heading')"
-                        xModel="formHeading"
-                    />
-                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading_help')" />
-                </div>
-                <div>
-                    <x-form-text
-                        name="form_description"
-                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')"
-                        :value="old('form_description', $settings->form_description ?? '')"
-                        :placeholder="__('dixlase-inquiry::front.form.default_description')"
-                        xModel="formDescription"
-                    />
-                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
-                </div>
-            </div>
-
             {{-- Language selector --}}
             <div class="space-y-4">
                 <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
                     <x-form-select
                         name="lang"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')"
                         :options="[
                             'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
                             'ja' => '日本語',
@@ -114,9 +90,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 {{-- Input format --}}
                 <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
                     <x-form-select
                         name="name_order_western"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')"
                         :options="[
                             '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
                             '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
@@ -125,6 +101,30 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         xModel="nameOrderWestern"
                     />
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                </div>
+
+                {{-- Form heading --}}
+                <div>
+                    <x-form-text
+                        name="form_heading"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')"
+                        :value="old('form_heading', $settings->form_heading ?? '')"
+                        :placeholder="__('dixlase-inquiry::front.form.heading')"
+                        xModel="formHeading"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading_help')" />
+                </div>
+
+                {{-- Form description --}}
+                <div>
+                    <x-form-text
+                        name="form_description"
+                        :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')"
+                        :value="old('form_description', $settings->form_description ?? '')"
+                        :placeholder="__('dixlase-inquiry::front.form.default_description')"
+                        xModel="formDescription"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
                 </div>
             </div>
         </div>
