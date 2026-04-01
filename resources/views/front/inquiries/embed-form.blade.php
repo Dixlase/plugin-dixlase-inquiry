@@ -19,36 +19,43 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})">
-    @if(session('inquiry_success'))
-        <div x-data="{ show: false }" x-init="$nextTick(() => show = true)"
-            x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0"
-            class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
+<div class="dixlase-inquiry-embed" id="inquiry-form"
+    x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
+    @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
+
+    {{-- エラー表示エリア（AJAX用） --}}
+    <div class="inquiry-errors hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- 完了画面 --}}
+    <div x-show="currentView === 'complete'" x-cloak
+        :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+        class="transition-opacity duration-300 ease-out">
+        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
             <div class="text-green-600 dark:text-green-400 mb-3"><i class="fas fa-check-circle text-3xl"></i></div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.complete.title') }}</h3>
             <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.complete.message') !!}</p>
         </div>
-    @else
-        @if($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <ul class="list-disc list-inside">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    </div>
 
-        {{-- 確認画面 --}}
-        @if($settings->show_confirmation_page ?? true)
-        <div x-show="showConfirmation" x-cloak
-            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-            class="space-y-4">
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4 text-center">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.confirmation.message') !!}</p>
-            </div>
+    {{-- 確認画面 --}}
+    @if($settings->show_confirmation_page ?? true)
+    <div x-show="currentView === 'confirmation'" x-cloak
+        :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+        class="transition-opacity duration-300 ease-out space-y-4">
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4 text-center">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.confirmation.message') !!}</p>
+        </div>
 
             <dl class="space-y-3">
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -101,26 +108,30 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </div>
             </dl>
 
-            <div class="flex gap-3 pt-4">
-                <button type="button" @click="showConfirmation = false"
+            <div class="flex gap-3 pt-4 justify-center">
+                <button type="button" @click="goBack()"
                     class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
                     <i class="fas fa-arrow-left mr-2"></i>
                     {{ __('dixlase-inquiry::front.buttons.back') }}
                 </button>
-                <button type="button" @click="submitForm()"
-                    class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
-                    <i class="fas fa-paper-plane mr-2"></i>
+                <button type="button" @click="submitForm()" :disabled="isSubmitting"
+                    class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <template x-if="isSubmitting"><i class="fas fa-spinner fa-spin mr-2"></i></template>
+                    <template x-if="!isSubmitting"><i class="fas fa-paper-plane mr-2"></i></template>
                     {{ __('dixlase-inquiry::front.buttons.send') }}
                 </button>
             </div>
         </div>
         @endif
 
-        <form x-ref="inquiryForm" action="{{ route('inquiry.embed.send') }}" method="POST" class="space-y-4"
+        <form x-ref="inquiryForm" action="{{ route('inquiry.embed.send') }}" method="POST"
+            x-show="currentView === 'form'"
+            :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+            class="transition-opacity duration-300 ease-out space-y-4"
             @if($settings->show_confirmation_page ?? true)
-            x-show="!showConfirmation" @submit.prevent="showConfirm()"
-            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            @submit.prevent="showConfirm()"
+            @else
+            @submit.prevent="submitFormAjax()"
             @endif
         >
             @csrf
@@ -455,7 +466,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </button>
             </div>
         </form>
-    @endif
 </div>
 
 {{-- プラグインアセットの読み込み（@once で重複防止） --}}
