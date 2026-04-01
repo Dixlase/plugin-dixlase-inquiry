@@ -21,6 +21,12 @@ return [
     'section_field_settings' => 'フィールド設定',
     'section_display_settings' => 'フォーム表示設定',
 
+    // フォーム見出し・説明
+    'form_heading' => 'フォーム見出し',
+    'form_heading_help' => '空の場合はデフォルトの見出しが使用されます。',
+    'form_description' => 'フォーム説明文',
+    'form_description_help' => 'フォームの見出しの下に表示される説明文です。空の場合はデフォルトの説明文が使用されます。',
+
     // 言語設定
     'lang' => 'フォーム言語',
     'lang_auto' => '自動',

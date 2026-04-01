@@ -82,6 +82,8 @@ class DixlaseInquirySetting extends Model
     public static function getDefaultSettings()
     {
         return (object) [
+            'form_heading' => '',
+            'form_description' => '',
             'admin_email' => '',
             'subject' => 'お問い合わせありがとうございます',
             'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
