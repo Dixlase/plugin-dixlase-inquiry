@@ -81,12 +81,19 @@ if (! function_exists('dls_inquiry_form')) {
                 }
             }
 
+            // CAPTCHA
+            $captchaFormKey = 'dixlase-inquiry.inquiry_contact';
+            $captchaEnabled = \App\Helpers\CaptchaHelper::shouldShowCaptcha($captchaFormKey);
+            $captchaWidget = $captchaEnabled ? \App\Helpers\CaptchaHelper::renderWidget($captchaFormKey) : null;
+
             $formHtml = view('dixlase-inquiry::front.inquiries.embed-form', [
                 'settings' => $settings,
                 'options' => $options,
                 'privacyUrl' => $privacyUrl,
                 'genderOptions' => $genderOptions,
                 'prefectures' => $prefectures,
+                'captchaEnabled' => $captchaEnabled,
+                'captchaWidget' => $captchaWidget,
             ])->render();
 
             // フォームレンダリング後にロケールを元に戻す
