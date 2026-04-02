@@ -57,18 +57,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
             return this.labels[locale]?.[key] ?? key;
         },
-        fillEmptyWithDefaults() {
-            if (!this.formHeading.trim()) {
-                this.formHeading = this.getLabel('heading');
-            }
-            if (!this.formDescription.trim()) {
-                this.formDescription = this.getLabel('default_description');
-            }
-        },
-        init() {
-            // 言語切替時に空のフィールドにデフォルト値を自動入力
-            this.$watch('selectedLocale', () => this.fillEmptyWithDefaults());
-        },
         openPreview() {
             const form = document.createElement('form');
             form.method = 'POST';
