@@ -24,6 +24,7 @@ return [
     'form' => [
         'heading' => 'お問い合わせ',
         'default_description' => 'お気軽にお問い合わせください。以下のフォームに必要事項をご記入の上、送信してください。',
+        'go_to_form' => 'お問い合わせはこちら',
         'title' => 'お問い合わせ',
         'name' => 'お名前',
         'last_name' => '姓',
