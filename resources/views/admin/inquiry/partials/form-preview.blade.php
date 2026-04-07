@@ -28,7 +28,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <h3 x-show="formHeading" class="inquiry-preview-heading text-gray-900 dark:text-white"
             x-text="formHeading"></h3>
         <p x-show="formDescription" class="inquiry-preview-description text-gray-600 dark:text-gray-400"
-            x-text="formDescription"></p>
+            x-html="formDescription.replace(/\n/g, '<br>')"></p>
     </div>
 
     {{-- 名前フィールド（常に表示・必須） --}}

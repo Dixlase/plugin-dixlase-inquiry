@@ -99,11 +99,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 {{-- Form description --}}
                 <div>
                     <x-form-label for="form_description" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')" />
-                    <x-form-text
+                    <textarea
+                        id="form_description"
                         name="form_description"
-                        :value="old('form_description', $settings->form_description ?? '')"
-                        xModel="formDescription"
-                    />
+                        rows="3"
+                        x-model="formDescription"
+                        class="input-common block w-full p-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white"
+                    >{{ old('form_description', $settings->form_description ?? '') }}</textarea>
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
                 </div>
             </div>
