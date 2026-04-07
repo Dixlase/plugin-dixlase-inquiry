@@ -23,7 +23,7 @@
 return [
     'form' => [
         'heading' => 'Contact Us',
-        'default_description' => 'Feel free to reach out to us. Please fill in the form below and submit your inquiry.',
+        'default_description' => "Feel free to reach out to us.\nPlease fill in the form below and submit your inquiry.",
         'go_to_form' => 'Contact Us',
         'title' => 'Contact Us',
         'name' => 'Name',
