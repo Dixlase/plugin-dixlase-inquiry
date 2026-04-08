@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('layouts.admin')
 
 @section('content')
-<div class="max-w-7xl mx-auto" x-data="{ deleteId: null }">
+<div class="max-w-7xl mx-auto" x-data x-init="$store.inquiryDelete = { id: null }">
 
     {{-- 未読バッジ --}}
     @if($unreadCount > 0)
@@ -169,7 +169,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <button type="button"
-                                        @click="deleteId = {{ $inquiry->id }}; openModal('deleteInquiryModal')"
+                                        @click="$store.inquiryDelete.id = {{ $inquiry->id }}; openModal('deleteInquiryModal')"
                                         class="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
                                         title="{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}">
                                         <i class="fas fa-trash-alt"></i>
@@ -228,7 +228,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 @click="close()"
                 class="mx-2"
             >{{ __('common.cancel') }}</x-form-button>
-            <form :action="'{{ route('dixlase-inquiry::admin.inquiry.destroy', '') }}/' + deleteId" method="POST" class="inline">
+            <form :action="'{{ route('dixlase-inquiry::admin.inquiry.destroy', ['id' => '__ID__']) }}'.replace('__ID__', $store.inquiryDelete.id)" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
                 <x-form-button
