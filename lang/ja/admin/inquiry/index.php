@@ -30,6 +30,11 @@ return [
     'all_statuses' => 'すべてのステータス',
     'unread_count' => ':count 件未読',
 
+    // 一括操作
+    'bulk_selected' => '件選択中',
+    'bulk_apply' => '適用',
+    'bulk_status_updated' => ':count 件のステータスを更新しました。',
+
     'table' => [
         'caption' => '問い合わせ一覧',
         'id' => 'ID',
