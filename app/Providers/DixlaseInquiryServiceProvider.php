@@ -152,7 +152,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
 
             // 別ページモードの場合のみルート登録
             if (! $settings->use_single_page) {
-                $slug = $settings->inquiry_url_slug ?? 'inquiry';
+                $slug = ! empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry';
 
                 Route::middleware(['web', 'front.ip'])
                     ->group(function () use ($slug) {
@@ -190,7 +190,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
     {
         try {
             $settings = DixlaseInquirySetting::getSettings();
-            $slug = $settings->inquiry_url_slug ?? 'inquiry';
+            $slug = ! empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry';
         } catch (\Exception $e) {
             $slug = 'inquiry';
         }

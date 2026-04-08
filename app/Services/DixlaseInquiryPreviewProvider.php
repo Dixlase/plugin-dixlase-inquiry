@@ -293,7 +293,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
                 'name_order_western' => $nameWestern,
                 'show_confirmation_page' => $showConfirmation,
                 'use_single_page' => filter_var($settings->use_single_page ?? true, FILTER_VALIDATE_BOOLEAN),
-                'inquiry_url_slug' => $settings->inquiry_url_slug ?? 'inquiry',
+                'inquiry_url_slug' => ! empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry',
             ],
         );
     }
