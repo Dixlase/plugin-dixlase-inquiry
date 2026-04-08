@@ -32,7 +32,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 {!! $formHtml !!}
             @else
                 <div class="text-center">
-                    <a href="{{ url('/' . ($settings->inquiry_url_slug ?? 'inquiry')) }}"
+                    <a href="{{ url('/' . (!empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry')) }}"
                         class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
                         <i class="fas fa-paper-plane mr-2"></i>
                         {{ __('dixlase-inquiry::front.form.go_to_form') }}
