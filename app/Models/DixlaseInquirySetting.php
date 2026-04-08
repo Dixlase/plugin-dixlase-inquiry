@@ -82,6 +82,7 @@ class DixlaseInquirySetting extends Model
     public static function getDefaultSettings()
     {
         return (object) [
+            'accepting_inquiries' => true,
             'form_heading' => '',
             'form_description' => '',
             'admin_email' => '',

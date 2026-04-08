@@ -159,6 +159,21 @@ class DixlaseInquiryAdminController extends Controller
     }
 
     /**
+     * 問い合わせ受付状態のトグル（AJAX）
+     */
+    public function toggleAccepting(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $current = filter_var(DixlaseInquirySetting::get('accepting_inquiries', true), FILTER_VALIDATE_BOOLEAN);
+        $newValue = ! $current;
+        DixlaseInquirySetting::set('accepting_inquiries', $newValue ? '1' : '0');
+
+        return response()->json([
+            'success' => true,
+            'accepting' => $newValue,
+        ]);
+    }
+
+    /**
      * 設定 - 概要ページ
      */
     public function settingsIndex(): View

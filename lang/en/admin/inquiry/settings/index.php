@@ -16,6 +16,15 @@ return [
     'heading' => 'Inquiry Settings',
     'description' => 'Overview of all inquiry form settings. Check embedding methods and status at a glance.',
 
+    // Accepting inquiries
+    'accepting_inquiries' => 'Accept Inquiries',
+    'accepting_on' => 'Accepting inquiries',
+    'accepting_on_desc' => 'The form is visible and visitors can submit inquiries.',
+    'accepting_off' => 'Inquiries are paused',
+    'accepting_off_desc' => 'The form is hidden and the inquiry page is inaccessible.',
+    'accepting_toggle_success' => 'Inquiry acceptance status updated.',
+    'accepting_toggle_error' => 'Failed to update inquiry acceptance status.',
+
     'nav' => [
         'form_basic' => 'Form Settings',
         'completion' => 'Completion Page Settings',

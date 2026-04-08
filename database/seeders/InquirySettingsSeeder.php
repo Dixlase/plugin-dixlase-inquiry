@@ -41,6 +41,9 @@ class InquirySettingsSeeder extends Seeder
         $texts = $this->getLocalizedTexts($locale);
 
         $defaults = [
+            // 問い合わせ受付状態
+            'accepting_inquiries' => '1',
+
             // フォーム見出し・説明（インストール時のロケールに基づくデフォルト値）
             'form_heading' => $texts['form_heading'],
             'form_description' => $texts['form_description'],

@@ -170,7 +170,7 @@ if (! function_exists('dls_inquiry_enabled')) {
         try {
             $settings = DixlaseInquirySetting::getSettings();
 
-            return $settings && ! empty($settings->admin_email);
+            return $settings && ! empty($settings->admin_email) && ($settings->accepting_inquiries ?? true);
         } catch (\Exception $e) {
             return false;
         }

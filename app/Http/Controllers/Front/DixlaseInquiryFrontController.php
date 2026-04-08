@@ -46,8 +46,8 @@ class DixlaseInquiryFrontController extends Controller
     {
         $settings = DixlaseInquirySetting::getSettings();
 
-        // シングルページモードの場合は404
-        if ($settings->use_single_page) {
+        // シングルページモードまたは受付停止の場合は404
+        if ($settings->use_single_page || ! ($settings->accepting_inquiries ?? true)) {
             abort(404);
         }
 
@@ -228,6 +228,11 @@ class DixlaseInquiryFrontController extends Controller
     public function embedSend(DixlaseInquiryEmbedSendRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
+
+        // 受付停止中は送信を拒否
+        if (! ($settings->accepting_inquiries ?? true)) {
+            abort(403);
+        }
 
         $this->applyFormLocale($settings);
 
