@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('layouts.admin')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="max-w-7xl mx-auto" x-data="{ deleteId: null }">
 
     {{-- 未読バッジ --}}
     @if($unreadCount > 0)
@@ -168,16 +168,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                         title="{{ __('dixlase-inquiry::admin/inquiry/index.view') }}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <form action="{{ route('dixlase-inquiry::admin.inquiry.destroy', $inquiry->id) }}" method="POST"
-                                        @submit.prevent="if(confirm('{{ __('dixlase-inquiry::admin/inquiry/index.confirm_delete') }}')) $el.submit()">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
-                                            title="{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button"
+                                        @click="deleteId = {{ $inquiry->id }}; openModal('deleteInquiryModal')"
+                                        class="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                                        title="{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -215,4 +211,34 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </section>
 
 </div>
+
+{{-- 削除確認モーダル --}}
+@push('modals')
+    <x-ui-modal id="deleteInquiryModal"
+        :title="__('dixlase-inquiry::admin/inquiry/index.confirm_delete_title')"
+        :message="__('dixlase-inquiry::admin/inquiry/index.confirm_delete')"
+        icon-type="danger"
+        :form="null"
+    >
+        @slot('footer')
+            <x-form-button
+                type="button"
+                variant="secondary"
+                icon="fas fa-times"
+                @click="close()"
+                class="mx-2"
+            >{{ __('common.cancel') }}</x-form-button>
+            <form :action="'{{ route('dixlase-inquiry::admin.inquiry.destroy', '') }}/' + deleteId" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <x-form-button
+                    type="submit"
+                    variant="danger"
+                    icon="fas fa-trash-alt"
+                    class="mx-2"
+                >{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}</x-form-button>
+            </form>
+        @endslot
+    </x-ui-modal>
+@endpush
 @endsection

@@ -31,6 +31,7 @@ return [
     'no_inquiries' => '問い合わせが見つかりません。',
     'view' => '詳細',
     'delete' => '削除',
-    'confirm_delete' => 'この問い合わせを削除しますか？',
+    'confirm_delete_title' => '問い合わせの削除',
+    'confirm_delete' => 'この問い合わせを削除しますか？この操作は元に戻せません。',
     'deleted' => '問い合わせが削除されました。',
 ];
