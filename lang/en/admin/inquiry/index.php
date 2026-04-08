@@ -31,6 +31,7 @@ return [
     'no_inquiries' => 'No inquiries found.',
     'view' => 'View',
     'delete' => 'Delete',
-    'confirm_delete' => 'Are you sure you want to delete this inquiry?',
+    'confirm_delete_title' => 'Delete Inquiry',
+    'confirm_delete' => 'Are you sure you want to delete this inquiry? This action cannot be undone.',
     'deleted' => 'The inquiry has been deleted.',
 ];
