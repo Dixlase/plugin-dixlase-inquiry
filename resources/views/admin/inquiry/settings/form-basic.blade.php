@@ -24,8 +24,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 <div class="mx-auto">
     <form id="form-basic-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.update') }}" method="POST" x-data="{
         isSimpleMode: {{ $isSimpleMode ? 'true' : 'false' }},
-        formHeading: '{{ old('form_heading', $settings->form_heading ?? '') }}',
-        formDescription: '{{ old('form_description', $settings->form_description ?? '') }}',
+        formHeading: {!! Js::from(old('form_heading', $settings->form_heading ?? '')) !!},
+        formDescription: {!! Js::from(old('form_description', $settings->form_description ?? '')) !!},
         selectedLocale: {{ $isSimpleMode ? "'auto'" : "'" . old('lang', $settings->lang ?? 'auto') . "'" }},
         useSinglePage: {{ $isSimpleMode ? "'1'" : "'" . (old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0') . "'" }},
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
