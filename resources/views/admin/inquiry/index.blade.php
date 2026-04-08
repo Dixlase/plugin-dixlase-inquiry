@@ -42,12 +42,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <fieldset>
                 <legend class="sr-only">{{ __('dixlase-inquiry::admin/inquiry/index.search_title') }}</legend>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div class="flex flex-wrap items-end gap-4">
                     {{-- キーワード検索 --}}
-                    <div>
-                        <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {{ __('common.filters.search_keyword') }}
-                        </label>
+                    <div class="flex-1 min-w-[200px]">
+                        <x-form-label for="search" :text="__('common.filters.search_keyword')" />
                         <x-form-text
                             id="search"
                             name="search"
@@ -57,10 +55,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </div>
 
                     {{-- ステータスフィルタ --}}
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {{ __('dixlase-inquiry::admin/inquiry/index.status_filter') }}
-                        </label>
+                    <div class="w-48">
+                        <x-form-label for="status" :text="__('dixlase-inquiry::admin/inquiry/index.status_filter')" />
                         <x-form-select
                             id="status"
                             name="status"
@@ -73,19 +69,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     </div>
 
                     {{-- ボタン --}}
-                    <div class="flex items-end">
-                        <div class="flex gap-2 w-full">
-                            <x-form-button
-                                type="submit"
-                                variant="primary"
-                                :label="__('common.search')"
-                                icon="fas fa-search"
-                            />
-                            <a href="{{ route('dixlase-inquiry::admin.inquiry.index') }}"
-                               class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 flex items-center justify-center">
-                                {{ __('common.filters.clear_button') }}
-                            </a>
-                        </div>
+                    <div class="flex gap-2">
+                        <x-form-button
+                            type="submit"
+                            variant="primary"
+                            :label="__('common.search')"
+                            icon="fas fa-search"
+                        />
+                        <a href="{{ route('dixlase-inquiry::admin.inquiry.index') }}"
+                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 flex items-center justify-center">
+                            {{ __('common.filters.clear_button') }}
+                        </a>
                     </div>
                 </div>
             </fieldset>
@@ -168,14 +162,23 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ $inquiry->submitted_at->format('Y-m-d H:i') }}
                             </td>
                             <td data-label="{{ __('dixlase-inquiry::admin/inquiry/index.table.actions') }}">
-                                <x-form-button
-                                    type="button"
-                                    variant="secondary"
-                                    size="sm"
-                                    :label="__('dixlase-inquiry::admin/inquiry/index.view')"
-                                    icon="fas fa-eye"
-                                    @click="window.location.href='{{ route('dixlase-inquiry::admin.inquiry.show', $inquiry->id) }}'"
-                                />
+                                <div class="flex items-center gap-1">
+                                    <a href="{{ route('dixlase-inquiry::admin.inquiry.show', $inquiry->id) }}"
+                                        class="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+                                        title="{{ __('dixlase-inquiry::admin/inquiry/index.view') }}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <form action="{{ route('dixlase-inquiry::admin.inquiry.destroy', $inquiry->id) }}" method="POST"
+                                        @submit.prevent="if(confirm('{{ __('dixlase-inquiry::admin/inquiry/index.confirm_delete') }}')) $el.submit()">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                                            title="{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
