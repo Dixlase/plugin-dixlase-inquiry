@@ -32,7 +32,10 @@ return [
 
     // 一括操作
     'bulk_selected' => '件選択中',
+    'bulk_select_status' => 'ステータスを選択',
     'bulk_apply' => '適用',
+    'bulk_confirm_title' => 'ステータスの一括更新',
+    'bulk_confirm_message' => '選択した問い合わせのステータスを更新します。よろしいですか？',
     'bulk_status_updated' => ':count 件のステータスを更新しました。',
 
     'table' => [

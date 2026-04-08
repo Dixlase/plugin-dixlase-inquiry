@@ -32,7 +32,10 @@ return [
 
     // Bulk actions
     'bulk_selected' => ' selected',
+    'bulk_select_status' => 'Select status',
     'bulk_apply' => 'Apply',
+    'bulk_confirm_title' => 'Bulk Status Update',
+    'bulk_confirm_message' => 'Update the status of selected inquiries. Are you sure?',
     'bulk_status_updated' => ':count inquiry status(es) updated.',
 
     'table' => [
