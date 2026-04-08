@@ -27,7 +27,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     allIds: {{ Js::from($inquiries->pluck('id')) }},
     get allSelected() { return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length; },
     toggleAll() { this.allSelected ? this.selectedIds = [] : this.selectedIds = [...this.allIds]; },
-}" x-init="$store.inquiryDelete = { id: null }">
+}" x-init="$store.inquiryDelete = { id: null }; $store.inquiryBulk = { ids: [], status: '' }"
+   x-effect="$store.inquiryBulk.ids = selectedIds; $store.inquiryBulk.status = bulkStatus">
 
     {{-- 未読バッジ --}}
     @if($unreadCount > 0)
@@ -126,14 +127,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         {{-- バルクアクションバー --}}
         @if($inquiries->count() > 0)
         <div class="mb-4 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex items-center gap-3">
-            <span class="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap" x-show="selectedIds.length > 0">
+            <span class="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                 <span x-text="selectedIds.length"></span>{{ __('dixlase-inquiry::admin/inquiry/index.bulk_selected') }}
             </span>
             <x-form-select
                 name="bulk_status_select"
                 :options="array_merge(['' => __('dixlase-inquiry::admin/inquiry/index.bulk_select_status')], $statusLabels)"
                 xModel="bulkStatus"
-                class="!py-1.5 !text-sm"
+                class="!py-1.5 !text-sm !w-auto"
             />
             <button type="button"
                 @click="openModal('bulkStatusModal')"
@@ -294,8 +295,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <form action="{{ route('dixlase-inquiry::admin.inquiry.bulk-status') }}" method="POST" class="inline" id="bulkStatusForm">
                 @csrf
                 @method('PATCH')
-                <input type="hidden" name="status" :value="bulkStatus">
-                <template x-for="id in selectedIds" :key="id">
+                <input type="hidden" name="status" :value="$store.inquiryBulk.status">
+                <template x-for="id in $store.inquiryBulk.ids" :key="id">
                     <input type="hidden" name="ids[]" :value="id">
                 </template>
                 <x-form-button
