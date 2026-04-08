@@ -24,12 +24,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @section('content')
     <div class="dixlase-inquiry">
-        <div class="container mx-auto pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto pt-32 pb-16 px-4 sm:px-6 lg:px-8">
             <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-2xl mx-auto">
                 {{-- ページヘッダー（見出し+説明文） --}}
-                <header class="px-8 pt-10 pb-6 text-center">
+                <header class="px-8 pt-10 pb-8 mb-12 text-center">
                     @if(!empty($settings->form_heading))
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">{{ $settings->form_heading }}</h1>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-5">{{ $settings->form_heading }}</h1>
                     @endif
                     @if(!empty($settings->form_description))
                         <p class="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">{!! nl2br(e($settings->form_description)) !!}</p>
@@ -37,7 +37,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </header>
 
                 {{-- フォームコンテンツ --}}
-                <div class="px-8 pb-10">
+                <div class="px-8 pt-8 pb-10">
                     <form action="{{ $settings->show_confirmation_page ? route('inquiry.confirm') : route('inquiry.send') }}" method="POST">
                         @csrf
                         @include('dixlase-inquiry::front.inquiries.partials.form-fields')
