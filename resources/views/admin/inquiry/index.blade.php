@@ -125,32 +125,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
         {{-- バルクアクションバー --}}
         @if($inquiries->count() > 0)
-        <div x-show="selectedIds.length > 0" x-cloak
-            class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center gap-3 flex-wrap">
-            <span class="text-sm font-medium text-blue-800 dark:text-blue-200">
+        <div class="mb-4 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex items-center gap-3">
+            <span class="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap" x-show="selectedIds.length > 0">
                 <span x-text="selectedIds.length"></span>{{ __('dixlase-inquiry::admin/inquiry/index.bulk_selected') }}
             </span>
-            <form action="{{ route('dixlase-inquiry::admin.inquiry.bulk-status') }}" method="POST" class="flex items-center gap-2">
-                @csrf
-                @method('PATCH')
-                <template x-for="id in selectedIds" :key="id">
-                    <input type="hidden" name="ids[]" :value="id">
-                </template>
-                <x-form-select
-                    name="status"
-                    :options="$statusLabels"
-                    xModel="bulkStatus"
-                    class="!py-1 !text-sm"
-                />
-                <x-form-button
-                    type="submit"
-                    variant="primary"
-                    size="sm"
-                    :label="__('dixlase-inquiry::admin/inquiry/index.bulk_apply')"
-                    icon="fas fa-check"
-                    ::disabled="!bulkStatus"
-                />
-            </form>
+            <x-form-select
+                name="bulk_status_select"
+                :options="array_merge(['' => __('dixlase-inquiry::admin/inquiry/index.bulk_select_status')], $statusLabels)"
+                xModel="bulkStatus"
+                class="!py-1.5 !text-sm"
+            />
+            <button type="button"
+                @click="openModal('bulkStatusModal')"
+                :disabled="selectedIds.length === 0 || !bulkStatus"
+                class="inline-flex items-center whitespace-nowrap px-4 py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-check mr-1.5"></i>{{ __('dixlase-inquiry::admin/inquiry/index.bulk_apply') }}
+            </button>
         </div>
 
         {{-- テーブル --}}
@@ -280,6 +270,40 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     icon="fas fa-trash-alt"
                     class="mx-2"
                 >{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}</x-form-button>
+            </form>
+        @endslot
+    </x-ui-modal>
+@endpush
+
+{{-- 一括ステータス更新確認モーダル --}}
+@push('modals')
+    <x-ui-modal id="bulkStatusModal"
+        :title="__('dixlase-inquiry::admin/inquiry/index.bulk_confirm_title')"
+        :message="__('dixlase-inquiry::admin/inquiry/index.bulk_confirm_message')"
+        icon-type="warning"
+        :form="null"
+    >
+        @slot('footer')
+            <x-form-button
+                type="button"
+                variant="secondary"
+                icon="fas fa-times"
+                @click="close()"
+                class="mx-2"
+            >{{ __('common.cancel') }}</x-form-button>
+            <form action="{{ route('dixlase-inquiry::admin.inquiry.bulk-status') }}" method="POST" class="inline" id="bulkStatusForm">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="status" :value="bulkStatus">
+                <template x-for="id in selectedIds" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <x-form-button
+                    type="submit"
+                    variant="primary"
+                    icon="fas fa-check"
+                    class="mx-2"
+                >{{ __('dixlase-inquiry::admin/inquiry/index.bulk_apply') }}</x-form-button>
             </form>
         @endslot
     </x-ui-modal>
