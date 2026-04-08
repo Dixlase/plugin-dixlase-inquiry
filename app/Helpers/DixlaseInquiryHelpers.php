@@ -113,6 +113,40 @@ if (! function_exists('dls_inquiry_form')) {
     }
 }
 
+if (! function_exists('dls_inquiry_section')) {
+    /**
+     * 問い合わせセクション全体（見出し+説明文+フォームまたはリンクボタン）を表示する
+     *
+     * @return string|null レンダリングされたHTML、またはプラグインが無効な場合はnull
+     */
+    function dls_inquiry_section(): ?string
+    {
+        if (! function_exists('dls_inquiry_enabled') || ! dls_inquiry_enabled()) {
+            return null;
+        }
+
+        try {
+            $settings = DixlaseInquirySetting::getSettings();
+
+            if (! $settings) {
+                return null;
+            }
+
+            // シングルページモードならフォームHTMLを生成
+            $formHtml = ($settings->use_single_page ?? true) ? dls_inquiry_form() : '';
+
+            return view('dixlase-inquiry::front.inquiries.section', [
+                'settings' => $settings,
+                'formHtml' => $formHtml ?? '',
+            ])->render();
+        } catch (\Exception $e) {
+            \Log::error('dls_inquiry_section error: '.$e->getMessage());
+
+            return null;
+        }
+    }
+}
+
 if (! function_exists('dls_inquiry_settings')) {
     /**
      * 問い合わせ設定を取得する

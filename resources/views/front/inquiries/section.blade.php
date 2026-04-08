@@ -1,0 +1,44 @@
+{{--
+This file is part of Dixlase Inquiry.
+
+Copyright (C) 2026 exc-D inc.
+https://exc-d.com
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+--}}
+
+{{-- お問い合わせセクション（見出し+説明文+フォームまたはリンクボタン） --}}
+<section class="inquiry-section py-16 bg-gray-100 dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            @if(!empty($settings->form_heading))
+                <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-3">{{ $settings->form_heading }}</h2>
+            @endif
+            @if(!empty($settings->form_description))
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto">{!! nl2br(e($settings->form_description)) !!}</p>
+            @endif
+            @if($settings->use_single_page ?? true)
+                {!! $formHtml !!}
+            @else
+                <div class="text-center">
+                    <a href="{{ url('/' . ($settings->inquiry_url_slug ?? 'inquiry')) }}"
+                        class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        {{ __('dixlase-inquiry::front.form.go_to_form') }}
+                    </a>
+                </div>
+            @endif
+        </div>
+    </div>
+</section>
