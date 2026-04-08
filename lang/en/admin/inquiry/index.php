@@ -30,6 +30,11 @@ return [
     'all_statuses' => 'All Statuses',
     'unread_count' => ':count unread',
 
+    // Bulk actions
+    'bulk_selected' => ' selected',
+    'bulk_apply' => 'Apply',
+    'bulk_status_updated' => ':count inquiry status(es) updated.',
+
     'table' => [
         'caption' => 'List of inquiries',
         'id' => 'ID',

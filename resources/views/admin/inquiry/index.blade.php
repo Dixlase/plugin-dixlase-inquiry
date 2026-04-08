@@ -21,7 +21,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('layouts.admin')
 
 @section('content')
-<div class="max-w-7xl mx-auto" x-data x-init="$store.inquiryDelete = { id: null }">
+<div class="max-w-7xl mx-auto" x-data="{
+    selectedIds: [],
+    bulkStatus: '',
+    allIds: {{ Js::from($inquiries->pluck('id')) }},
+    get allSelected() { return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length; },
+    toggleAll() { this.allSelected ? this.selectedIds = [] : this.selectedIds = [...this.allIds]; },
+}" x-init="$store.inquiryDelete = { id: null }">
 
     {{-- 未読バッジ --}}
     @if($unreadCount > 0)
@@ -117,13 +123,46 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             ])"
         />
 
-        {{-- テーブル --}}
+        {{-- バルクアクションバー --}}
         @if($inquiries->count() > 0)
+        <div x-show="selectedIds.length > 0" x-cloak
+            class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center gap-3 flex-wrap">
+            <span class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                <span x-text="selectedIds.length"></span>{{ __('dixlase-inquiry::admin/inquiry/index.bulk_selected') }}
+            </span>
+            <form action="{{ route('dixlase-inquiry::admin.inquiry.bulk-status') }}" method="POST" class="flex items-center gap-2">
+                @csrf
+                @method('PATCH')
+                <template x-for="id in selectedIds" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <x-form-select
+                    name="status"
+                    :options="$statusLabels"
+                    xModel="bulkStatus"
+                    class="!py-1 !text-sm"
+                />
+                <x-form-button
+                    type="submit"
+                    variant="primary"
+                    size="sm"
+                    :label="__('dixlase-inquiry::admin/inquiry/index.bulk_apply')"
+                    icon="fas fa-check"
+                    ::disabled="!bulkStatus"
+                />
+            </form>
+        </div>
+
+        {{-- テーブル --}}
         <div class="responsive-table !border-0 !dark:border-0">
             <table class="border rounded-sm">
                 <caption class="sr-only">{{ __('dixlase-inquiry::admin/inquiry/index.table.caption') }}</caption>
                 <thead>
                     <tr>
+                        <th class="w-10">
+                            <input type="checkbox" @change="toggleAll()" :checked="allSelected"
+                                class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                        </th>
                         <th>{{ __('dixlase-inquiry::admin/inquiry/index.table.id') }}</th>
                         <th>{{ __('dixlase-inquiry::admin/inquiry/index.table.status') }}</th>
                         <th>{{ __('dixlase-inquiry::admin/inquiry/index.table.name') }}</th>
@@ -136,6 +175,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <tbody>
                     @foreach($inquiries as $inquiry)
                         <tr class="{{ $inquiry->read_at === null ? 'font-semibold' : '' }}">
+                            <td>
+                                <input type="checkbox" value="{{ $inquiry->id }}" x-model.number="selectedIds"
+                                    class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                            </td>
                             <td data-label="{{ __('dixlase-inquiry::admin/inquiry/index.table.id') }}">
                                 {{ $inquiry->id }}
                             </td>

@@ -159,6 +159,24 @@ class DixlaseInquiryAdminController extends Controller
     }
 
     /**
+     * 一括ステータス更新
+     */
+    public function bulkUpdateStatus(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:'.(new DixlaseInquiry)->getTable().',id',
+            'status' => 'required|string|in:'.implode(',', array_column(InquiryStatus::cases(), 'value')),
+        ]);
+
+        DixlaseInquiry::whereIn('id', $validated['ids'])
+            ->update(['status' => $validated['status']]);
+
+        return redirect()->back()
+            ->with('success', __('dixlase-inquiry::admin/inquiry/index.bulk_status_updated', ['count' => count($validated['ids'])]));
+    }
+
+    /**
      * 問い合わせ受付状態のトグル（AJAX）
      */
     public function toggleAccepting(Request $request): \Illuminate\Http\JsonResponse
