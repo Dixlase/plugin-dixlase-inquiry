@@ -177,7 +177,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                         {{-- ボタン --}}
                         <div class="flex gap-3 pt-6 justify-center">
-                            <button type="button" onclick="history.back()"
+                            <button type="button" @click="history.back()"
                                 class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
                                 <i class="fas fa-arrow-left mr-2"></i>
                                 {{ __('dixlase-inquiry::front.buttons.back') }}
