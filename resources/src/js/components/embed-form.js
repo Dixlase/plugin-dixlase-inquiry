@@ -8,12 +8,101 @@
  */
 export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWestern = false) {
     if (!showConfirmationPage) {
-        // 確認画面なしの場合は空のオブジェクトを返す
-        return {};
+        // 確認画面なしの場合は最低限のAJAX送信機能のみ
+        return {
+            currentView: 'form',
+            isTransitioning: false,
+            isSubmitting: false,
+
+            async submitFormAjax() {
+                if (this.isSubmitting) {
+                    return;
+                }
+                const form = this.$refs.inquiryForm;
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                this.isSubmitting = true;
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+                    if (response.ok) {
+                        await this.transitionTo('complete');
+                    } else {
+                        const data = await response.json().catch(() => null);
+                        if (data && data.errors) {
+                            this.showValidationErrors(data.errors);
+                        } else {
+                            form.submit();
+                        }
+                    }
+                } catch {
+                    form.submit();
+                } finally {
+                    this.isSubmitting = false;
+                }
+            },
+
+            showValidationErrors(errors) {
+                const container = this.$el.querySelector('.inquiry-errors');
+                if (!container) {
+                    return;
+                }
+                const messages = Object.values(errors).flat();
+                container.innerHTML = '<ul class="list-disc list-inside">' +
+                    messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+                container.classList.remove('hidden');
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            async transitionTo(view) {
+                const container = this.$refs.heightContainer;
+                const oldH = container ? container.scrollHeight : 0;
+                if (container) {
+                    container.style.height = oldH + 'px';
+                }
+                this.isTransitioning = true;
+                await this.sleep(300);
+                if (container) {
+                    container.classList.remove('transition-[height]');
+                }
+                this.currentView = view;
+                await this.$nextTick();
+                await this.nextFrame();
+                if (container) {
+                    container.style.height = 'auto';
+                    const newH = container.scrollHeight;
+                    container.style.height = oldH + 'px';
+                    container.classList.add('transition-[height]');
+                    await this.nextFrame();
+                    container.style.height = newH + 'px';
+                    await this.sleep(300);
+                    container.style.height = 'auto';
+                }
+                await this.nextFrame();
+                this.isTransitioning = false;
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            },
+
+            nextFrame() {
+                return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            },
+        };
     }
 
     return {
-        showConfirmation: false,
+        currentView: 'form',
+        isTransitioning: false,
+        isSubmitting: false,
         formData: {
             subject: '',
             first_name: '',
@@ -35,6 +124,58 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 return (this.formData.first_name + ' ' + this.formData.last_name).trim();
             }
             return (this.formData.last_name + ' ' + this.formData.first_name).trim();
+        },
+
+        /**
+         * ビュー切り替え（フェードアウト→高さアニメーション→フェードイン）
+         */
+        async transitionTo(view) {
+            const container = this.$refs.heightContainer;
+            const oldHeight = container ? container.scrollHeight : 0;
+
+            // 現在の高さを固定（auto → 具体的なpx値）
+            if (container) {
+                container.style.height = oldHeight + 'px';
+            }
+
+            // フェードアウト
+            this.isTransitioning = true;
+            await this.sleep(300);
+
+            // トランジション無効化してビュー切り替え
+            if (container) {
+                container.classList.remove('transition-[height]');
+            }
+            this.currentView = view;
+            await this.$nextTick();
+            await this.nextFrame();
+
+            if (container) {
+                // 同期的に: auto→測定→旧高さに戻す（フレームをまたがないのでFOUC無し）
+                container.style.height = 'auto';
+                const newHeight = container.scrollHeight;
+                container.style.height = oldHeight + 'px';
+
+                // トランジションを再有効化してアニメーション
+                container.classList.add('transition-[height]');
+                await this.nextFrame();
+                container.style.height = newHeight + 'px';
+                await this.sleep(300);
+                container.style.height = 'auto';
+            }
+
+            // フェードイン開始
+            await this.nextFrame();
+            this.isTransitioning = false;
+            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+
+        sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        },
+
+        nextFrame() {
+            return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         },
 
         showConfirm() {
@@ -106,30 +247,84 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 this.formData.genderLabel = '';
             }
 
-            this.showConfirmation = true;
-
-            // スクロールして確認画面を表示
-            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            this.transitionTo('confirmation');
         },
 
-        submitForm() {
-            this.$refs.inquiryForm.submit();
-        }
+        goBack() {
+            this.transitionTo('form');
+        },
+
+        /**
+         * AJAX送信でフォームを送信し、完了画面にフェード遷移する
+         */
+        async submitForm() {
+            if (this.isSubmitting) {
+                return;
+            }
+            const form = this.$refs.inquiryForm;
+            this.isSubmitting = true;
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (response.ok) {
+                    await this.transitionTo('complete');
+                } else {
+                    const data = await response.json().catch(() => null);
+                    if (data && data.errors) {
+                        this.showValidationErrors(data.errors);
+                        await this.transitionTo('form');
+                    } else {
+                        // フォールバック: 通常の送信
+                        form.submit();
+                    }
+                }
+            } catch {
+                // ネットワークエラー時はフォールバック
+                form.submit();
+            } finally {
+                this.isSubmitting = false;
+            }
+        },
+
+        showValidationErrors(errors) {
+            const container = this.$el.querySelector('.inquiry-errors');
+            if (!container) {
+                return;
+            }
+            const messages = Object.values(errors).flat();
+            container.innerHTML = '<ul class="list-disc list-inside">' +
+                messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
+            container.classList.remove('hidden');
+        },
     };
 }
 
-// Alpine.data() でコンポーネントを登録（CSP厳格モード対応）
-// このスクリプトは Alpine.start() 後に読み込まれるため、
-// 既存DOM要素を Alpine.initTree() で遅延初期化する
-if (typeof window !== 'undefined' && window.Alpine) {
+/**
+ * Alpineにコンポーネントを登録し、必要に応じて既存DOM要素を初期化する
+ */
+function registerComponent() {
     window.Alpine.data('inquiryEmbedForm', (showConfirmationPage = true, nameOrderWestern = false) =>
         createInquiryEmbedForm(showConfirmationPage, nameOrderWestern)
     );
 
-    // Alpine.start() 後に読み込まれた場合、既存のDOM要素を初期化
+    // Alpine.start() 後に読み込まれた場合、既存のDOM要素を遅延初期化する
     document.querySelectorAll('[x-data*="inquiryEmbedForm"]').forEach(el => {
         if (!el._x_dataStack) {
             window.Alpine.initTree(el);
         }
     });
+}
+
+// Alpine.data() でコンポーネントを登録（CSP厳格モード対応）
+// Alpine が既にロード済みの場合は即座に登録、未ロードの場合は alpine:init イベントで登録
+if (typeof window !== 'undefined') {
+    if (window.Alpine) {
+        registerComponent();
+    } else {
+        document.addEventListener('alpine:init', registerComponent);
+    }
 }

@@ -23,13 +23,13 @@
 use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
-if (!function_exists('dls_inquiry_form')) {
+if (! function_exists('dls_inquiry_form')) {
     /**
      * 問い合わせフォームを表示する
      *
-     * @param array $options オプション設定
-     *   - 'class' => string 追加のCSSクラス
-     *   - 'id' => string カスタムID
+     * @param  array  $options  オプション設定
+     *                          - 'class' => string 追加のCSSクラス
+     *                          - 'id' => string カスタムID
      * @return string|null レンダリングされたHTML、またはプラグインが無効な場合はnull
      */
     function dls_inquiry_form(array $options = []): ?string
@@ -37,12 +37,13 @@ if (!function_exists('dls_inquiry_form')) {
         try {
             $settings = DixlaseInquirySetting::getSettings();
 
-            if (!$settings || empty($settings->admin_email)) {
+            if (! $settings || empty($settings->admin_email)) {
                 return null;
             }
 
-            // フォームロケールを適用（'auto'時は現在のロケールを維持）
+            // フォームロケールを一時的に適用（レンダリング後に元に戻す）
             $formLocale = $settings->lang ?? 'auto';
+            $originalLocale = app()->getLocale();
             if ($formLocale !== 'auto') {
                 app()->setLocale($formLocale);
             }
@@ -55,7 +56,7 @@ if (!function_exists('dls_inquiry_form')) {
                     $privacyUrl = $provider->getPrivacyPolicyUrl();
                 }
             }
-            if (!$privacyUrl && !empty($settings->privacy_policy_url)) {
+            if (! $privacyUrl && ! empty($settings->privacy_policy_url)) {
                 $privacyUrl = $settings->privacy_policy_url;
             }
 
@@ -80,27 +81,77 @@ if (!function_exists('dls_inquiry_form')) {
                 }
             }
 
-            return view('dixlase-inquiry::front.inquiries.embed-form', [
+            // CAPTCHA
+            $captchaFormKey = 'dixlase-inquiry.inquiry_contact';
+            $captchaEnabled = \App\Helpers\CaptchaHelper::shouldShowCaptcha($captchaFormKey);
+            $captchaWidget = $captchaEnabled ? \App\Helpers\CaptchaHelper::renderWidget($captchaFormKey) : null;
+
+            $formHtml = view('dixlase-inquiry::front.inquiries.embed-form', [
                 'settings' => $settings,
                 'options' => $options,
                 'privacyUrl' => $privacyUrl,
                 'genderOptions' => $genderOptions,
                 'prefectures' => $prefectures,
+                'captchaEnabled' => $captchaEnabled,
+                'captchaWidget' => $captchaWidget,
             ])->render();
+
+            // フォームレンダリング後にロケールを元に戻す
+            app()->setLocale($originalLocale);
+
+            // render() で文字列化すると @push が親レイアウトに届かないため、
+            // アセットタグをフォームHTML出力に直接追加する
+            $assets = load_plugin_assets('DixlaseInquiry', ['css/style.scss', 'js/app.js']);
+
+            return $formHtml.$assets;
         } catch (\Exception $e) {
-            \Log::error('dls_inquiry_form error: ' . $e->getMessage());
+            app()->setLocale($originalLocale ?? app()->getLocale());
+            \Log::error('dls_inquiry_form error: '.$e->getMessage());
+
             return null;
         }
     }
 }
 
-if (!function_exists('dls_inquiry_settings')) {
+if (! function_exists('dls_inquiry_section')) {
+    /**
+     * 問い合わせセクション全体（見出し+説明文+フォームまたはリンクボタン）を表示する
+     *
+     * @return string|null レンダリングされたHTML、またはプラグインが無効な場合はnull
+     */
+    function dls_inquiry_section(): ?string
+    {
+        if (! function_exists('dls_inquiry_enabled') || ! dls_inquiry_enabled()) {
+            return null;
+        }
+
+        try {
+            $settings = DixlaseInquirySetting::getSettings();
+
+            if (! $settings) {
+                return null;
+            }
+
+            // シングルページモードならフォームHTMLを生成
+            $formHtml = ($settings->use_single_page ?? true) ? dls_inquiry_form() : '';
+
+            return view('dixlase-inquiry::front.inquiries.section', [
+                'settings' => $settings,
+                'formHtml' => $formHtml ?? '',
+            ])->render();
+        } catch (\Exception $e) {
+            \Log::error('dls_inquiry_section error: '.$e->getMessage());
+
+            return null;
+        }
+    }
+}
+
+if (! function_exists('dls_inquiry_settings')) {
     /**
      * 問い合わせ設定を取得する
-     * 
-     * @return \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting|null
      */
-    function dls_inquiry_settings(): ?DixlaseInquirySetting
+    function dls_inquiry_settings(): ?object
     {
         try {
             return DixlaseInquirySetting::getSettings();
@@ -110,17 +161,16 @@ if (!function_exists('dls_inquiry_settings')) {
     }
 }
 
-if (!function_exists('dls_inquiry_enabled')) {
+if (! function_exists('dls_inquiry_enabled')) {
     /**
      * 問い合わせプラグインが有効かどうかを確認する
-     * 
-     * @return bool
      */
     function dls_inquiry_enabled(): bool
     {
         try {
             $settings = DixlaseInquirySetting::getSettings();
-            return $settings && !empty($settings->admin_email);
+
+            return $settings && ! empty($settings->admin_email) && ($settings->accepting_inquiries ?? true);
         } catch (\Exception $e) {
             return false;
         }

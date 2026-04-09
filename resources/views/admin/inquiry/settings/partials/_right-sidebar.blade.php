@@ -2,7 +2,7 @@
 This file is part of Dixlase Inquiry.
 
 Copyright (C) 2026 exc-D inc.
-Website: https://exc-d.com
+https://exc-d.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,28 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-{{-- Right sidebar toggle button --}}
-<button type="button"
-        @click="toggleRightSidebar()"
-        class="flex fixed top-14 right-0 z-50 items-center backdrop-blur-sm dark:bg-gray-900/75 bg-white/75 text-blue-400 dark:text-white px-1.5 py-4 rounded-l-lg shadow-md border border-r-0 border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
-        :class="{
-            'translate-x-0': rightSidebarCollapsed,
-            '-translate-x-80': !rightSidebarCollapsed
-        }"
-        :style="rightSidebarReady ? 'transition: transform 200ms ease-in-out' : ''"
-        :aria-label="rightSidebarCollapsed
-            ? '{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_open') }}'
-            : '{{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_close') }}'">
-    <i class="fas text-sm" :class="rightSidebarCollapsed ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
-</button>
-
-{{-- Right sidebar --}}
-<div class="space-y-6 fixed top-12 right-0 bottom-0 w-80 z-50 overflow-y-auto bg-white/75 dark:bg-gray-900/75 backdrop-blur-sm border-l border-gray-200 dark:border-gray-600 shadow-md px-6 py-6"
-     :class="{
-         'translate-x-80': rightSidebarCollapsed,
-         'translate-x-0': !rightSidebarCollapsed
-     }"
-     :style="rightSidebarReady ? 'transition: transform 300ms ease-in-out' : ''">
+<x-admin.right-sidebar
+    :openLabel="__('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_open')"
+    :closeLabel="__('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_close')"
+>
 
     {{-- Simple mode notice --}}
     @if($isSimpleMode)
@@ -74,7 +56,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- Language selector --}}
             <div class="space-y-4">
                 <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
+                    <x-form-label for="lang" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
                     <x-form-select
                         name="lang"
                         :options="[
@@ -90,7 +72,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
                 {{-- Input format --}}
                 <div>
-                    <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
+                    <x-form-label for="name_order_western" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
                     <x-form-select
                         name="name_order_western"
                         :options="[
@@ -101,6 +83,30 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         xModel="nameOrderWestern"
                     />
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                </div>
+
+                {{-- Form heading --}}
+                <div>
+                    <x-form-label for="form_heading" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')" />
+                    <x-form-text
+                        name="form_heading"
+                        :value="old('form_heading', $settings->form_heading ?? '')"
+                        xModel="formHeading"
+                    />
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading_help')" />
+                </div>
+
+                {{-- Form description --}}
+                <div>
+                    <x-form-label for="form_description" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description')" />
+                    <textarea
+                        id="form_description"
+                        name="form_description"
+                        rows="3"
+                        x-model="formDescription"
+                        class="input-common block w-full p-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white"
+                    >{{ old('form_description', $settings->form_description ?? '') }}</textarea>
+                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
                 </div>
             </div>
         </div>
@@ -167,22 +173,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
             {{-- Postal code & Address --}}
             <x-form-toggle
-                name="show_postal_code"
+                name="show_address"
                 :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_postal_address')"
-                :checked="old('show_postal_code', $settings->show_postal_code ?? false)"
-                xModel="showPostalCode"
+                :checked="old('show_address', $settings->show_address ?? false)"
+                xModel="showAddress"
             />
-            <input type="hidden" name="show_address" :value="showPostalCode">
             <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
                 <x-form-toggle
                     name="postal_code_required"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.postal_address_required')"
                     :checked="old('postal_code_required', $settings->postal_code_required ?? false)"
-                    xBind="(showPostalCode === '1')"
+                    xBind="(showAddress === '1')"
                     xModel="postalCodeRequired"
                 />
             </div>
-            <input type="hidden" name="address_required" :value="postalCodeRequired">
 
             {{-- Phone --}}
             <x-form-toggle
@@ -390,4 +394,4 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </div>
     @endif
 
-</div>
+</x-admin.right-sidebar>

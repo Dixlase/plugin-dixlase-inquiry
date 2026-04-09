@@ -23,6 +23,8 @@
 return [
     'form' => [
         'heading' => 'Contact Us',
+        'default_description' => "Feel free to reach out to us.\nPlease fill in the form below and submit your inquiry.",
+        'go_to_form' => 'Contact Us',
         'title' => 'Contact Us',
         'name' => 'Name',
         'last_name' => 'Last Name',
@@ -112,7 +114,7 @@ return [
 
     'confirmation' => [
         'title' => 'Confirm Your Information',
-        'message' => 'Please confirm the information below is correct:',
+        'message' => 'Please confirm the information below is correct.<br>If everything looks good, press the submit button.',
     ],
 
     'complete' => [
@@ -123,6 +125,7 @@ return [
         'submitted_at' => 'Submitted At',
         'auto_reply_notice' => 'A confirmation email has been sent. If you do not receive it, please check your spam folder.',
         'back_to_home' => 'Back to Home',
+        'back_to_form' => 'Back to Form',
     ],
 
     'validation' => [

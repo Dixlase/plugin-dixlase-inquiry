@@ -2,7 +2,7 @@
 This file is part of Dixlase Inquiry.
 
 Copyright (C) 2026 exc-D inc.
-Website: https://exc-d.com
+https://exc-d.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,53 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @extends('layouts.admin')
 
 @section('content')
-<div class="mx-auto">
+<div class="mx-auto" x-data="{
+    accepting: {{ $settings->accepting_inquiries ? 'true' : 'false' }},
+    isToggling: false,
+    async toggleAccepting() {
+        if (this.isToggling) return;
+        this.isToggling = true;
+        try {
+            const res = await fetch('{{ route('dixlase-inquiry::admin.inquiry.toggle-accepting') }}', {
+                method: 'PATCH',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                this.accepting = data.accepting;
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            this.isToggling = false;
+        }
+    }
+}">
+
+    {{-- 受付状態バナー --}}
+    <div class="mb-6 rounded-lg border p-4 flex items-center justify-between"
+        :class="accepting
+            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+            : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'">
+        <div class="flex items-center">
+            <div class="mr-3">
+                <i class="text-2xl" :class="accepting ? 'fas fa-check-circle text-green-600 dark:text-green-400' : 'fas fa-pause-circle text-amber-600 dark:text-amber-400'"></i>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-900 dark:text-white text-sm"
+                    x-text="accepting ? '{{ __('dixlase-inquiry::admin/inquiry/settings/index.accepting_on') }}' : '{{ __('dixlase-inquiry::admin/inquiry/settings/index.accepting_off') }}'"></p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5"
+                    x-text="accepting ? '{{ __('dixlase-inquiry::admin/inquiry/settings/index.accepting_on_desc') }}' : '{{ __('dixlase-inquiry::admin/inquiry/settings/index.accepting_off_desc') }}'"></p>
+            </div>
+        </div>
+        <button type="button" @click="toggleAccepting()" :disabled="isToggling"
+            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            :class="accepting ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'"
+            role="switch" :aria-checked="accepting.toString()">
+            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                :class="accepting ? 'translate-x-5' : 'translate-x-0'"></span>
+        </button>
+    </div>
 
     {{-- 警告メッセージ --}}
     @if(empty($settings->admin_email))

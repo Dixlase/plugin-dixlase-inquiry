@@ -23,11 +23,14 @@
 namespace Plugins\DixlaseInquiry\App\Http\Requests;
 
 use App\Helpers\CaptchaHelper;
+use App\Traits\VerifiesCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class DixlaseInquirySubmitRequest extends FormRequest
 {
+    use VerifiesCaptcha;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -61,7 +64,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
         }
 
         // 郵便番号（設定により必須/任意、形式は日本式/欧米式で異なる）
-        if ($settings->show_postal_code ?? false) {
+        if ($settings->show_address ?? false) {
             if ($isWestern) {
                 // 欧米式: 単一フィールド
                 $postalCodeRule = 'regex:/^[A-Za-z0-9\s\-]{3,10}$/';
@@ -130,7 +133,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
         }
 
         // カタカナ（日本式かつshow_kana有効時のみ）
-        if (!$isWestern && ($settings->show_kana ?? false)) {
+        if (! $isWestern && ($settings->show_kana ?? false)) {
             $kanaRule = 'regex:/^[ァ-ヶー]+$/u';
             $rules['last_name_kana'] = ($settings->require_kana ?? false)
                 ? ['required', 'string', 'max:50', $kanaRule]
@@ -149,7 +152,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
             if ($settings->show_gender_prefer_not_to_say ?? false) {
                 $genderValues[] = 'prefer_not_to_say';
             }
-            $genderOptions = 'in:' . implode(',', $genderValues);
+            $genderOptions = 'in:'.implode(',', $genderValues);
             $rules['gender'] = ($settings->gender_required ?? false)
                 ? ['required', 'string', $genderOptions]
                 : ['nullable', 'string', $genderOptions];
@@ -160,9 +163,9 @@ class DixlaseInquirySubmitRequest extends FormRequest
             $rules['privacy_agreed'] = ['required', 'accepted'];
         }
 
-        // CAPTCHA（CaptchaHelper経由で有効判定）
+        // CAPTCHA（ドライバー固有のフィールド名・ルールを動的取得）
         if (CaptchaHelper::shouldShowCaptcha('dixlase-inquiry.inquiry_contact')) {
-            $rules['g-recaptcha-response'] = 'required|captcha';
+            $rules = array_merge($rules, $this->getCaptchaRules());
         }
 
         return $rules;
@@ -189,8 +192,12 @@ class DixlaseInquirySubmitRequest extends FormRequest
             'gender.in' => __('dixlase-inquiry::front.validation.gender_invalid'),
             'privacy_agreed.required' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
             'privacy_agreed.accepted' => __('dixlase-inquiry::front.validation.privacy_agreed_required'),
-            'g-recaptcha-response.required' => __('dixlase-inquiry::front.validation.recaptcha_required'),
         ];
+
+        // CAPTCHAエラーメッセージ（ドライバー固有のフィールド名に対応）
+        foreach (array_keys($this->getCaptchaRules()) as $captchaField) {
+            $messages["{$captchaField}.required"] = __('dixlase-inquiry::front.validation.recaptcha_required');
+        }
 
         // カタカナバリデーションメッセージ
         $messages['last_name_kana.required'] = __('dixlase-inquiry::front.validation.last_name_kana_required');
@@ -229,7 +236,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return [
+        $attributes = [
             'last_name' => __('dixlase-inquiry::front.form.last_name'),
             'first_name' => __('dixlase-inquiry::front.form.first_name'),
             'email' => __('dixlase-inquiry::front.form.email'),
@@ -253,7 +260,13 @@ class DixlaseInquirySubmitRequest extends FormRequest
             'phone_2' => __('dixlase-inquiry::front.form.phone'),
             'phone_3' => __('dixlase-inquiry::front.form.phone'),
             'gender' => __('dixlase-inquiry::front.form.gender'),
-            'g-recaptcha-response' => __('dixlase-inquiry::front.form.recaptcha'),
         ];
+
+        // CAPTCHAフィールド名の属性（ドライバー固有のフィールド名に対応）
+        foreach (array_keys($this->getCaptchaRules()) as $captchaField) {
+            $attributes[$captchaField] = __('dixlase-inquiry::front.form.recaptcha');
+        }
+
+        return $attributes;
     }
 }
