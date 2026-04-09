@@ -2,7 +2,7 @@
 This file is part of Dixlase Inquiry.
 
 Copyright (C) 2026 exc-D inc.
-Website: https://exc-d.com
+https://exc-d.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,16 +24,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 <div class="mx-auto">
     <form id="form-basic-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.form-basic.update') }}" method="POST" x-data="{
         isSimpleMode: {{ $isSimpleMode ? 'true' : 'false' }},
+        formHeading: {!! Js::from(old('form_heading', $settings->form_heading ?? '')) !!},
+        formDescription: {!! Js::from(old('form_description', $settings->form_description ?? '')) !!},
         selectedLocale: {{ $isSimpleMode ? "'auto'" : "'" . old('lang', $settings->lang ?? 'auto') . "'" }},
         useSinglePage: {{ $isSimpleMode ? "'1'" : "'" . (old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0') . "'" }},
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
         nameOrderWestern: {{ $isSimpleMode ? "'0'" : "'" . (old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0') . "'" }},
         showSubject: '{{ old('show_subject', $settings->show_subject ?? false) ? '1' : '0' }}',
         subjectRequired: '{{ old('subject_required', $settings->subject_required ?? false) ? '1' : '0' }}',
-        showPostalCode: '{{ old('show_postal_code', $settings->show_postal_code ?? false) ? '1' : '0' }}',
+        showAddress: '{{ old('show_address', $settings->show_address ?? false) ? '1' : '0' }}',
         postalCodeRequired: '{{ old('postal_code_required', $settings->postal_code_required ?? false) ? '1' : '0' }}',
-        get showAddress() { return this.showPostalCode; },
-        get addressRequired() { return this.postalCodeRequired; },
+        addressRequired: '{{ old('address_required', $settings->address_required ?? false) ? '1' : '0' }}',
         showPhone: '{{ old('show_phone', $settings->show_phone ?? true) ? '1' : '0' }}',
         phoneRequired: '{{ old('phone_required', $settings->phone_required ?? false) ? '1' : '0' }}',
         showGender: '{{ old('show_gender', $settings->show_gender ?? false) ? '1' : '0' }}',
@@ -67,14 +68,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             csrf.value = '{{ csrf_token() }}';
             form.appendChild(csrf);
             const settings = {
+                form_heading: this.formHeading,
+                form_description: this.formDescription,
                 lang: this.selectedLocale,
                 name_order_western: this.nameOrderWestern,
                 show_subject: this.showSubject,
                 subject_required: this.subjectRequired,
-                show_postal_code: this.showPostalCode,
+                show_address: this.showAddress,
                 postal_code_required: this.postalCodeRequired,
-                show_address: this.showPostalCode,
-                address_required: this.postalCodeRequired,
+                address_required: this.addressRequired,
                 show_phone: this.showPhone,
                 phone_required: this.phoneRequired,
                 show_gender: this.showGender,

@@ -215,7 +215,6 @@ DixlaseInquiryプラグインの設定は、管理画面の「設定」→「お
 | address_required | boolean | 住所必須 |
 | show_subject | boolean | 題名表示 |
 | subject_required | boolean | 題名必須 |
-| show_postal_code | boolean | 郵便番号表示 |
 | postal_code_required | boolean | 郵便番号必須 |
 | show_gender | boolean | 性別表示 |
 | gender_required | boolean | 性別必須 |

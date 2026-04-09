@@ -19,29 +19,53 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form" x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})">
-    @if(session('inquiry_success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ __('dixlase-inquiry::front.form.success_message') }}
-        </div>
-    @else
-        @if($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <ul class="list-disc list-inside">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+<div class="dixlase-inquiry-embed" id="inquiry-form"
+    x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
+    @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
 
-        {{-- 確認画面 --}}
-        @if($settings->show_confirmation_page ?? true)
-        <div x-show="showConfirmation" x-cloak class="space-y-4">
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('dixlase-inquiry::front.confirmation.message') }}</p>
+    {{-- 高さアニメーション用ラッパー --}}
+    <div x-ref="heightContainer" class="overflow-hidden transition-[height] duration-300 ease-out" style="height: auto;">
+
+    {{-- エラー表示エリア（AJAX用） --}}
+    <div class="inquiry-errors hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- 完了画面 --}}
+    <div x-show="currentView === 'complete'" x-cloak
+        :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+        class="transition-opacity duration-300 ease-out">
+        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
+            <div class="text-green-600 dark:text-green-400 mb-3"><i class="fas fa-check-circle text-3xl"></i></div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.complete.title') }}</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.complete.message') !!}</p>
+            <div class="mt-6">
+                <button type="button" @click="transitionTo('form')"
+                    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    {{ __('dixlase-inquiry::front.complete.back_to_form') }}
+                </button>
             </div>
+        </div>
+    </div>
+
+    {{-- 確認画面 --}}
+    @if($settings->show_confirmation_page ?? true)
+    <div x-show="currentView === 'confirmation'" x-cloak
+        :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+        class="transition-opacity duration-300 ease-out space-y-4">
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4 text-center">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.confirmation.message') !!}</p>
+        </div>
 
             <dl class="space-y-3">
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -58,7 +82,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.email') }}</dt>
                     <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.email"></dd>
                 </div>
-                @if($settings->show_postal_code ?? false)
+                @if($settings->show_address ?? false)
                 <div x-show="formData.postal_code" class="border-b border-gray-200 dark:border-gray-700 pb-2">
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('dixlase-inquiry::front.form.postal_code') }}</dt>
                     <dd class="mt-1 text-gray-900 dark:text-white" x-text="formData.postal_code"></dd>
@@ -94,24 +118,30 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </div>
             </dl>
 
-            <div class="flex gap-3 pt-4">
-                <button type="button" @click="showConfirmation = false"
+            <div class="flex gap-3 pt-4 justify-center">
+                <button type="button" @click="goBack()"
                     class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-md transition-colors duration-200">
                     <i class="fas fa-arrow-left mr-2"></i>
                     {{ __('dixlase-inquiry::front.buttons.back') }}
                 </button>
-                <button type="button" @click="submitForm()"
-                    class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
-                    <i class="fas fa-paper-plane mr-2"></i>
+                <button type="button" @click="submitForm()" :disabled="isSubmitting"
+                    class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <template x-if="isSubmitting"><i class="fas fa-spinner fa-spin mr-2"></i></template>
+                    <template x-if="!isSubmitting"><i class="fas fa-paper-plane mr-2"></i></template>
                     {{ __('dixlase-inquiry::front.buttons.send') }}
                 </button>
             </div>
         </div>
         @endif
 
-        <form x-ref="inquiryForm" action="{{ route('inquiry.embed.send') }}" method="POST" class="space-y-4"
+        <form x-ref="inquiryForm" action="{{ route('inquiry.embed.send') }}" method="POST"
+            x-show="currentView === 'form'"
+            :class="isTransitioning ? 'opacity-0' : 'opacity-100'"
+            class="transition-opacity duration-300 ease-out space-y-4"
             @if($settings->show_confirmation_page ?? true)
-            x-show="!showConfirmation" @submit.prevent="showConfirm()"
+            @submit.prevent="showConfirm()"
+            @else
+            @submit.prevent="submitFormAjax()"
             @endif
         >
             @csrf
@@ -120,7 +150,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 1. 名前（2カラム） --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.name') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.name') }}<x-form-required-badge />
                 </label>
                 @if($settings->name_order_western ?? false)
                 {{-- 欧米式（名・姓） --}}
@@ -158,7 +188,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.kana') }}
-                    @if($settings->require_kana ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->require_kana ?? false)<x-form-required-badge />@endif
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -180,19 +210,31 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 2. メールアドレス --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.email') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.email') }}<x-form-required-badge />
                 </label>
                 <input type="email" name="email" value="{{ old('email') }}"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.email_placeholder') }}" required>
             </div>
 
+            {{-- 2b. メールアドレス（確認） --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {{ __('dixlase-inquiry::front.form.email_confirmation') }}<x-form-required-badge />
+                </label>
+                <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="{{ __('dixlase-inquiry::front.form.email_confirmation_placeholder') }}" required
+                    @if($settings->email_confirm_paste_disabled ?? true) @paste.prevent @endif>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('dixlase-inquiry::front.form.email_confirmation_help') }}</p>
+            </div>
+
             {{-- 3. 郵便番号 --}}
-            @if($settings->show_postal_code ?? false)
+            @if($settings->show_address ?? false)
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.postal_code') }}
-                    @if($settings->postal_code_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->postal_code_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
@@ -222,7 +264,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.address') }}
-                    @if($settings->address_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->address_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式住所 --}}
@@ -322,7 +364,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.phone') }}
-                    @if($settings->phone_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->phone_required ?? false)<x-form-required-badge />@endif
                 </label>
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
@@ -357,7 +399,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.gender') }}
-                    @if($settings->gender_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->gender_required ?? false)<x-form-required-badge />@endif
                 </label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3" x-data="{ selectedGender: '{{ old('gender', '') }}' }">
                     @foreach($genderOptions as $option)
@@ -379,7 +421,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ __('dixlase-inquiry::front.form.subject') }}
-                    @if($settings->subject_required ?? false)<span class="text-red-500">*</span>@endif
+                    @if($settings->subject_required ?? false)<x-form-required-badge />@endif
                 </label>
                 <input type="text" name="subject" value="{{ old('subject') }}"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
@@ -391,7 +433,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 8. 問い合わせ内容 --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dixlase-inquiry::front.form.message') }}<span class="text-red-500">*</span>
+                    {{ __('dixlase-inquiry::front.form.message') }}<x-form-required-badge />
                 </label>
                 <textarea name="message" rows="6"
                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
@@ -401,40 +443,31 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             {{-- 9. プライバシー同意 --}}
             @if($settings->privacy_consent_enabled ?? false)
             <div>
-                <div class="flex items-center space-x-3 my-3">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="privacy_agreed" value="0">
-                        <input type="checkbox" name="privacy_agreed" value="1" required
-                               {{ old('privacy_agreed') ? 'checked' : '' }}
-                               class="sr-only peer">
-                        <div class="w-11 h-6 rounded-full bg-gray-200 dark:bg-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-500 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-blue-500 transition-colors"></div>
-                        <div class="absolute left-1 top-1 w-4 h-4 bg-white border border-gray-300 rounded-full transition-all peer-checked:translate-x-full peer-checked:border-white"></div>
-                    </label>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">
-                        @if(!empty($settings->privacy_consent_text))
-                            @if(!empty($privacyUrl))
-                                <a href="{{ $privacyUrl }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">{{ $settings->privacy_consent_text }}</a>
-                            @else
-                                {{ $settings->privacy_consent_text }}
-                            @endif
-                        @else
-                            @if(!empty($privacyUrl))
-                                {!! __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl]) !!}
-                            @else
-                                {{ __('dixlase-inquiry::front.form.privacy_consent_default') }}
-                            @endif
-                        @endif
-                    </span>
-                </div>
+                <x-form-toggle
+                    name="privacy_agreed"
+                    :checked="(bool) old('privacy_agreed')"
+                    :required="true"
+                    :rawLabel="true"
+                    :label="!empty($settings->privacy_consent_text)
+                        ? (!empty($privacyUrl)
+                            ? '<a href=\'' . e($privacyUrl) . '\' target=\'_blank\' class=\'text-blue-600 hover:underline dark:text-blue-400\'>' . e($settings->privacy_consent_text) . '</a>'
+                            : e($settings->privacy_consent_text))
+                        : (!empty($privacyUrl)
+                            ? __('dixlase-inquiry::front.form.privacy_consent', ['url' => $privacyUrl])
+                            : __('dixlase-inquiry::front.form.privacy_consent_default'))"
+                />
             </div>
             @endif
 
-            {{-- 10. 送信ボタン --}}
-            <div>
+            {{-- 10. CAPTCHA --}}
+            <x-captcha :enabled="$captchaEnabled ?? false" :widget="$captchaWidget ?? null" />
+
+            {{-- 11. 送信ボタン --}}
+            <div class="text-center">
                 <button type="submit"
                     class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200">
                     @if($settings->show_confirmation_page ?? true)
-                    <i class="fas fa-check mr-2"></i>
+                    <i class="fas fa-paper-plane mr-2"></i>
                     {{ __('dixlase-inquiry::front.buttons.confirm') }}
                     @else
                     <i class="fas fa-paper-plane mr-2"></i>
@@ -443,7 +476,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </button>
             </div>
         </form>
-    @endif
+
+    </div>{{-- /heightContainer --}}
 </div>
 
 {{-- プラグインアセットの読み込み（@once で重複防止） --}}

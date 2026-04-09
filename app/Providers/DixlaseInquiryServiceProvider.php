@@ -46,10 +46,10 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
     public function register(): void
     {
         // Load helper functions
-        require_once __DIR__ . '/../Helpers/DixlaseInquiryHelpers.php';
+        require_once __DIR__.'/../Helpers/DixlaseInquiryHelpers.php';
 
         // プラグイン設定ファイルの登録
-        $this->mergeConfigFrom(__DIR__ . '/../../config/inquiry.php', 'dixlase-inquiry');
+        $this->mergeConfigFrom(__DIR__.'/../../config/inquiry.php', 'dixlase-inquiry');
     }
 
     /**
@@ -79,18 +79,22 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
         $this->app->singleton(DixlaseInquiryDashboardProvider::class);
         $this->app->tag([DixlaseInquiryDashboardProvider::class], 'plugin.capabilities');
 
+        // Preview provider registration
+        $this->app->singleton(\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryPreviewProvider::class);
+        $this->app->tag([\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryPreviewProvider::class], 'plugin.capabilities');
+
         // Load views
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'dixlase-inquiry');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'dixlase-inquiry');
 
         // Load translations
-        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'dixlase-inquiry');
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'dixlase-inquiry');
 
         // Load migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
         // Publish assets
         $this->publishes([
-            __DIR__ . '/../../resources/assets' => public_path('vendor/inquiry'),
+            __DIR__.'/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
     }
 
@@ -103,7 +107,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
             try {
                 $settings = DixlaseInquirySetting::getSettings();
 
-                if (!($settings->throttle_enabled ?? true)) {
+                if (! ($settings->throttle_enabled ?? true)) {
                     return Limit::none();
                 }
 
@@ -134,7 +138,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
     {
         // @inquiry ディレクティブを登録
         Blade::directive('inquiry', function ($expression) {
-            return "<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\DixlaseInquiryFormShortcode::class)->render(); ?>";
+            return '<?php echo app(\\Plugins\\DixlaseInquiry\\App\\Shortcodes\\DixlaseInquiryFormShortcode::class)->render(); ?>';
         });
     }
 
@@ -147,16 +151,16 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
             $settings = DixlaseInquirySetting::getSettings();
 
             // 別ページモードの場合のみルート登録
-            if (!$settings->use_single_page) {
-                $slug = $settings->inquiry_url_slug ?? 'inquiry';
+            if (! $settings->use_single_page) {
+                $slug = ! empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry';
 
                 Route::middleware(['web', 'front.ip'])
                     ->group(function () use ($slug) {
                         Route::get($slug, [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'index'])
                             ->name('inquiry.index');
-                        Route::post($slug . '/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'confirm'])
+                        Route::post($slug.'/confirm', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'confirm'])
                             ->name('inquiry.confirm');
-                        Route::post($slug . '/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'send'])
+                        Route::post($slug.'/send', [\Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController::class, 'send'])
                             ->name('inquiry.send')
                             ->middleware('throttle:inquiry-submit');
                     });
@@ -186,7 +190,7 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
     {
         try {
             $settings = DixlaseInquirySetting::getSettings();
-            $slug = $settings->inquiry_url_slug ?? 'inquiry';
+            $slug = ! empty($settings->inquiry_url_slug) ? $settings->inquiry_url_slug : 'inquiry';
         } catch (\Exception $e) {
             $slug = 'inquiry';
         }

@@ -23,6 +23,8 @@
 return [
     'form' => [
         'heading' => 'お問い合わせ',
+        'default_description' => "お気軽にお問い合わせください。\n以下のフォームに必要事項をご記入の上、送信してください。",
+        'go_to_form' => 'お問い合わせはこちら',
         'title' => 'お問い合わせ',
         'name' => 'お名前',
         'last_name' => '姓',
@@ -123,7 +125,7 @@ return [
 
     'confirmation' => [
         'title' => '入力内容の確認',
-        'message' => '以下の内容でお間違いありませんか？',
+        'message' => '以下の内容でお間違いありませんか？<br>間違いなければ送信ボタンを押してください。',
     ],
 
     'complete' => [
@@ -134,6 +136,7 @@ return [
         'submitted_at' => '送信日時',
         'auto_reply_notice' => '確認メールを送信しました。メールが届かない場合は、迷惑メールフォルダをご確認ください。',
         'back_to_home' => 'トップページへ戻る',
+        'back_to_form' => 'フォームに戻る',
     ],
 
     'validation' => [

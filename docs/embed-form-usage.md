@@ -162,8 +162,7 @@ DixlaseInquiryプラグインは、問い合わせフォームをテーマやペ
 |------|---------|---------|
 | 題名 | `show_subject` | `subject_required` |
 | 電話番号 | `show_phone` | `phone_required` |
-| 郵便番号 | `show_postal_code` | `postal_code_required` |
-| 住所 | `show_address` | `address_required` |
+| 郵便番号・住所 | `show_address` | `postal_code_required` / `address_required` |
 | 性別 | `show_gender` | `gender_required` |
 
 ### 名前の表示順
@@ -240,7 +239,7 @@ return [
 - **Tailwind CSS**: スタイリングに使用
 - **Font Awesome**: アイコンに使用
 
-これらはDixlaseDefaultThemeに含まれています。
+これらはDixlaseOnePageに含まれています。
 
 ## トラブルシューティング
 

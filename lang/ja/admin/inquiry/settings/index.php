@@ -10,11 +10,28 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 return [
     'heading' => 'お問い合わせ設定',
     'description' => 'お問い合わせフォームの各種設定の概要です。埋め込み方法やステータスを一目で確認できます。',
+
+    // 受付状態
+    'accepting_inquiries' => 'お問い合わせの受付',
+    'accepting_on' => 'お問い合わせを受け付けています',
+    'accepting_on_desc' => 'フォームが表示され、訪問者からのお問い合わせを受け付けます。',
+    'accepting_off' => 'お問い合わせの受付を停止しています',
+    'accepting_off_desc' => 'フォームは非表示になり、お問い合わせページにもアクセスできません。',
+    'accepting_toggle_success' => '受付状態を更新しました。',
+    'accepting_toggle_error' => '受付状態の更新に失敗しました。',
 
     'nav' => [
         'form_basic' => 'フォーム設定',

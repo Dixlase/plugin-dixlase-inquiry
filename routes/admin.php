@@ -50,6 +50,12 @@ Route::prefix('inquiry')
         Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
         Route::patch('/{id}/status', [DixlaseInquiryAdminController::class, 'updateStatus'])->name('status.update')->where('id', '[0-9]+');
 
+        // 一括ステータス更新
+        Route::patch('/bulk-status', [DixlaseInquiryAdminController::class, 'bulkUpdateStatus'])->name('bulk-status');
+
+        // 受付状態のトグル（AJAX）
+        Route::patch('/toggle-accepting', [DixlaseInquiryAdminController::class, 'toggleAccepting'])->name('toggle-accepting');
+
         // 設定サブメニュー
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [DixlaseInquiryAdminController::class, 'settingsIndex'])->name('index');

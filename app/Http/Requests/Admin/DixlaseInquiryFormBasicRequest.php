@@ -43,14 +43,17 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lang' => 'required|string|in:auto,' . implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
+            'form_heading' => 'nullable|string|max:100',
+            'form_description' => 'nullable|string|max:500',
+            'lang' => 'required|string|in:auto,'.implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
             'use_single_page' => 'boolean',
-            'inquiry_url_slug' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9\-]+$/', UniqueRouteSlug::for('dixlase-inquiry:directory')],
+            'inquiry_url_slug' => ['nullable', 'string', 'max:100', 'regex:/^[a-z0-9\-]*$/', UniqueRouteSlug::for('dixlase-inquiry:directory')],
             'name_order_western' => 'boolean',
             'show_subject' => 'boolean',
             'subject_required' => 'boolean',
-            'show_postal_code' => 'boolean',
+            'show_address' => 'boolean',
             'postal_code_required' => 'boolean',
+            'address_required' => 'boolean',
             'show_phone' => 'boolean',
             'phone_required' => 'boolean',
             'show_gender' => 'boolean',
@@ -81,8 +84,9 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'name_order_western',
             'show_subject',
             'subject_required',
-            'show_postal_code',
+            'show_address',
             'postal_code_required',
+            'address_required',
             'show_phone',
             'phone_required',
             'show_gender',
@@ -101,10 +105,6 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
         foreach ($booleanFields as $field) {
             $data[$field] = $this->has($field) ? (bool) $this->input($field) : false;
         }
-
-        // 住所は郵便番号と連動
-        $data['show_address'] = $data['show_postal_code'];
-        $data['address_required'] = $data['postal_code_required'];
 
         $this->merge($data);
     }

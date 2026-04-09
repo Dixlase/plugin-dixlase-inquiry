@@ -10,11 +10,28 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 return [
     'heading' => 'Inquiry Settings',
     'description' => 'Overview of all inquiry form settings. Check embedding methods and status at a glance.',
+
+    // Accepting inquiries
+    'accepting_inquiries' => 'Accept Inquiries',
+    'accepting_on' => 'Accepting inquiries',
+    'accepting_on_desc' => 'The form is visible and visitors can submit inquiries.',
+    'accepting_off' => 'Inquiries are paused',
+    'accepting_off_desc' => 'The form is hidden and the inquiry page is inaccessible.',
+    'accepting_toggle_success' => 'Inquiry acceptance status updated.',
+    'accepting_toggle_error' => 'Failed to update inquiry acceptance status.',
 
     'nav' => [
         'form_basic' => 'Form Settings',

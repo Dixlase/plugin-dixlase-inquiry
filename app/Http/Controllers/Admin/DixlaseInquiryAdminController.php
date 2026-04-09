@@ -64,17 +64,17 @@ class DixlaseInquiryAdminController extends Controller
 
         $perPage = (int) $request->input('per_page', 25);
         $allowedPerPage = [10, 25, 50, 100];
-        if (!in_array($perPage, $allowedPerPage)) {
+        if (! in_array($perPage, $allowedPerPage)) {
             $perPage = 25;
         }
 
         $inquiries = DixlaseInquiry::query()
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('email', 'like', '%' . $search . '%')
-                      ->orWhere('subject', 'like', '%' . $search . '%')
-                      ->orWhere('message', 'like', '%' . $search . '%');
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%')
+                        ->orWhere('subject', 'like', '%'.$search.'%')
+                        ->orWhere('message', 'like', '%'.$search.'%');
                 });
             })
             ->when($statusFilter, function ($query, $statusFilter) {
@@ -149,13 +149,46 @@ class DixlaseInquiryAdminController extends Controller
         $inquiry = DixlaseInquiry::findOrFail($id);
 
         $request->validate([
-            'status' => ['required', 'string', 'in:' . implode(',', array_column(InquiryStatus::cases(), 'value'))],
+            'status' => ['required', 'string', 'in:'.implode(',', array_column(InquiryStatus::cases(), 'value'))],
         ]);
 
         $inquiry->update(['status' => $request->input('status')]);
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.show', $id)
             ->with('success', __('dixlase-inquiry::admin/inquiry/show.status_updated'));
+    }
+
+    /**
+     * 一括ステータス更新
+     */
+    public function bulkUpdateStatus(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:'.(new DixlaseInquiry)->getTable().',id',
+            'status' => 'required|string|in:'.implode(',', array_column(InquiryStatus::cases(), 'value')),
+        ]);
+
+        DixlaseInquiry::whereIn('id', $validated['ids'])
+            ->update(['status' => $validated['status']]);
+
+        return redirect()->back()
+            ->with('success', __('dixlase-inquiry::admin/inquiry/index.bulk_status_updated', ['count' => count($validated['ids'])]));
+    }
+
+    /**
+     * 問い合わせ受付状態のトグル（AJAX）
+     */
+    public function toggleAccepting(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $current = filter_var(DixlaseInquirySetting::get('accepting_inquiries', true), FILTER_VALIDATE_BOOLEAN);
+        $newValue = ! $current;
+        DixlaseInquirySetting::set('accepting_inquiries', $newValue ? '1' : '0');
+
+        return response()->json([
+            'success' => true,
+            'accepting' => $newValue,
+        ]);
     }
 
     /**
@@ -299,7 +332,7 @@ class DixlaseInquiryAdminController extends Controller
         // 真偽値フィールドを正規化
         $boolFields = [
             'use_single_page', 'name_order_western', 'show_subject', 'subject_required',
-            'show_postal_code', 'postal_code_required', 'show_address', 'address_required',
+            'show_address', 'postal_code_required', 'address_required',
             'show_phone', 'phone_required', 'show_gender', 'gender_required',
             'show_gender_other', 'show_gender_prefer_not_to_say',
             'email_confirm_paste_disabled',
@@ -326,7 +359,7 @@ class DixlaseInquiryAdminController extends Controller
         $dbSettings = DixlaseInquirySetting::getSettings();
         $previewData = session('inquiry_preview_settings');
 
-        if (!$previewData) {
+        if (! $previewData) {
             return $dbSettings;
         }
 
@@ -409,15 +442,15 @@ class DixlaseInquiryAdminController extends Controller
         }
 
         // トグルに応じてメール送信
-        if ($previewSendEmail && !empty($settings->admin_email)) {
+        if ($previewSendEmail && ! empty($settings->admin_email)) {
             try {
                 Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
 
-                if (($settings->auto_reply_enabled ?? false) && !empty($validated['email'])) {
+                if (($settings->auto_reply_enabled ?? false) && ! empty($validated['email'])) {
                     Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
                 }
             } catch (\Exception $e) {
-                \Log::error('Inquiry preview mail send failed: ' . $e->getMessage());
+                \Log::error('Inquiry preview mail send failed: '.$e->getMessage());
             }
         }
 

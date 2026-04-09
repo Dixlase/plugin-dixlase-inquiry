@@ -41,6 +41,13 @@ class InquirySettingsSeeder extends Seeder
         $texts = $this->getLocalizedTexts($locale);
 
         $defaults = [
+            // 問い合わせ受付状態
+            'accepting_inquiries' => '1',
+
+            // フォーム見出し・説明（インストール時のロケールに基づくデフォルト値）
+            'form_heading' => $texts['form_heading'],
+            'form_description' => $texts['form_description'],
+
             // メールアドレス設定（基本設定のシステム管理者メールアドレスを使用）
             'admin_email' => $systemAdminEmail,
             'auto_reply_from_email' => $systemAdminEmail,
@@ -63,12 +70,11 @@ class InquirySettingsSeeder extends Seeder
             'phone_required' => '0',
             'show_address' => '0',
             'address_required' => '0',
+            'postal_code_required' => '0',
             'show_subject' => '0',
             'subject_required' => '0',
             'show_gender_other' => '0',
             'show_gender_prefer_not_to_say' => '0',
-            'show_postal_code' => '0',
-            'postal_code_required' => '0',
             'email_confirm_paste_disabled' => '1',
             'use_single_page' => '1',
             'show_confirmation_page' => '1',
@@ -100,30 +106,39 @@ class InquirySettingsSeeder extends Seeder
      */
     protected function getLocalizedTexts(string $locale): array
     {
-        $langPath = dirname(__DIR__, 2) . '/lang';
+        $langPath = dirname(__DIR__, 2).'/lang';
 
         // 管理者通知の翻訳ファイル読み込み
         $adminNotificationFile = "{$langPath}/{$locale}/admin/inquiry/settings/admin-notification.php";
-        if (!file_exists($adminNotificationFile)) {
+        if (! file_exists($adminNotificationFile)) {
             $adminNotificationFile = "{$langPath}/en/admin/inquiry/settings/admin-notification.php";
         }
         $adminNotification = require $adminNotificationFile;
 
         // 自動返信の翻訳ファイル読み込み
         $autoReplyFile = "{$langPath}/{$locale}/admin/inquiry/settings/auto-reply.php";
-        if (!file_exists($autoReplyFile)) {
+        if (! file_exists($autoReplyFile)) {
             $autoReplyFile = "{$langPath}/en/admin/inquiry/settings/auto-reply.php";
         }
         $autoReply = require $autoReplyFile;
 
+        // フロント翻訳ファイル読み込み（見出し・説明）
+        $frontFile = "{$langPath}/{$locale}/front.php";
+        if (! file_exists($frontFile)) {
+            $frontFile = "{$langPath}/en/front.php";
+        }
+        $front = require $frontFile;
+
         // 完了ページの翻訳ファイル読み込み
         $completionFile = "{$langPath}/{$locale}/admin/inquiry/settings/completion.php";
-        if (!file_exists($completionFile)) {
+        if (! file_exists($completionFile)) {
             $completionFile = "{$langPath}/en/admin/inquiry/settings/completion.php";
         }
         $completion = require $completionFile;
 
         return [
+            'form_heading' => $front['form']['heading'] ?? 'Contact Us',
+            'form_description' => $front['form']['default_description'] ?? '',
             'subject' => $adminNotification['default_subject'] ?? 'Inquiry Received',
             'body' => $adminNotification['default_body'] ?? '',
             'auto_reply_subject' => $autoReply['default_subject'] ?? 'Thank you for your inquiry',
