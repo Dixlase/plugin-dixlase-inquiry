@@ -10,7 +10,7 @@
     "author": "exc-D inc.",
     "author_id": "exc-d-inc",
     "authority_key_id": "dixlase-authority-2026",
-    "email": "info@exc-d.com",
+    "email": "office@exc-d.com",
     "url": "https://exc-d.com",
     "license": "GPL-3.0-or-later",
     "license_template": "license-dual-gpl.txt",
@@ -34,6 +34,9 @@
         "inquiry",
         "contact",
         "form"
+    ],
+    "capabilities": [
+        "captcha"
     ],
     "requires": {
         "dixlase": "^0.1.0",
@@ -107,7 +110,8 @@
         },
         "contracts": [
             "RouteSlugProvider",
-            "DashboardNotificationProviderInterface"
+            "DashboardNotificationProviderInterface",
+            "CaptchaFormProviderInterface"
         ],
         "migrations": true,
         "commands": false,
