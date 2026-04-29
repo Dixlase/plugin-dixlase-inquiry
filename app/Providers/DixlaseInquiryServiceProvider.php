@@ -83,6 +83,10 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
         $this->app->singleton(\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryPreviewProvider::class);
         $this->app->tag([\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryPreviewProvider::class], 'plugin.capabilities');
 
+        // CAPTCHA form provider registration
+        $this->app->singleton(\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryCaptchaFormProvider::class);
+        $this->app->tag([\Plugins\DixlaseInquiry\App\Services\DixlaseInquiryCaptchaFormProvider::class], 'plugin.capabilities');
+
         // Load views
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'dixlase-inquiry');
 
