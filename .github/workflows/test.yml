@@ -2,8 +2,8 @@ name: Test
 
 on:
   push:
-    branches-ignore:
-      - main  # main は deploy.yml が実行する
+    branches:
+      - main
   pull_request:
     branches:
       - main
