@@ -33,4 +33,6 @@
 return [
     'captcha_not_enabled' => 'お問い合わせフォームのCAPTCHAが有効になっていません。スパム送信防止のため、有効化を推奨します。',
     'configure_captcha' => 'CAPTCHAを設定する',
+    'unread_inquiries' => '未読のお問い合わせが :count 件あります。',
+    'view_inquiries' => '一覧を表示',
 ];

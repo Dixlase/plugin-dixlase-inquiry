@@ -33,4 +33,6 @@
 return [
     'captcha_not_enabled' => 'CAPTCHA is not enabled for the contact form. Enabling it is recommended to prevent spam submissions.',
     'configure_captcha' => 'Configure CAPTCHA',
+    'unread_inquiries' => 'You have :count unread inquir(y/ies).',
+    'view_inquiries' => 'View inquiries',
 ];

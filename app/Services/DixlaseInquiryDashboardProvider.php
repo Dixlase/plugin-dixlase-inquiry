@@ -35,6 +35,7 @@ namespace Plugins\DixlaseInquiry\App\Services;
 use App\Contracts\PluginIntegration\DashboardNotificationProviderInterface;
 use App\DTO\PluginIntegration\DashboardNotificationDTO;
 use App\Models\CaptchaEnabledForm;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 
 /**
  * Dashboard notification provider for the Inquiry plugin.
@@ -80,6 +81,23 @@ class DixlaseInquiryDashboardProvider implements DashboardNotificationProviderIn
                     pluginName: __('dixlase-inquiry::admin.plugin.name'),
                     url: route('admin.settings.security.captcha'),
                     actionLabel: __('dixlase-inquiry::dashboard.configure_captcha'),
+                );
+            }
+        } catch (\Exception $e) {
+            // DB not available or table missing — skip silently
+        }
+
+        try {
+            $unreadCount = DixlaseInquiry::unread()->count();
+            if ($unreadCount > 0) {
+                $notifications[] = new DashboardNotificationDTO(
+                    key: 'inquiry_unread',
+                    level: 'info',
+                    message: __('dixlase-inquiry::dashboard.unread_inquiries', ['count' => $unreadCount]),
+                    icon: 'fas fa-envelope',
+                    pluginName: __('dixlase-inquiry::admin.plugin.name'),
+                    url: route('dixlase-inquiry::admin.inquiry.index'),
+                    actionLabel: __('dixlase-inquiry::dashboard.view_inquiries'),
                 );
             }
         } catch (\Exception $e) {
