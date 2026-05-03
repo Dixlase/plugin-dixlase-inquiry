@@ -44,8 +44,8 @@ class InquirySettingsSeeder extends Seeder
     public function run(): void
     {
         // 基本設定からシステム管理者メールアドレスと言語設定を取得
-        $systemAdminEmail = $this->getBaseSetting('system_admin_email', '');
-        $locale = $this->getBaseSetting('locale', 'ja');
+        $systemAdminEmail = $this->getSiteSetting('system_admin_email', '');
+        $locale = $this->getSiteSetting('locale', 'ja');
 
         // 言語ファイルからデフォルトテキストを取得
         $texts = $this->getLocalizedTexts($locale);
@@ -102,13 +102,18 @@ class InquirySettingsSeeder extends Seeder
     }
 
     /**
-     * 基本設定から値を取得
+     * Read a Dixlase setting via SettingResolver (multisite-aware: routes
+     * through global_settings / site_settings based on the registered scope).
      */
-    protected function getBaseSetting(string $name, mixed $default = null): mixed
+    protected function getSiteSetting(string $name, mixed $default = null): mixed
     {
-        $setting = DB::table('base_settings')->where('name', $name)->first();
+        try {
+            $value = app(\App\Services\Site\SettingResolver::class)->get($name);
 
-        return $setting?->value ?? $default;
+            return $value ?? $default;
+        } catch (\Throwable) {
+            return $default;
+        }
     }
 
     /**
