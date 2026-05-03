@@ -33,7 +33,7 @@
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Admin;
 
 use App\Helpers\CaptchaHelper;
-use App\Models\BaseSetting;
+use App\Models\SiteSetting;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
 use Illuminate\Http\RedirectResponse;
@@ -234,7 +234,7 @@ class DixlaseInquiryAdminController extends Controller
         }
 
         // Determine admin mode (Simple=0, Advanced=1)
-        $isSimpleMode = (int) BaseSetting::getValue('admin_mode', 0) === 0;
+        $isSimpleMode = (int) SiteSetting::getValue('admin_mode', 0) === 0;
 
         return view('dixlase-inquiry::admin.inquiry.settings.form-basic', array_merge($this->viewParams, [
             'settings' => $settings,
@@ -287,9 +287,9 @@ class DixlaseInquiryAdminController extends Controller
 
         // メールテスト状態を取得
         $sessionTestResults = session('mail_test_results', []);
-        $mailConnectionTested = (bool) ($sessionTestResults['mail_connection_tested'] ?? BaseSetting::getValue('mail_connection_tested', false));
-        $mailSendTested = (bool) ($sessionTestResults['mail_send_tested'] ?? BaseSetting::getValue('mail_send_tested', false));
-        $mailReceiveTested = (bool) ($sessionTestResults['mail_receive_tested'] ?? BaseSetting::getValue('mail_receive_tested', false));
+        $mailConnectionTested = (bool) ($sessionTestResults['mail_connection_tested'] ?? SiteSetting::getValue('mail_connection_tested', false));
+        $mailSendTested = (bool) ($sessionTestResults['mail_send_tested'] ?? SiteSetting::getValue('mail_send_tested', false));
+        $mailReceiveTested = (bool) ($sessionTestResults['mail_receive_tested'] ?? SiteSetting::getValue('mail_receive_tested', false));
 
         return view('dixlase-inquiry::admin.inquiry.settings.admin-notification', array_merge($this->viewParams, [
             'settings' => $settings,
