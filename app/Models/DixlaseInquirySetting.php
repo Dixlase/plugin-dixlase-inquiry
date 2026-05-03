@@ -70,7 +70,7 @@ class DixlaseInquirySetting extends Model
     public static function getSettings()
     {
         $defaults = self::getDefaultSettings();
-        $settings = new \stdClass;
+        $settings = new \stdClass();
 
         foreach ($defaults as $key => $defaultValue) {
             $value = self::get($key, $defaultValue);
@@ -98,11 +98,11 @@ class DixlaseInquirySetting extends Model
             'admin_email' => '',
             'subject' => 'お問い合わせありがとうございます',
             'body' => "以下の内容でお問い合わせを受け付けました。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n郵便番号: {{postal_code}}\n住所: {{address}}\n電話番号: {{phone}}\n\nお問い合わせ内容:\n{{message}}",
-            'show_phone' => true,
+            'show_phone' => false,
             'phone_required' => false,
-            'show_address' => true,
+            'show_address' => false,
             'address_required' => false,
-            'show_subject' => true,
+            'show_subject' => false,
             'subject_required' => false,
             'postal_code_required' => false,
             'show_gender' => false,
