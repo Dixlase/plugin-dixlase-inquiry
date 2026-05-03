@@ -88,10 +88,12 @@
             "register_blade_directives": true,
             "modify_routes": false
         },
-        "_optional": [],
+        "_optional": [
+            "database.core_tables_read"
+        ],
         "_notes": {
-            "ja": "",
-            "en": ""
+            "ja": "database.core_tables_read: captcha_enabled_forms テーブルへの読み取り（CaptchaEnabledForm モデル経由）。スキャナーの検出パターンに captcha_enabled_forms が含まれていないため未検出となる。",
+            "en": "database.core_tables_read: Reads from captcha_enabled_forms table via CaptchaEnabledForm model. Not detected by scanner since captcha_enabled_forms is not in the detection patterns."
         }
     },
     "declares": {
