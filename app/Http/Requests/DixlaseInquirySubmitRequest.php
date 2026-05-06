@@ -56,7 +56,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
     public function rules(): array
     {
         $settings = DixlaseInquirySetting::getSettings();
-        $isWestern = (bool) ($settings->name_order_western ?? false);
+        $isWestern = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
 
         $rules = [
             'last_name' => 'required|string|max:255',
@@ -187,7 +187,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
     public function messages(): array
     {
         $settings = DixlaseInquirySetting::getSettings();
-        $isWestern = (bool) ($settings->name_order_western ?? false);
+        $isWestern = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
 
         $messages = [
             'last_name.required' => __('dixlase-inquiry::front.validation.last_name_required'),

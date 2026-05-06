@@ -39,7 +39,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         selectedLocale: {{ $isSimpleMode ? "'auto'" : "'" . old('lang', $settings->lang ?? 'auto') . "'" }},
         useSinglePage: {{ $isSimpleMode ? "'1'" : "'" . (old('use_single_page', $settings->use_single_page ?? true) ? '1' : '0') . "'" }},
         inquiryUrlSlug: '{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}',
-        nameOrderWestern: {{ $isSimpleMode ? "'0'" : "'" . (old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0') . "'" }},
+        nameOrderWestern: {!! $isSimpleMode ? "'0'" : Js::from((function() use ($settings) {
+            $v = old('name_order_western', $settings->name_order_western ?? '0');
+            return $v === 'auto' ? 'auto' : (filter_var($v, FILTER_VALIDATE_BOOLEAN) ? '1' : '0');
+        })()) !!},
         showSubject: '{{ old('show_subject', $settings->show_subject ?? false) ? '1' : '0' }}',
         subjectRequired: '{{ old('subject_required', $settings->subject_required ?? false) ? '1' : '0' }}',
         showAddress: '{{ old('show_address', $settings->show_address ?? false) ? '1' : '0' }}',
@@ -66,6 +69,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         getLabel(key) {
             const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
             return this.labels[locale]?.[key] ?? key;
+        },
+        // 'auto' を現在のデフォルトロケールに基づいて '0'/'1' に解決した値を返す（プレビュー表示用）
+        get nameOrderWesternResolved() {
+            if (this.nameOrderWestern === 'auto') {
+                return this.defaultLocale.startsWith('ja') ? '0' : '1';
+            }
+            return this.nameOrderWestern;
         },
         openPreview() {
             const form = document.createElement('form');

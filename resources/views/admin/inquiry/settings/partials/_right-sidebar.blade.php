@@ -83,13 +83,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 {{-- Input format --}}
                 <div>
                     <x-form-label for="name_order_western" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
+                    @php
+                        $rawNameOrder = old('name_order_western', $settings->name_order_western ?? '0');
+                        $nameOrderValue = $rawNameOrder === 'auto' ? 'auto' : (filter_var($rawNameOrder, FILTER_VALIDATE_BOOLEAN) ? '1' : '0');
+                    @endphp
                     <x-form-select
                         name="name_order_western"
                         :options="[
+                            'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_auto'),
                             '0' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
                             '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
                         ]"
-                        :value="old('name_order_western', $settings->name_order_western ?? false) ? '1' : '0'"
+                        :value="$nameOrderValue"
                         xModel="nameOrderWestern"
                     />
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
@@ -144,21 +149,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @endif
 
             {{-- Katakana (Furigana) --}}
-            <div :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
+            <div :class="{ 'opacity-50 pointer-events-none': nameOrderWesternResolved === '1' }">
                 <x-form-toggle
                     name="show_kana"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_kana')"
                     :checked="old('show_kana', $settings->show_kana ?? false)"
                     xModel="showKana"
-                    ::disabled="nameOrderWestern === '1'"
+                    ::disabled="nameOrderWesternResolved === '1'"
                 />
             </div>
-            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700" :class="{ 'opacity-50 pointer-events-none': nameOrderWestern === '1' }">
+            <div class="ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700" :class="{ 'opacity-50 pointer-events-none': nameOrderWesternResolved === '1' }">
                 <x-form-toggle
                     name="require_kana"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.require_kana')"
                     :checked="old('require_kana', $settings->require_kana ?? false)"
-                    xBind="(showKana === '1' && nameOrderWestern === '0')"
+                    xBind="(showKana === '1' && nameOrderWesternResolved === '0')"
                     xModel="requireKana"
                 />
             </div>

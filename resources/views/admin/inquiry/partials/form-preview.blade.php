@@ -49,14 +49,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         </legend>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{-- 日本式: 姓が先 --}}
-            <div x-show="nameOrderWestern == '0'">
+            <div x-show="nameOrderWesternResolved === '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <span x-text="getLabel('last_name')"></span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('last_name_label_ja')"></span>)</span>
                 </label>
                 <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
-            <div x-show="nameOrderWestern == '0'">
+            <div x-show="nameOrderWesternResolved === '0'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <span x-text="getLabel('first_name')"></span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('first_name_label_ja')"></span>)</span>
@@ -64,14 +64,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
             {{-- 欧米式: 名が先 --}}
-            <div x-show="nameOrderWestern == '1'">
+            <div x-show="nameOrderWesternResolved === '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <span x-text="getLabel('first_name')"></span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('first_name_label_en')"></span>)</span>
                 </label>
                 <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
-            <div x-show="nameOrderWestern == '1'">
+            <div x-show="nameOrderWesternResolved === '1'">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     <span x-text="getLabel('last_name')"></span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">(<span x-text="getLabel('last_name_label_en')"></span>)</span>
@@ -82,7 +82,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     </fieldset>
 
     {{-- カタカナ（フリガナ）フィールド --}}
-    <div x-show="showKana === '1' && nameOrderWestern == '0'">
+    <div x-show="showKana === '1' && nameOrderWesternResolved === '0'">
         <fieldset>
             <legend>
                 <span x-text="getLabel('kana')"></span>
@@ -134,12 +134,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-required-badge />
                 </span>
             </legend>
-            <div x-show="nameOrderWestern == '0'" class="flex items-center gap-2">
+            <div x-show="nameOrderWesternResolved === '0'" class="flex items-center gap-2">
                 <input type="text" disabled maxlength="3" placeholder="123" class="input-common my-2 w-20 opacity-60">
                 <span class="text-gray-500 dark:text-gray-400">-</span>
                 <input type="text" disabled maxlength="4" placeholder="4567" class="input-common my-2 w-24 opacity-60">
             </div>
-            <div x-show="nameOrderWestern == '1'">
+            <div x-show="nameOrderWesternResolved === '1'">
                 <input type="text" disabled class="input-common my-2 w-full opacity-60">
             </div>
         </fieldset>
@@ -154,7 +154,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-required-badge />
                 </span>
             </legend>
-            <div x-show="nameOrderWestern == '0'" class="space-y-4">
+            <div x-show="nameOrderWesternResolved === '0'" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         <span x-text="getLabel('prefecture')"></span>
@@ -182,7 +182,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <input type="text" disabled class="input-common my-2 w-full opacity-60">
                 </div>
             </div>
-            <div x-show="nameOrderWestern == '1'" class="space-y-4">
+            <div x-show="nameOrderWesternResolved === '1'" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         <span x-text="getLabel('address_line')"></span>
@@ -226,14 +226,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-required-badge />
                 </span>
             </legend>
-            <div x-show="nameOrderWestern == '0'" class="flex items-center gap-2">
+            <div x-show="nameOrderWesternResolved === '0'" class="flex items-center gap-2">
                 <input type="tel" disabled maxlength="5" placeholder="090" class="input-common my-2 w-20 opacity-60">
                 <span class="text-gray-500 dark:text-gray-400">-</span>
                 <input type="tel" disabled maxlength="4" placeholder="1234" class="input-common my-2 w-20 opacity-60">
                 <span class="text-gray-500 dark:text-gray-400">-</span>
                 <input type="tel" disabled maxlength="4" placeholder="5678" class="input-common my-2 w-20 opacity-60">
             </div>
-            <div x-show="nameOrderWestern == '1'">
+            <div x-show="nameOrderWesternResolved === '1'">
                 <input type="tel" disabled class="input-common my-2 w-full opacity-60">
             </div>
         </fieldset>

@@ -64,6 +64,7 @@ return [
 
     // 入力形式
     'format_style' => '入力形式',
+    'format_auto' => '自動',
     'format_japanese' => '日本式',
     'format_japanese_desc' => '姓・名の順、郵便番号・電話番号は分割入力、住所は都道府県から入力',
     'format_western' => '欧米式',
