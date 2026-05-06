@@ -77,7 +77,19 @@ class DixlaseInquiryDashboardProviderTest extends TestCase
      */
     public function test_returns_empty_when_captcha_enabled(): void
     {
-        CaptchaEnabledForm::enableForm('dixlase-inquiry.inquiry_contact');
+        $siteId = \DB::table('sites')->insertGetId([
+            'name' => 'Test Site',
+            'slug' => 'test-site',
+            'primary_locale' => 'ja',
+            'timezone' => 'Asia/Tokyo',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        CaptchaEnabledForm::updateOrCreate(
+            ['form_key' => 'dixlase-inquiry.inquiry_contact'],
+            ['site_id' => $siteId, 'enabled' => true]
+        );
 
         $provider = new DixlaseInquiryDashboardProvider();
         $notifications = $provider->getNotifications();
