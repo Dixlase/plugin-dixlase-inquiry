@@ -48,6 +48,7 @@ trait InquiryFormDataTrait
      * CaptchaService がプラグインslugをプレフィックスに付与するため
      */
     protected const CAPTCHA_FORM_KEY = 'dixlase-inquiry.inquiry_contact';
+
     /**
      * フォームロケールを適用
      * 'auto'の場合は現在のロケールを維持
@@ -58,6 +59,10 @@ trait InquiryFormDataTrait
         if ($locale !== 'auto') {
             app()->setLocale($locale);
         }
+
+        // 'auto' を含む name_order_western を現在のロケールに基づいて bool に解決
+        // （ビューやバリデーションは bool 値を期待するため）
+        $settings->name_order_western = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
     }
 
     /**
@@ -73,7 +78,7 @@ trait InquiryFormDataTrait
             }
         }
 
-        return !empty($settings->privacy_policy_url) ? $settings->privacy_policy_url : null;
+        return ! empty($settings->privacy_policy_url) ? $settings->privacy_policy_url : null;
     }
 
     /**
@@ -109,7 +114,7 @@ trait InquiryFormDataTrait
     {
         $prefectures = __('dixlase-inquiry::front.prefectures');
 
-        if (!is_array($prefectures)) {
+        if (! is_array($prefectures)) {
             return [];
         }
 
@@ -129,20 +134,20 @@ trait InquiryFormDataTrait
      */
     protected function prepareInquiryData(array $validated, object $settings): array
     {
-        $isWestern = (bool) ($settings->name_order_western ?? false);
+        $isWestern = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
 
         // 名前を結合
         $fullName = $isWestern
-            ? trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''))
-            : trim(($validated['last_name'] ?? '') . ' ' . ($validated['first_name'] ?? ''));
+            ? trim(($validated['first_name'] ?? '').' '.($validated['last_name'] ?? ''))
+            : trim(($validated['last_name'] ?? '').' '.($validated['first_name'] ?? ''));
 
         // カタカナ名前を結合（日本式のみ）
         $nameKana = null;
-        if (!$isWestern && ($settings->show_kana ?? false)) {
+        if (! $isWestern && ($settings->show_kana ?? false)) {
             $lastKana = $validated['last_name_kana'] ?? '';
             $firstKana = $validated['first_name_kana'] ?? '';
             if ($lastKana || $firstKana) {
-                $nameKana = trim($lastKana . ' ' . $firstKana);
+                $nameKana = trim($lastKana.' '.$firstKana);
             }
         }
 
@@ -208,7 +213,7 @@ trait InquiryFormDataTrait
         $part2 = $validated['postal_code_2'] ?? null;
 
         if ($part1 && $part2) {
-            return $part1 . '-' . $part2;
+            return $part1.'-'.$part2;
         }
 
         // 旧形式のフォールバック
@@ -231,7 +236,7 @@ trait InquiryFormDataTrait
                 $validated['country'] ?? null,
             ]);
 
-            return !empty($parts) ? implode(', ', $parts) : ($validated['address'] ?? null);
+            return ! empty($parts) ? implode(', ', $parts) : ($validated['address'] ?? null);
         }
 
         // 日本式分割フィールド
@@ -241,9 +246,9 @@ trait InquiryFormDataTrait
         $building = $validated['building'] ?? null;
 
         if ($prefecture || $city || $addressLine) {
-            $combined = ($prefecture ?? '') . ($city ?? '') . ($addressLine ?? '');
+            $combined = ($prefecture ?? '').($city ?? '').($addressLine ?? '');
             if ($building) {
-                $combined .= ' ' . $building;
+                $combined .= ' '.$building;
             }
 
             return trim($combined) ?: null;
@@ -269,7 +274,7 @@ trait InquiryFormDataTrait
         $part3 = $validated['phone_3'] ?? null;
 
         if ($part1 && $part2 && $part3) {
-            return $part1 . '-' . $part2 . '-' . $part3;
+            return $part1.'-'.$part2.'-'.$part3;
         }
 
         // 旧形式のフォールバック

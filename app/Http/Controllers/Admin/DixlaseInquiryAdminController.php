@@ -175,7 +175,7 @@ class DixlaseInquiryAdminController extends Controller
     {
         $validated = $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'integer|exists:'.(new DixlaseInquiry)->getTable().',id',
+            'ids.*' => 'integer|exists:'.(new DixlaseInquiry())->getTable().',id',
             'status' => 'required|string|in:'.implode(',', array_column(InquiryStatus::cases(), 'value')),
         ]);
 
@@ -341,7 +341,7 @@ class DixlaseInquiryAdminController extends Controller
         $settingsData = $request->except(['_token']);
         // 真偽値フィールドを正規化
         $boolFields = [
-            'use_single_page', 'name_order_western', 'show_subject', 'subject_required',
+            'use_single_page', 'show_subject', 'subject_required',
             'show_address', 'postal_code_required', 'address_required',
             'show_phone', 'phone_required', 'show_gender', 'gender_required',
             'show_gender_other', 'show_gender_prefer_not_to_say',
