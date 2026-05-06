@@ -58,7 +58,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'lang' => 'required|string|in:auto,'.implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
             'use_single_page' => 'boolean',
             'inquiry_url_slug' => ['nullable', 'string', 'max:100', 'regex:/^[a-z0-9\-]*$/', UniqueRouteSlug::for('dixlase-inquiry:directory')],
-            'name_order_western' => 'boolean',
+            'name_order_western' => 'required|string|in:0,1,auto',
             'show_subject' => 'boolean',
             'subject_required' => 'boolean',
             'show_address' => 'boolean',
@@ -91,7 +91,6 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
     {
         $booleanFields = [
             'use_single_page',
-            'name_order_western',
             'show_subject',
             'subject_required',
             'show_address',

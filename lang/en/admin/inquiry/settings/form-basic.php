@@ -64,6 +64,7 @@ return [
 
     // 入力形式
     'format_style' => 'Input Format',
+    'format_auto' => 'Auto',
     'format_japanese' => 'Japanese Style',
     'format_japanese_desc' => 'Last/First name order, split postal code/phone, prefecture-based address',
     'format_western' => 'Western Style',

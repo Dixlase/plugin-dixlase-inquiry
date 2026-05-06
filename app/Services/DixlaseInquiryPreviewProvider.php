@@ -99,7 +99,7 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
         $fields = [];
         $order = 0;
         $bool = fn ($key, $default = false) => filter_var($settings->$key ?? $default, FILTER_VALIDATE_BOOLEAN);
-        $nameWestern = $bool('name_order_western');
+        $nameWestern = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
         $locale = $this->resolveLocale($settings->lang ?? 'auto');
 
         /** @var \Closure(string, array<string, string>): string $t ロケール指定付き翻訳ヘルパー */

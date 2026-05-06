@@ -89,8 +89,8 @@ class InquirySettingsSeeder extends Seeder
             'use_single_page' => '1',
             'show_confirmation_page' => '1',
             'inquiry_url_slug' => 'inquiry',
-            'name_order_western' => $locale === 'en' ? '1' : '0',
-            'lang' => $locale,
+            'name_order_western' => 'auto',
+            'lang' => 'auto',
         ];
 
         foreach ($defaults as $name => $value) {

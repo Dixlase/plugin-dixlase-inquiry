@@ -58,6 +58,11 @@ if (! function_exists('dls_inquiry_form')) {
                 app()->setLocale($formLocale);
             }
 
+            // name_order_western が 'auto' の場合は現在のロケールに基づいて解決した bool に変換
+            // （Bladeテンプレート側は bool 値を期待するため）
+            $settings = clone $settings;
+            $settings->name_order_western = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
+
             // プライバシーポリシーURLを解決
             $privacyUrl = null;
             if (app()->bound(PrivacyPolicyProviderInterface::class)) {
@@ -184,5 +189,26 @@ if (! function_exists('dls_inquiry_enabled')) {
         } catch (\Exception $e) {
             return false;
         }
+    }
+}
+
+if (! function_exists('dls_inquiry_is_western')) {
+    /**
+     * 名前順序が欧米式かどうかを解決する
+     *
+     * name_order_western が 'auto' の場合、現在のアプリロケールに基づいて判定する
+     * （日本語以外は欧米式として扱う）
+     *
+     * @param  object  $settings  問い合わせ設定オブジェクト
+     */
+    function dls_inquiry_is_western(object $settings): bool
+    {
+        $value = $settings->name_order_western ?? false;
+
+        if ($value === 'auto') {
+            return ! str_starts_with(app()->getLocale(), 'ja');
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }
