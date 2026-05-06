@@ -119,7 +119,7 @@ class DixlaseInquirySetting extends Model
             'use_single_page' => true,
             'show_confirmation_page' => true,
             'inquiry_url_slug' => 'inquiry',
-            'name_order_western' => false,
+            'name_order_western' => 'auto',
             'lang' => 'auto',
             'privacy_consent_enabled' => false,
             'privacy_policy_url' => '',
