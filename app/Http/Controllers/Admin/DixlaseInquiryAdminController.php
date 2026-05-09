@@ -224,7 +224,7 @@ class DixlaseInquiryAdminController extends Controller
         $settings = DixlaseInquirySetting::getSettings();
 
         // 全ロケールのフロント翻訳をJSに渡す
-        $locales = config('dixlase-inquiry.locales', ['ja', 'en']);
+        $locales = \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::enabledLocales();
         $formTranslations = [];
         foreach ($locales as $locale) {
             $formTranslations[$locale] = array_merge(

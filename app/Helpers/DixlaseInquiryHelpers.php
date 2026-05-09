@@ -51,15 +51,14 @@ if (! function_exists('dls_inquiry_form')) {
                 return null;
             }
 
-            // フォームロケールを一時的に適用（レンダリング後に元に戻す）
-            $formLocale = $settings->lang ?? 'auto';
+            // Apply the form locale temporarily; restore after rendering.
             $originalLocale = app()->getLocale();
-            if ($formLocale !== 'auto') {
-                app()->setLocale($formLocale);
-            }
+            app()->setLocale(
+                \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::resolveFormLocale($settings->lang ?? 'auto')
+            );
 
-            // name_order_western が 'auto' の場合は現在のロケールに基づいて解決した bool に変換
-            // （Bladeテンプレート側は bool 値を期待するため）
+            // Materialise 'auto' name_order_western to a bool so the Blade
+            // template can rely on a concrete value.
             $settings = clone $settings;
             $settings->name_order_western = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
 
@@ -194,21 +193,16 @@ if (! function_exists('dls_inquiry_enabled')) {
 
 if (! function_exists('dls_inquiry_is_western')) {
     /**
-     * 名前順序が欧米式かどうかを解決する
+     * Resolve whether the name order should be treated as western.
      *
-     * name_order_western が 'auto' の場合、現在のアプリロケールに基づいて判定する
-     * （日本語以外は欧米式として扱う）
+     * Delegates to InquiryFormResolver so the locale fallback rules stay in
+     * a single place (multilingual plugin → middleware-set locale; otherwise
+     * → site basic-settings default).
      *
      * @param  object  $settings  問い合わせ設定オブジェクト
      */
     function dls_inquiry_is_western(object $settings): bool
     {
-        $value = $settings->name_order_western ?? false;
-
-        if ($value === 'auto') {
-            return ! str_starts_with(app()->getLocale(), 'ja');
-        }
-
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        return \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
     }
 }

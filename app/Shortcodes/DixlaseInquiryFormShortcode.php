@@ -34,6 +34,7 @@ namespace Plugins\DixlaseInquiry\App\Shortcodes;
 
 use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
+use Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport;
 
 class DixlaseInquiryFormShortcode
 {
@@ -48,11 +49,9 @@ class DixlaseInquiryFormShortcode
         // 問い合わせ設定を取得
         $settings = DixlaseInquirySetting::getSettings();
 
-        // フォームロケールを適用（'auto'時は現在のロケールを維持）
-        $formLocale = $settings->lang ?? 'auto';
-        if ($formLocale !== 'auto') {
-            app()->setLocale($formLocale);
-        }
+        // Apply the form locale through the central resolver so multilingual
+        // plugin settings and the site's basic-settings default are honoured.
+        app()->setLocale(InquiryLocaleSupport::resolveFormLocale($settings->lang ?? 'auto'));
 
         // プライバシーポリシーURLを解決
         $privacyUrl = $this->resolvePrivacyPolicyUrl($settings);

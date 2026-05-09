@@ -38,19 +38,23 @@ namespace Plugins\DixlaseInquiry\App\Support;
 class InquiryFormResolver
 {
     /**
-     * Resolve whether the name order should be western (first/last)
-     * based on the setting value and current application locale.
+     * Resolve whether the name order should be western (first/last).
      *
      * - '1' (or true) → western
      * - '0' (or false) → Japanese
-     * - 'auto' → western if current locale is not Japanese
+     * - 'auto' → western if the form's effective locale is not Japanese.
+     *   The effective locale is derived through InquiryLocaleSupport so that
+     *   isWestern() is correct even when the caller has not yet applied the
+     *   form locale to the application.
      */
     public static function isWestern(object $settings): bool
     {
         $value = $settings->name_order_western ?? false;
 
         if ($value === 'auto') {
-            return ! str_starts_with(app()->getLocale(), 'ja');
+            $locale = InquiryLocaleSupport::resolveFormLocale($settings->lang ?? 'auto');
+
+            return ! str_starts_with($locale, 'ja');
         }
 
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
