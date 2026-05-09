@@ -29,7 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry-form"
+<div class="dixlase-inquiry-embed" id="inquiry"
     x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
     @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
 
@@ -155,7 +155,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             @endif
         >
             @csrf
-            <input type="hidden" name="redirect_url" value="{{ url()->current() }}#inquiry-form">
+            <input type="hidden" name="redirect_url" value="{{ url()->current() }}#inquiry">
 
             {{-- 1. 名前（2カラム） --}}
             <div>
