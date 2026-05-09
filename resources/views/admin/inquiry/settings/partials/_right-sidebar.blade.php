@@ -69,15 +69,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-label for="lang" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
                     <x-form-select
                         name="lang"
-                        :options="[
-                            'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_auto'),
-                            'ja' => '日本語',
-                            'en' => 'English',
-                        ]"
+                        :options="\Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::langSelectOptions()"
                         :value="old('lang', $settings->lang ?? 'auto')"
                         xModel="selectedLocale"
                     />
-                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help')" />
+                    @if(\Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::multilingualEnabled())
+                        <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help_multilingual')" />
+                    @else
+                        <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang_help')" />
+                    @endif
                 </div>
 
                 {{-- Input format --}}
@@ -97,7 +97,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         :value="$nameOrderValue"
                         xModel="nameOrderWestern"
                     />
-                    <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                    @if(\Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::multilingualEnabled())
+                        <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help_multilingual')" />
+                    @else
+                        <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
+                    @endif
                 </div>
 
                 {{-- Form heading --}}

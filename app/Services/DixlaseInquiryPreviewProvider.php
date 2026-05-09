@@ -319,14 +319,14 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
     }
 
     /**
-     * lang設定値からロケールを解決する
+     * Resolve a `lang` setting value to a concrete locale.
+     *
+     * Delegates to InquiryLocaleSupport so the preview shows what visitors
+     * would actually see at the root URL, including the multilingual plugin's
+     * default and the site's basic-settings default.
      */
     private function resolveLocale(string $lang): string
     {
-        if ($lang === 'auto' || $lang === '') {
-            return app()->getLocale();
-        }
-
-        return $lang;
+        return \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::resolveFormLocale($lang);
     }
 }

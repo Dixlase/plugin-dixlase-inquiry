@@ -65,7 +65,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         throttleDecayMinutes: {{ $isSimpleMode ? "'5'" : "'" . old('throttle_decay_minutes', $settings->throttle_decay_minutes ?? 5) . "'" }},
         showConfirmationPage: {{ $isSimpleMode ? "'1'" : "'" . (old('show_confirmation_page', $settings->show_confirmation_page ?? true) ? '1' : '0') . "'" }},
         labels: {{ Js::from($formTranslations) }},
-        defaultLocale: '{{ config('app.locale') }}',
+        defaultLocale: '{{ \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::resolvedDefaultLocale() }}',
         getLabel(key) {
             const locale = this.selectedLocale === 'auto' ? this.defaultLocale : this.selectedLocale;
             return this.labels[locale]?.[key] ?? key;

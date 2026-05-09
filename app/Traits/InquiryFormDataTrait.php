@@ -50,18 +50,20 @@ trait InquiryFormDataTrait
     protected const CAPTCHA_FORM_KEY = 'dixlase-inquiry.inquiry_contact';
 
     /**
-     * フォームロケールを適用
-     * 'auto'の場合は現在のロケールを維持
+     * Apply the form locale to the application.
+     *
+     * Resolution is delegated to InquiryLocaleSupport::resolveFormLocale so
+     * the multilingual plugin's settings (when active) and the site's basic
+     * settings (when not) are honoured consistently. After locale resolution
+     * the 'auto' name_order_western value is materialised to a bool for views
+     * and validation.
      */
     protected function applyFormLocale(object $settings): void
     {
-        $locale = $settings->lang ?? 'auto';
-        if ($locale !== 'auto') {
-            app()->setLocale($locale);
-        }
+        app()->setLocale(
+            \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::resolveFormLocale($settings->lang ?? 'auto')
+        );
 
-        // 'auto' を含む name_order_western を現在のロケールに基づいて bool に解決
-        // （ビューやバリデーションは bool 値を期待するため）
         $settings->name_order_western = \Plugins\DixlaseInquiry\App\Support\InquiryFormResolver::isWestern($settings);
     }
 

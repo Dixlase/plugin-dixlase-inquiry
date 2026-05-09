@@ -34,6 +34,7 @@ namespace Plugins\DixlaseInquiry\App\Http\Requests\Admin;
 
 use App\Rules\UniqueRouteSlug;
 use Illuminate\Foundation\Http\FormRequest;
+use Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport;
 
 class DixlaseInquiryFormBasicRequest extends FormRequest
 {
@@ -55,7 +56,7 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
         return [
             'form_heading' => 'nullable|string|max:100',
             'form_description' => 'nullable|string|max:500',
-            'lang' => 'required|string|in:auto,'.implode(',', config('dixlase-inquiry.locales', ['ja', 'en'])),
+            'lang' => 'required|string|in:auto,'.implode(',', InquiryLocaleSupport::enabledLocales()),
             'use_single_page' => 'boolean',
             'inquiry_url_slug' => ['nullable', 'string', 'max:100', 'regex:/^[a-z0-9\-]*$/', UniqueRouteSlug::for('dixlase-inquiry:directory')],
             'name_order_western' => 'required|string|in:0,1,auto',
