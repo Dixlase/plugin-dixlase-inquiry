@@ -74,21 +74,20 @@ class DixlaseInquiryDashboardProviderTest extends TestCase
 
     /**
      * CAPTCHA enabled returns empty notifications
+     *
+     * The captcha-enabled row must live on the same site that SiteContext
+     * resolves to during the test, otherwise the BelongsToSite global scope
+     * filters it out and isFormEnabled() reports false. TestCase::setUp seeds
+     * the primary site as id=1 and primes SiteContext::setCurrent(1); we let
+     * BelongsToSite::creating auto-fill site_id from that context rather than
+     * manually inserting a second site row (which lands at id=2 and falls
+     * outside the scope's WHERE clause).
      */
     public function test_returns_empty_when_captcha_enabled(): void
     {
-        $siteId = \DB::table('sites')->insertGetId([
-            'name' => 'Test Site',
-            'slug' => 'test-site',
-            'primary_locale' => 'ja',
-            'timezone' => 'Asia/Tokyo',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         CaptchaEnabledForm::updateOrCreate(
             ['form_key' => 'dixlase-inquiry.inquiry_contact'],
-            ['site_id' => $siteId, 'enabled' => true]
+            ['enabled' => true]
         );
 
         $provider = new DixlaseInquiryDashboardProvider();
