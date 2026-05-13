@@ -33,7 +33,6 @@
 namespace Plugins\DixlaseInquiry\App\Support;
 
 use App\Helpers\LocaleHelper;
-use Plugins\DixlaseMultilingual\App\Services\EnabledLocaleResolver;
 use Throwable;
 
 /**
@@ -43,16 +42,34 @@ use Throwable;
  * locales and the "auto" resolution follow that plugin's settings. When it is
  * absent, the form falls back to the inquiry plugin's static config and the
  * site's primary locale from core.
+ *
+ * Multilingual references use string literals rather than class references
+ * because DixlaseMultilingual is an optional sibling plugin and may not be on
+ * the autoloader at all (e.g. CI environments that exclude it). Touching its
+ * `::class` constants would trigger autoload and a fatal error on those
+ * environments.
  */
 class InquiryLocaleSupport
 {
+    /** FQCN of the multilingual plugin's locale resolver service. */
+    private const RESOLVER_CLASS = 'Plugins\\DixlaseMultilingual\\App\\Services\\EnabledLocaleResolver';
+
+    /** Mirror of the multilingual plugin's DEFAULT_MODE_FIXED sentinel value. */
+    private const DEFAULT_MODE_FIXED = 'fixed';
+
     /**
      * Whether the multilingual plugin is installed and bound in the container.
+     *
+     * Uses the container binding as the single source of truth. A bound entry
+     * implies the multilingual plugin's service provider ran (which only
+     * happens when its class file is autoloadable), so a separate
+     * `class_exists` check would be redundant — and would also defeat
+     * Mockery-based test mocks where the binding is provided but the class
+     * itself is absent.
      */
     public static function multilingualEnabled(): bool
     {
-        return class_exists(EnabledLocaleResolver::class)
-            && app()->bound(EnabledLocaleResolver::class);
+        return app()->bound(self::RESOLVER_CLASS);
     }
 
     /**
@@ -69,7 +86,7 @@ class InquiryLocaleSupport
     {
         if (self::multilingualEnabled()) {
             try {
-                $locales = app(EnabledLocaleResolver::class)->getEnabledLocales();
+                $locales = app(self::RESOLVER_CLASS)->getEnabledLocales();
                 if (! empty($locales)) {
                     return array_values($locales);
                 }
@@ -98,8 +115,8 @@ class InquiryLocaleSupport
     {
         if (self::multilingualEnabled()) {
             try {
-                $resolver = app(EnabledLocaleResolver::class);
-                if ($resolver->getDefaultLocaleMode() === EnabledLocaleResolver::DEFAULT_MODE_FIXED) {
+                $resolver = app(self::RESOLVER_CLASS);
+                if ($resolver->getDefaultLocaleMode() === self::DEFAULT_MODE_FIXED) {
                     return $resolver->getFallbackLocale();
                 }
             } catch (Throwable) {
