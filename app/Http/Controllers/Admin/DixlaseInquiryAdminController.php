@@ -32,6 +32,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Admin;
 
+use App\Helpers\AdminHelper;
 use App\Helpers\CaptchaHelper;
 use App\Models\SiteSetting;
 use App\Traits\AdminInterfaceTrait;
@@ -58,6 +59,15 @@ class DixlaseInquiryAdminController extends Controller
     use AdminLoggedInTrait;
     use InquiryFormDataTrait;
 
+    /**
+     * Plugin slug used for permission lookups against PermissionRegistry.
+     *
+     * PermissionRegistry resolves `plugins/{slug}/config/roles.php` from
+     * the directory basename, so this must be the PascalCase directory
+     * name (`DixlaseInquiry`), not the kebab-case `slug` from plugin.json.
+     */
+    private const PLUGIN_SLUG = 'DixlaseInquiry';
+
     public function __construct()
     {
         $this->initialize();
@@ -65,10 +75,36 @@ class DixlaseInquiryAdminController extends Controller
     }
 
     /**
+     * Abort with 403 unless the current member can view (read) the given
+     * inquiry menu. Delegates to AdminHelper so SUPER_ADMIN bypasses,
+     * core's `role_permission_overrides` deltas, and the plugin defaults
+     * in `config/roles.php` are all honoured in one place.
+     */
+    private function authorizeView(string $menuKey): void
+    {
+        if (! AdminHelper::canViewPluginMenu(self::PLUGIN_SLUG, $menuKey)) {
+            abort(403, __('http/middleware/check_menu_access.no_access_permission'));
+        }
+    }
+
+    /**
+     * Abort with 403 unless the current member can edit (write) the given
+     * inquiry menu.
+     */
+    private function authorizeEdit(string $menuKey): void
+    {
+        if (! AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, $menuKey)) {
+            abort(403, __('http/middleware/check_menu_edit.no_edit_permission'));
+        }
+    }
+
+    /**
      * 問い合わせ一覧
      */
     public function index(Request $request): View
     {
+        $this->authorizeView('inquiry.index');
+
         $search = $request->input('search');
         $statusFilter = $request->input('status', '');
 
@@ -116,6 +152,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function show(int $id): View
     {
+        $this->authorizeView('inquiry.index');
+
         $inquiry = DixlaseInquiry::findOrFail($id);
 
         // 自動既読マーク
@@ -144,6 +182,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.index');
+
         $inquiry = DixlaseInquiry::findOrFail($id);
         $inquiry->delete();
 
@@ -156,6 +196,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateStatus(Request $request, int $id): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.index');
+
         $inquiry = DixlaseInquiry::findOrFail($id);
 
         $request->validate([
@@ -173,6 +215,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function bulkUpdateStatus(Request $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.index');
+
         $validated = $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'integer|exists:'.(new DixlaseInquiry())->getTable().',id',
@@ -191,6 +235,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function toggleAccepting(Request $request): \Illuminate\Http\JsonResponse
     {
+        $this->authorizeEdit('inquiry.index');
+
         $current = filter_var(DixlaseInquirySetting::get('accepting_inquiries', true), FILTER_VALIDATE_BOOLEAN);
         $newValue = ! $current;
         DixlaseInquirySetting::set('accepting_inquiries', $newValue ? '1' : '0');
@@ -206,6 +252,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function settingsIndex(): View
     {
+        $this->authorizeView('inquiry.settings.index');
+
         $settings = DixlaseInquirySetting::getSettings();
 
         $captchaEnabled = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY);
@@ -221,6 +269,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function settingsFormBasic(): View
     {
+        $this->authorizeView('inquiry.settings.form-basic');
+
         $settings = DixlaseInquirySetting::getSettings();
 
         // 全ロケールのフロント翻訳をJSに渡す
@@ -249,6 +299,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateFormBasic(DixlaseInquiryFormBasicRequest $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.settings.form-basic');
+
         DixlaseInquirySetting::updateSettings($request->validated());
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-basic')
@@ -260,6 +312,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function settingsCompletion(): View
     {
+        $this->authorizeView('inquiry.settings.completion');
+
         $settings = DixlaseInquirySetting::getSettings();
 
         return view('dixlase-inquiry::admin.inquiry.settings.completion', array_merge($this->viewParams, [
@@ -272,6 +326,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateCompletion(DixlaseInquiryCompletionRequest $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.settings.completion');
+
         DixlaseInquirySetting::updateSettings($request->validated());
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.completion')
@@ -283,6 +339,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function settingsAdminNotification(): View
     {
+        $this->authorizeView('inquiry.settings.admin-notification');
+
         $settings = DixlaseInquirySetting::getSettings();
 
         // メールテスト状態を取得
@@ -304,6 +362,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateAdminNotification(DixlaseInquiryAdminNotificationRequest $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.settings.admin-notification');
+
         DixlaseInquirySetting::updateSettings($request->validated());
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.admin-notification')
@@ -315,6 +375,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function settingsAutoReply(): View
     {
+        $this->authorizeView('inquiry.settings.auto-reply');
+
         $settings = DixlaseInquirySetting::getSettings();
 
         return view('dixlase-inquiry::admin.inquiry.settings.auto-reply', array_merge($this->viewParams, [
@@ -327,6 +389,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateAutoReply(DixlaseInquiryAutoReplyRequest $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.settings.auto-reply');
+
         DixlaseInquirySetting::updateSettings($request->validated());
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.auto-reply')
@@ -338,6 +402,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function storePreviewSettings(Request $request): RedirectResponse
     {
+        $this->authorizeEdit('inquiry.settings.form-basic');
+
         $settingsData = $request->except(['_token']);
         // 真偽値フィールドを正規化
         $boolFields = [
@@ -387,6 +453,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function showPreview(): View
     {
+        $this->authorizeView('inquiry.settings.form-basic');
+
         $settings = $this->getPreviewSettings();
 
         $this->applyFormLocale($settings);
@@ -418,6 +486,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function previewConfirm(Request $request): View
     {
+        $this->authorizeView('inquiry.settings.form-basic');
+
         $settings = $this->getPreviewSettings();
 
         $this->applyFormLocale($settings);
@@ -435,6 +505,8 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function previewSend(Request $request): View
     {
+        $this->authorizeEdit('inquiry.settings.form-basic');
+
         $settings = $this->getPreviewSettings();
 
         $this->applyFormLocale($settings);

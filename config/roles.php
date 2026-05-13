@@ -33,28 +33,55 @@
 use App\Enums\MemberRole;
 
 /**
- * プラグインのデフォルト権限設定
- * 
- * 各メニュー/機能に対するデフォルトの権限を定義します。
- * 管理画面で変更された場合のみ、role_permission_overrides テーブルに差分が保存されます。
- * 
- * 構造は config/admin.php の nav 構造と同じネスト形式です。
+ * Plugin default permission settings.
+ *
+ * Defines the default access/view roles for each menu entry the plugin
+ * exposes. The structure mirrors `config/admin/navigation.php` so that
+ * `PermissionRegistry::getPluginEffective($slug, $menuKey)` can resolve
+ * dot-notation keys like `inquiry.settings.form-basic` by walking the
+ * nested `children` arrays.
+ *
+ * Defaults are intentionally set to ADMIN so that the inquiry menus are
+ * visible and editable to admins out of the box. Operators can lower the
+ * threshold (e.g. allow EDITOR to manage inquiry replies) via the
+ * "Member role permissions" admin screen; any change is persisted in
+ * `role_permission_overrides` as a delta.
  */
 
 return [
     'permissions' => [
-        // 問い合わせ管理
         'inquiry' => [
             'children' => [
-                // 問い合わせ一覧
-                'inquiry_list' => [
-                    'access_roles' => MemberRole::EDITOR->value,
-                    'view_roles' => MemberRole::EDITOR->value,
+                // Inquiry list + detail + status updates + delete.
+                'index' => [
+                    'access_roles' => MemberRole::ADMIN->value,
+                    'view_roles' => MemberRole::ADMIN->value,
                 ],
-                // 問い合わせ設定（管理者以上）
-                'inquiry_settings' => [
-                    'access_roles' => MemberRole::SUPER_ADMIN->value,
-                    'view_roles' => MemberRole::SUPER_ADMIN->value,
+
+                // Settings hub and per-section pages.
+                'settings' => [
+                    'children' => [
+                        'index' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        'form-basic' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        'completion' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        'admin-notification' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        'auto-reply' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                    ],
                 ],
             ],
         ],

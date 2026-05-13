@@ -31,11 +31,24 @@
  */
 
 return [
-    // 問い合わせ管理
+    // Inquiry management.
+    //
+    // `plugin_slug` routes the sidebar's permission check through
+    // AdminHelper::canEditPluginMenu()/canViewPluginMenu() against this
+    // plugin's `config/roles.php`. Without it the sidebar falls back to
+    // core's PermissionRegistry, which has no `inquiry` entry, and the
+    // menu disappears for everyone below SUPER_ADMIN.
+    //
+    // The slug must be the plugin's directory basename (PascalCase),
+    // not the kebab-case `slug` from plugin.json, because
+    // PermissionRegistry resolves `plugins/{slug}/config/roles.php`
+    // using the directory name (see AdminMemberRolesController:248:
+    // "PermissionRegistry uses directory name as slug").
     'inquiry' => [
         '_insert_before' => 'profile',
         'text' => 'dixlase-inquiry::admin/navigation.inquiry',
         'icon' => 'fas fa-fw fa-envelope',
+        'plugin_slug' => 'DixlaseInquiry',
         'can' => 'admin',
         'children' => [
             'index' => [
