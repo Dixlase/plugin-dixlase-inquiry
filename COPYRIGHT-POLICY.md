@@ -63,4 +63,4 @@ Future governance of Dixlase Inquiry is tied to the future governance of the Dix
 
 ---
 
-**Contact:** office@exc-d.com
+**Contact:** info@dixlase.org
