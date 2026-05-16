@@ -67,7 +67,9 @@ class DixlaseInquiryAutoReply extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->settings->auto_reply_subject ?? __('dixlase-inquiry::front.mail.auto_reply_subject'),
+            subject: dls_inquiry_localized_setting('auto_reply_subject')
+                ?? $this->settings->auto_reply_subject
+                ?? __('dixlase-inquiry::front.mail.auto_reply_subject'),
         );
     }
 

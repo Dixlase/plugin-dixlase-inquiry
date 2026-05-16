@@ -30,7 +30,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @extends('themes::layouts.app')
 
-@section('title', $settings->completion_title ?? __('dixlase-inquiry::front.complete.title'))
+@section('title', dls_inquiry_localized_setting('completion_title') ?? __('dixlase-inquiry::front.complete.title'))
 
 @section('content')
     <div class="dixlase-inquiry">
@@ -63,10 +63,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
                         <div class="text-green-600 dark:text-green-400 mb-3"><i class="fas fa-check-circle text-3xl"></i></div>
                         <h1 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                            {{ $settings->completion_title ?? __('dixlase-inquiry::front.complete.title') }}
+                            {{ dls_inquiry_localized_setting('completion_title') ?? __('dixlase-inquiry::front.complete.title') }}
                         </h1>
                         <p class="text-gray-600 dark:text-gray-400 text-sm">
-                            {!! $settings->completion_message ?? __('dixlase-inquiry::front.complete.message') !!}
+                            {!! dls_inquiry_localized_setting('completion_message') ?? __('dixlase-inquiry::front.complete.message') !!}
                         </p>
                     </div>
 

@@ -191,6 +191,53 @@ if (! function_exists('dls_inquiry_enabled')) {
     }
 }
 
+if (! function_exists('dls_inquiry_localized_setting')) {
+    /**
+     * Read a translatable inquiry setting in the current locale.
+     *
+     * Resolves through `DixlaseInquirySettingsAggregate` (which carries
+     * `TranslatableTrait`) so the lookup chain is:
+     *
+     *   1. DixlaseMultilingual's TranslationResolver for the current locale
+     *   2. Same resolver for the site's fallback locale (handled by the trait)
+     *   3. The primary value from `plg_dixlase_inquiry_settings` (the
+     *      aggregate's `getOriginalValue()` override delegates here)
+     *
+     * On single-language sites (no DixlaseMultilingual installed) step 1
+     * and 2 are skipped because no resolver is bound, and the helper
+     * returns the primary value directly — the existing behaviour for
+     * non-translated installs.
+     *
+     * Intended fields: form_heading, form_description, completion_title,
+     * completion_message, auto_reply_subject, auto_reply_body. Callers
+     * outside this set get the primary value via the same path.
+     */
+    function dls_inquiry_localized_setting(string $key): ?string
+    {
+        try {
+            $aggregate = \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySettingsAggregate::query()->first();
+
+            if ($aggregate === null) {
+                // Aggregate row not yet seeded (e.g. during early-boot or
+                // a fresh install before the seeder ran). Fall back to
+                // the primary key-value lookup so the form still renders.
+                return DixlaseInquirySetting::get($key);
+            }
+
+            $value = $aggregate->getTranslation($key);
+
+            return $value !== null ? (string) $value : null;
+        } catch (\Throwable) {
+            // Defensive: never let a translation lookup break the page.
+            try {
+                return DixlaseInquirySetting::get($key);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+    }
+}
+
 if (! function_exists('dls_inquiry_is_western')) {
     /**
      * Resolve whether the name order should be treated as western.
