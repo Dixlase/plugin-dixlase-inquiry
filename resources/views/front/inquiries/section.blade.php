@@ -29,7 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- お問い合わせセクション（見出し+説明文+フォームまたはリンクボタン） --}}
-<section class="inquiry-section py-16 bg-gray-100 dark:bg-gray-800">
+<section class="inquiry-section py-16 bg-gray-50 dark:bg-gray-900">
     <div class="container mx-auto px-4">
         <div class="max-w-2xl mx-auto">
             @if(!empty($settings->form_heading))
