@@ -36,9 +36,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     {{-- メールサーバー設定の確認メッセージ --}}
     @if(!($mailConnectionTested && $mailSendTested && $mailReceiveTested))
         <div class="mb-6">
+            {{--
+                Direct the operator at the core mail-settings page (where the
+                Test Connection / Test Send / Verify Reception buttons live)
+                rather than the basic-settings overview. The earlier
+                `admin.settings.base` route name had no trailing segment and
+                therefore did not exist — the issue only surfaced on
+                environments where at least one mail-test flag was still
+                unticked, because this @if branch hides the link otherwise.
+            --}}
             <x-ui-message
                 type="warning"
-                :message="__('dixlase-inquiry::admin/inquiry/settings/admin-notification.mail_test_required', ['url' => route('admin.settings.base')])"
+                :message="__('dixlase-inquiry::admin/inquiry/settings/admin-notification.mail_test_required', ['url' => route('admin.settings.base.mail')])"
             />
         </div>
     @endif
