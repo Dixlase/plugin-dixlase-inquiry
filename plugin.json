@@ -71,8 +71,8 @@
         "database": {
             "own_tables": true,
             "core_tables": [],
-            "core_tables_read": [],
-            "core_tables_write": []
+            "core_tables_read": ["site_settings", "captcha_enabled_forms"],
+            "core_tables_write": ["members_role_permissions"]
         },
         "storage": {
             "own_directory": false,
@@ -106,8 +106,8 @@
         },
         "_optional": [],
         "_notes": {
-            "ja": "",
-            "en": ""
+            "en": "Reads site_settings via App\\Facades\\SiteSettings for admin-mode detection and mail-test status. Reads captcha_enabled_forms (no core contract yet) for the dashboard 'captcha not enabled' notification — wrapped in DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() so the v0.2 migration to CaptchaServiceInterface is a one-method change. Seeder writes members_role_permissions during install for default inquiry-menu role setup (no core install hook yet); will move to a core install hook in v0.2. See Core repo .claude/plans/handoff-plugin-core-access-cleanup.md.",
+            "ja": "site_settings は App\\Facades\\SiteSettings 経由で管理モード判定とメールテスト状態に参照。captcha_enabled_forms はダッシュボードの『CAPTCHA 未設定』通知で参照 (core 契約が未提供のため一時的な直接アクセス) — DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() に隔離してあり、v0.2 で CaptchaServiceInterface に置き換える際は 1 メソッドの差し替えで済む。Seeder はインストール時に members_role_permissions へ書き込み問い合わせメニューの既定ロール権限を初期化 (core の install フック未提供)。v0.2 で core install フックに移行予定。Core リポジトリの .claude/plans/handoff-plugin-core-access-cleanup.md を参照。"
         }
     },
     "declares": {

@@ -71,20 +71,16 @@ class DixlaseInquiryDashboardProvider implements DashboardNotificationProviderIn
     {
         $notifications = [];
 
-        try {
-            if (! CaptchaEnabledForm::isFormEnabled(self::CAPTCHA_FORM_KEY)) {
-                $notifications[] = new DashboardNotificationDTO(
-                    key: 'inquiry_captcha_off',
-                    level: 'recommendation',
-                    message: __('dixlase-inquiry::dashboard.captcha_not_enabled'),
-                    icon: 'fas fa-robot',
-                    pluginName: __('dixlase-inquiry::admin.plugin.name'),
-                    url: route('admin.settings.security.captcha'),
-                    actionLabel: __('dixlase-inquiry::dashboard.configure_captcha'),
-                );
-            }
-        } catch (\Exception $e) {
-            // DB not available or table missing — skip silently
+        if (! $this->isCaptchaEnabledForInquiryForm()) {
+            $notifications[] = new DashboardNotificationDTO(
+                key: 'inquiry_captcha_off',
+                level: 'recommendation',
+                message: __('dixlase-inquiry::dashboard.captcha_not_enabled'),
+                icon: 'fas fa-robot',
+                pluginName: __('dixlase-inquiry::admin.plugin.name'),
+                url: route('admin.settings.security.captcha'),
+                actionLabel: __('dixlase-inquiry::dashboard.configure_captcha'),
+            );
         }
 
         try {
@@ -105,5 +101,31 @@ class DixlaseInquiryDashboardProvider implements DashboardNotificationProviderIn
         }
 
         return $notifications;
+    }
+
+    /**
+     * Whether the captcha is currently enabled for the inquiry contact form.
+     *
+     * This is a **documented temporary direct access** to the core
+     * `App\Models\CaptchaEnabledForm` model. The proper abstraction —
+     * `CaptchaServiceInterface::isFormEnabled()` — is planned for Dixlase
+     * v0.2 (see Core repo `.claude/plans/handoff-plugin-core-access-cleanup.md`,
+     * "Outstanding core API gap"). Until that contract ships, this single
+     * helper isolates the direct model access so the v0.2 retrofit is a
+     * one-method change. The `captcha_enabled_forms` table is declared
+     * under `plugin.json` `permissions.database.core_tables_read` and the
+     * intent is captured in `_notes`.
+     *
+     * Returns true on read failure (e.g. table missing during install)
+     * so the dashboard does not show a misleading "captcha not enabled"
+     * warning before the captcha tables are migrated.
+     */
+    private function isCaptchaEnabledForInquiryForm(): bool
+    {
+        try {
+            return CaptchaEnabledForm::isFormEnabled(self::CAPTCHA_FORM_KEY);
+        } catch (\Throwable) {
+            return true;
+        }
     }
 }
