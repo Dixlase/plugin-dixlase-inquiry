@@ -32,11 +32,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 <section class="inquiry-section py-16 bg-gray-50 dark:bg-gray-900">
     <div class="container mx-auto px-4">
         <div class="max-w-2xl mx-auto">
-            @if(!empty($settings->form_heading))
-                <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-3">{{ $settings->form_heading }}</h2>
+            @php
+                $heading = dls_inquiry_localized_setting('form_heading');
+                $description = dls_inquiry_localized_setting('form_description');
+            @endphp
+            @if(!empty($heading))
+                <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-3">{{ $heading }}</h2>
             @endif
-            @if(!empty($settings->form_description))
-                <p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto">{!! nl2br(e($settings->form_description)) !!}</p>
+            @if(!empty($description))
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto">{!! nl2br(e($description)) !!}</p>
             @endif
             @if($settings->use_single_page ?? true)
                 {!! $formHtml !!}

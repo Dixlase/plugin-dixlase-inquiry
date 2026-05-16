@@ -205,15 +205,23 @@ class DixlaseInquiryFrontController extends Controller
                     ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
             });
 
-            if ($settings['auto_reply_enabled'] && ! empty($settings['auto_reply_subject']) && ! empty($settings['auto_reply_body'])) {
-                $replyBody = $settings['auto_reply_body'];
+            // Resolve auto-reply text via the helper so DixlaseMultilingual's
+            // current-locale translation wins over the primary-locale value
+            // stored in plg_dixlase_inquiry_settings.
+            $autoReplySubject = dls_inquiry_localized_setting('auto_reply_subject')
+                ?? ($settings['auto_reply_subject'] ?? '');
+            $autoReplyBody = dls_inquiry_localized_setting('auto_reply_body')
+                ?? ($settings['auto_reply_body'] ?? '');
+
+            if ($settings['auto_reply_enabled'] && ! empty($autoReplySubject) && ! empty($autoReplyBody)) {
+                $replyBody = $autoReplyBody;
                 foreach ($validated as $key => $value) {
                     $replyBody = str_replace('{{'.$key.'}}', $value, $replyBody);
                 }
 
-                \Mail::raw($replyBody, function ($message) use ($settings, $validated) {
+                \Mail::raw($replyBody, function ($message) use ($autoReplySubject, $validated) {
                     $message->to($validated['email'])
-                        ->subject($settings['auto_reply_subject']);
+                        ->subject($autoReplySubject);
                 });
             }
 

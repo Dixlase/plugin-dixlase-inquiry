@@ -36,8 +36,26 @@
         "form"
     ],
     "capabilities": [
-        "captcha"
+        "captcha",
+        "multilingual-content"
     ],
+    "multilingual_content": {
+        "types": [
+            {
+                "key": "dixlase-inquiry:settings",
+                "model": "Plugins\\DixlaseInquiry\\App\\Models\\DixlaseInquirySettingsAggregate",
+                "label_key": "dixlase-inquiry::multilingual_types.settings",
+                "fields": [
+                    {"name": "form_heading",       "type": "text",     "rules": "nullable|string|max:100"},
+                    {"name": "form_description",   "type": "textarea", "rules": "nullable|string|max:500"},
+                    {"name": "completion_title",   "type": "text",     "rules": "nullable|string|max:100"},
+                    {"name": "completion_message", "type": "textarea", "rules": "nullable|string|max:1000"},
+                    {"name": "auto_reply_subject", "type": "text",     "rules": "nullable|string|max:200"},
+                    {"name": "auto_reply_body",    "type": "textarea", "rules": "nullable|string|max:5000"}
+                ]
+            }
+        ]
+    },
     "requires": {
         "dixlase": "^0.1.0",
         "php": ">=8.2"

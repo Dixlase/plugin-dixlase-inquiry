@@ -38,11 +38,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-2xl mx-auto">
                 {{-- ページヘッダー（見出し+説明文） --}}
                 <header class="px-8 pt-10 pb-8 mb-12 text-center">
-                    @if(!empty($settings->form_heading))
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-5">{{ $settings->form_heading }}</h1>
+                    @php
+                        $heading = dls_inquiry_localized_setting('form_heading');
+                        $description = dls_inquiry_localized_setting('form_description');
+                    @endphp
+                    @if(!empty($heading))
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-5">{{ $heading }}</h1>
                     @endif
-                    @if(!empty($settings->form_description))
-                        <p class="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">{!! nl2br(e($settings->form_description)) !!}</p>
+                    @if(!empty($description))
+                        <p class="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">{!! nl2br(e($description)) !!}</p>
                     @endif
                 </header>
 
