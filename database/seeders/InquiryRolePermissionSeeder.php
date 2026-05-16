@@ -39,7 +39,18 @@ use Illuminate\Support\Facades\Schema;
 class InquiryRolePermissionSeeder extends Seeder
 {
     /**
-     * シーダー実行
+     * Seed default per-role access/view permissions for the inquiry menu.
+     *
+     * This seeder is a **documented temporary direct write** to the core
+     * `members_role_permissions` table. The proper abstraction — a core
+     * install-hook that lets plugins declare their default role
+     * permissions and have core seed them — is planned for Dixlase v0.2
+     * (see Core repo `.claude/plans/handoff-plugin-core-access-cleanup.md`,
+     * "Outstanding core API gap"). Until that hook ships, this seeder
+     * writes directly with idempotent existence checks. The
+     * `members_role_permissions` table is declared under `plugin.json`
+     * `permissions.database.core_tables_write` and the intent is captured
+     * in `_notes`.
      */
     public function run(): void
     {
