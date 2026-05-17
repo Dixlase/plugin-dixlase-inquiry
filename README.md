@@ -12,6 +12,12 @@ Dixlase Inquiry is a plugin for Dixlase (and also composer-ready for future dist
 
 - Describe how to use this plugin here.
 
+## Capabilities
+
+This plugin declares the following capability in `plugin.json`:
+
+- **`multilingual-content`** — Reserved capability key for future multilingual content support. Declared on plugins that store user-editable text intended to be translatable once the supporting runtime is in place.
+
 ## License
 
 Dixlase Inquiry is distributed under a **dual license**:
