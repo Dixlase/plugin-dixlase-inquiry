@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Schema;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Services\DixlaseInquiryPreviewProvider;
+use Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport;
 use Tests\TestCase;
 
 class PreviewProviderTest extends TestCase
@@ -111,18 +112,28 @@ class PreviewProviderTest extends TestCase
     }
 
     /**
-     * lang設定が 'auto' の場合、アプリのデフォルトロケールが使用される
+     * lang設定が 'auto' の場合、プレビューのラベルは InquiryLocaleSupport が
+     * 解決したロケールに追従する（多言語無効時はサイト既定ロケール）。
      */
-    public function test_labels_use_app_locale_when_lang_is_auto(): void
+    public function test_labels_follow_resolved_locale_when_lang_is_auto(): void
     {
         DixlaseInquirySetting::set('lang', 'auto');
-        app()->setLocale('en');
+
+        // The provider resolves 'auto' through InquiryLocaleSupport; the
+        // labels must follow whatever locale that yields, not blindly
+        // app()->getLocale(). The resolver's own contract — 'auto' uses
+        // the site default when multilingual is off — is covered by
+        // InquiryLocaleSupportTest.
+        $resolvedLocale = InquiryLocaleSupport::resolveFormLocale('auto');
 
         $preview = $this->provider->getPreview('inquiry_form');
 
         $emailField = $this->findField($preview, 'email');
         $this->assertNotNull($emailField);
-        $this->assertSame('Email Address', $emailField->label);
+        $this->assertSame(
+            __('dixlase-inquiry::front.form.email', [], $resolvedLocale),
+            $emailField->label,
+        );
     }
 
     /**
