@@ -58,6 +58,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 {{ __('dixlase-inquiry::front.mail.auto_reply.footer') }}
 
-{{ __('mail.login_notification.regards') }}  
+{{ __('dixlase-inquiry::front.mail.regards') }}  
 {{ config('app.name') }}
 </x-mail::message>

@@ -199,6 +199,7 @@ return [
     'mail' => [
         'new_inquiry_subject' => '新しいお問い合わせがありました',
         'auto_reply_subject' => 'お問い合わせを受け付けました',
+        'regards' => 'よろしくお願いいたします。',
         'admin' => [
             'title' => '新しいお問い合わせ',
             'intro' => '以下の内容でお問い合わせを受け付けました。',
