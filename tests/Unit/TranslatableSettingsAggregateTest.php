@@ -35,7 +35,6 @@ namespace Plugins\DixlaseInquiry\Tests\Unit;
 use App\Contracts\TranslationResolver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySettingsAggregate;
 use Tests\TestCase;
@@ -63,51 +62,6 @@ class TranslatableSettingsAggregateTest extends TestCase
         'auto_reply_subject',
         'auto_reply_body',
     ];
-
-    /**
-     * Ensure the plugin-owned tables exist for the DB-backed tests below.
-     *
-     * The test environment runs with `INSTALLED=false`, so the plugin's
-     * service provider never boots and its `loadMigrationsFrom()` call is
-     * never reached. As a result `RefreshDatabase`'s `migrate:fresh`
-     * creates only the core tables, and `plg_dixlase_inquiry_settings` /
-     * `plg_dixlase_inquiry_settings_aggregate` are missing.
-     *
-     * Apply the two plugin-owned migrations this test exercises by
-     * invoking their `up()` directly — no console kernel, no service
-     * providers, no side effects. The `Schema::hasTable()` guard makes
-     * it a no-op on an installed environment, where `migrate:fresh`
-     * already created the same tables.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->ensurePluginTable(
-            'plg_dixlase_inquiry_settings',
-            '0001_01_01_000001_create_inquiry_settings_table.php',
-        );
-        $this->ensurePluginTable(
-            'plg_dixlase_inquiry_settings_aggregate',
-            '0001_01_01_000004_create_inquiry_settings_aggregate_table.php',
-        );
-    }
-
-    /**
-     * Run a plugin migration's `up()` unless its table already exists.
-     *
-     * `require` (not `require_once`) is used so the call returns the
-     * migration's anonymous-class instance even when the file has been
-     * loaded by an earlier test in the same run.
-     */
-    private function ensurePluginTable(string $table, string $migrationFile): void
-    {
-        if (Schema::hasTable($table)) {
-            return;
-        }
-
-        (require __DIR__.'/../../database/migrations/'.$migrationFile)->up();
-    }
 
     public function test_aggregate_declares_exactly_the_six_translatable_fields(): void
     {
