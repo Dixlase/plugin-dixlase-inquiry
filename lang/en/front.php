@@ -188,6 +188,7 @@ return [
     'mail' => [
         'new_inquiry_subject' => 'New Inquiry Received',
         'auto_reply_subject' => 'Thank you for your inquiry',
+        'regards' => 'Regards,',
         'admin' => [
             'title' => 'New Inquiry',
             'intro' => 'You have received a new inquiry with the following details.',
