@@ -62,12 +62,19 @@ class PreviewProviderTest extends TestCase
         $langPath = dirname(__DIR__, 2).'/lang';
         Lang::addNamespace('dixlase-inquiry', $langPath);
 
-        $this->provider = new DixlaseInquiryPreviewProvider;
+        $this->provider = new DixlaseInquiryPreviewProvider();
     }
 
     protected function tearDown(): void
     {
-        Schema::dropIfExists('plg_dixlase_inquiry_settings');
+        // Remove only the rows this test wrote; keep the table. It is
+        // created by the plugin's own migration and shared across the
+        // whole test run, so dropping it here would break sibling
+        // suites — most visibly on a persistent MySQL test database.
+        if (Schema::hasTable('plg_dixlase_inquiry_settings')) {
+            \Illuminate\Support\Facades\DB::table('plg_dixlase_inquiry_settings')->delete();
+        }
+
         parent::tearDown();
     }
 
