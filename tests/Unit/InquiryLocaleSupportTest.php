@@ -32,6 +32,8 @@
 
 namespace Plugins\DixlaseInquiry\Tests\Unit;
 
+use App\Contracts\Site\SiteContextInterface;
+use App\Models\Site;
 use Mockery;
 use Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport;
 use Plugins\DixlaseMultilingual\App\Services\EnabledLocaleResolver;
@@ -41,9 +43,9 @@ use Tests\TestCase;
  * Verifies the multilingual integration contract for the inquiry form's
  * `lang='auto'` resolution.
  *
- * The multilingual plugin is always installed in this test suite, so the
- * "no multilingual" branch is exercised indirectly by tests that confirm
- * explicit locale values bypass any resolver lookup.
+ * The "multilingual active" branch is exercised by binding a mock
+ * resolver; the "no multilingual" branch by binding none, so
+ * `multilingualEnabled()` reports false.
  */
 class InquiryLocaleSupportTest extends TestCase
 {
@@ -78,6 +80,22 @@ class InquiryLocaleSupportTest extends TestCase
 
         app()->setLocale('en');
         $this->assertSame('en', InquiryLocaleSupport::resolveFormLocale('auto'));
+    }
+
+    public function test_auto_without_multilingual_uses_site_default(): void
+    {
+        // With no resolver bound, multilingual is disabled. 'auto' must
+        // resolve to the site's default locale — never app()->getLocale()
+        // — so a single-language site never renders the form in the
+        // visitor's browser language.
+        $siteContext = Mockery::mock(SiteContextInterface::class);
+        $siteContext->shouldReceive('currentSite')
+            ->andReturn(new Site(['primary_locale' => 'ja']));
+        app()->instance(SiteContextInterface::class, $siteContext);
+
+        app()->setLocale('en');
+
+        $this->assertSame('ja', InquiryLocaleSupport::resolveFormLocale('auto'));
     }
 
     public function test_enabled_locales_reflect_resolver(): void
