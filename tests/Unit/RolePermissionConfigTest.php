@@ -36,7 +36,7 @@ use App\Enums\MemberRole;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Verifies the plugin's `config/roles.php` and `config/admin/navigation.php`
+ * Verifies the plugin's `config/admin/roles.php` and `config/admin/navigation.php`
  * are wired together so core's PermissionRegistry can discover the
  * inquiry menus and the sidebar can route checks through
  * `canEditPluginMenu()` / `canViewPluginMenu()`.
@@ -53,7 +53,7 @@ class RolePermissionConfigTest extends TestCase
     {
         parent::setUp();
 
-        $this->roles = require __DIR__.'/../../config/roles.php';
+        $this->roles = require __DIR__.'/../../config/admin/roles.php';
         $this->navigation = require __DIR__.'/../../config/admin/navigation.php';
     }
 
@@ -114,7 +114,7 @@ class RolePermissionConfigTest extends TestCase
             $this->navigation['inquiry']['plugin_slug'],
             'plugin_slug must be the PascalCase directory name, '
             .'not the kebab-case slug from plugin.json, because '
-            .'PermissionRegistry resolves config/roles.php via the directory basename.',
+            .'PermissionRegistry resolves config/admin/roles.php via the directory basename.',
         );
     }
 
@@ -134,12 +134,12 @@ class RolePermissionConfigTest extends TestCase
         $this->assertSame(
             $navSettingsChildren,
             $rolesSettingsChildren,
-            'config/roles.php and config/admin/navigation.php must declare the same settings child keys',
+            'config/admin/roles.php and config/admin/navigation.php must declare the same settings child keys',
         );
     }
 
     /**
-     * plugin.json must advertise that `config/roles.php` exists so
+     * plugin.json must advertise that `config/admin/roles.php` exists so
      * `dls:plugin:audit` / discovery tooling reads it.
      */
     public function test_plugin_json_declares_roles_config(): void

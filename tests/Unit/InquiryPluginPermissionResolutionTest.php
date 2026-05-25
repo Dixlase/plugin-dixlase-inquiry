@@ -39,7 +39,7 @@ use Tests\TestCase;
 
 /**
  * End-to-end check that core's PermissionRegistry can resolve each
- * inquiry menu_key from the plugin's `config/roles.php` and that the
+ * inquiry menu_key from the plugin's `config/admin/roles.php` and that the
  * resulting defaults match the expectation declared in the plugin
  * (ADMIN for both view and access).
  *
@@ -52,7 +52,7 @@ class InquiryPluginPermissionResolutionTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * PermissionRegistry resolves `plugins/{slug}/config/roles.php` from
+     * PermissionRegistry resolves `plugins/{slug}/config/admin/roles.php` from
      * the directory basename, so the slug must be the PascalCase
      * directory name, not the kebab-case `slug` from plugin.json.
      */
