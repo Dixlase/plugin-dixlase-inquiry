@@ -195,18 +195,18 @@ if (! function_exists('dls_inquiry_localized_setting')) {
     /**
      * Read a translatable inquiry setting in the current locale.
      *
-     * Resolves through `DixlaseInquirySettingsAggregate` (which carries
-     * `TranslatableTrait`) so the lookup chain is:
+     * Lookup chain:
      *
-     *   1. DixlaseMultilingual's TranslationResolver for the current locale
-     *   2. Same resolver for the site's fallback locale (handled by the trait)
-     *   3. The primary value from `plg_dixlase_inquiry_settings` (the
-     *      aggregate's `getOriginalValue()` override delegates here)
+     *   1. DixlaseMultilingual's SingletonTranslationResolver for the
+     *      current locale (anchored on
+     *      `(translatable_type='dixlase-inquiry:settings', translatable_id=1)`)
+     *   2. Same resolver for the site's default locale
+     *   3. The primary value from `plg_dixlase_inquiry_settings`
      *
-     * On single-language sites (no DixlaseMultilingual installed) step 1
-     * and 2 are skipped because no resolver is bound, and the helper
-     * returns the primary value directly — the existing behaviour for
-     * non-translated installs.
+     * On single-language sites (no DixlaseMultilingual installed) steps
+     * 1 and 2 are skipped because no resolver is bound, and the helper
+     * returns the primary value directly — the same behaviour as before
+     * Phase 3.
      *
      * Intended fields: form_heading, form_description, completion_title,
      * completion_message, auto_reply_subject, auto_reply_body. Callers
@@ -215,22 +215,38 @@ if (! function_exists('dls_inquiry_localized_setting')) {
     function dls_inquiry_localized_setting(string $key): ?string
     {
         try {
-            $aggregate = \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySettingsAggregate::query()->first();
+            if (app()->bound(\App\Contracts\Multilingual\SingletonTranslationResolver::class)) {
+                /** @var \App\Contracts\Multilingual\SingletonTranslationResolver $resolver */
+                $resolver = app(\App\Contracts\Multilingual\SingletonTranslationResolver::class);
 
-            if ($aggregate === null) {
-                // Aggregate row not yet seeded (e.g. during early-boot or
-                // a fresh install before the seeder ran). Fall back to
-                // the primary key-value lookup so the form still renders.
-                return DixlaseInquirySetting::get($key);
+                $value = $resolver->resolve('dixlase-inquiry:settings', $key, app()->getLocale());
+                if ($value !== null) {
+                    return (string) $value;
+                }
+
+                try {
+                    $siteDefault = \App\Helpers\LocaleHelper::getSiteDefaultLocale();
+                } catch (\Throwable) {
+                    $siteDefault = null;
+                }
+
+                if (is_string($siteDefault) && $siteDefault !== app()->getLocale()) {
+                    $value = $resolver->resolve('dixlase-inquiry:settings', $key, $siteDefault);
+                    if ($value !== null) {
+                        return (string) $value;
+                    }
+                }
             }
 
-            $value = $aggregate->getTranslation($key);
+            $primary = DixlaseInquirySetting::get($key);
 
-            return $value !== null ? (string) $value : null;
+            return $primary === null ? null : (string) $primary;
         } catch (\Throwable) {
             // Defensive: never let a translation lookup break the page.
             try {
-                return DixlaseInquirySetting::get($key);
+                $primary = DixlaseInquirySetting::get($key);
+
+                return $primary === null ? null : (string) $primary;
             } catch (\Throwable) {
                 return null;
             }
