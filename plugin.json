@@ -43,7 +43,8 @@
         "types": [
             {
                 "key": "dixlase-inquiry:settings",
-                "model": "Plugins\\DixlaseInquiry\\App\\Models\\DixlaseInquirySettingsAggregate",
+                "cardinality": "singleton",
+                "provider": "Plugins\\DixlaseInquiry\\App\\Multilingual\\InquirySettingsProvider",
                 "label_key": "dixlase-inquiry::multilingual_types.settings",
                 "fields": [
                     {

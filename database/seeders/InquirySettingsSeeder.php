@@ -34,9 +34,7 @@ namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
-use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySettingsAggregate;
 
 class InquirySettingsSeeder extends Seeder
 {
@@ -102,12 +100,6 @@ class InquirySettingsSeeder extends Seeder
             );
         }
 
-        // Ensure the singleton aggregate row exists so DixlaseMultilingual's
-        // polymorphic translations table has a stable `translatable_id` to
-        // anchor inquiry-settings translations against. Idempotent.
-        if (Schema::hasTable('plg_dixlase_inquiry_settings_aggregate')) {
-            DixlaseInquirySettingsAggregate::query()->firstOrCreate(['id' => 1]);
-        }
     }
 
     /**
