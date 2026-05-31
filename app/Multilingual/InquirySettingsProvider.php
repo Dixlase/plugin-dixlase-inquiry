@@ -33,6 +33,7 @@
 namespace Plugins\DixlaseInquiry\App\Multilingual;
 
 use App\Contracts\Multilingual\TranslatableContentProvider;
+use App\Helpers\LocaleHelper;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 /**
@@ -59,5 +60,41 @@ class InquirySettingsProvider implements TranslatableContentProvider
         $value = DixlaseInquirySetting::get($field);
 
         return $value === null ? null : (string) $value;
+    }
+
+    /**
+     * The locale the primary-stored values are written in.
+     *
+     * Sourced from the existing `lang` setting (already user-configurable
+     * in the inquiry settings UI as "form language"). Its semantics
+     * already match what we need here — `lang = 'en'` means the operator
+     * authored the primary form_heading / completion_message / etc. in
+     * English, so EN is the locale that should be excluded from the
+     * translation editor and short-circuited in the localized helper.
+     *
+     * `lang = 'auto'` (or unset) means the operator did not explicitly
+     * declare the language; we fall back to the site's default locale as
+     * the most-likely-correct guess. Operators who write primary content
+     * in a non-default language should set `lang` explicitly to avoid
+     * the EN-fallback rendering mismatched language text under
+     * `auto + multilingual` mode.
+     *
+     * Returns null only when LocaleHelper is unavailable; the helper /
+     * editor treat null as "no primary locale configured, treat all
+     * enabled locales as translatable" (= pre-Phase-B behaviour).
+     */
+    public function getPrimaryLocale(): ?string
+    {
+        $lang = DixlaseInquirySetting::get('lang');
+
+        if (is_string($lang) && $lang !== '' && $lang !== 'auto') {
+            return $lang;
+        }
+
+        try {
+            return LocaleHelper::getSiteDefaultLocale();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }
