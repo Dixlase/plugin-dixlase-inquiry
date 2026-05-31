@@ -101,9 +101,7 @@
                 "site_settings",
                 "captcha_enabled_forms"
             ],
-            "core_tables_write": [
-                "members_role_permissions"
-            ]
+            "core_tables_write": []
         },
         "storage": {
             "own_directory": false,
@@ -136,12 +134,11 @@
             "modify_routes": false
         },
         "_optional": [
-            "database.core_tables_read",
-            "database.core_tables_write"
+            "database.core_tables_read"
         ],
         "_notes": {
-            "en": "Reads site_settings via App\\Facades\\SiteSettings for admin-mode detection and mail-test status. Reads captcha_enabled_forms (no core contract yet) for the dashboard 'captcha not enabled' notification — wrapped in DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() so the v0.2 migration to CaptchaServiceInterface is a one-method change. Seeder writes members_role_permissions during install for default inquiry-menu role setup (no core install hook yet); will move to a core install hook in v0.2. database.core_tables_read / database.core_tables_write are listed under _optional because the core scanner's DatabaseDetectionPattern regex only recognises a hardcoded shortlist of models (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) and tables (users|members|plugins|media|settings|site_settings|security_settings); facade access (SiteSettings), CaptchaEnabledForm, and the members_role_permissions table all fall outside that shortlist and are reported as 'unused declaration' false positives. The declarations are kept because they accurately describe what the plugin touches. See Core repo .claude/plans/handoff-plugin-core-access-cleanup.md.",
-            "ja": "site_settings は App\\Facades\\SiteSettings 経由で管理モード判定とメールテスト状態に参照。captcha_enabled_forms はダッシュボードの『CAPTCHA 未設定』通知で参照 (core 契約が未提供のため一時的な直接アクセス) — DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() に隔離してあり、v0.2 で CaptchaServiceInterface に置き換える際は 1 メソッドの差し替えで済む。Seeder はインストール時に members_role_permissions へ書き込み問い合わせメニューの既定ロール権限を初期化 (core の install フック未提供)。v0.2 で core install フックに移行予定。database.core_tables_read / database.core_tables_write を _optional に入れているのは、コアスキャナの DatabaseDetectionPattern 正規表現が固定のモデル短縮リスト (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) とテーブル短縮リスト (users|members|plugins|media|settings|site_settings|security_settings) しか認識せず、ファサード経由 (SiteSettings)、CaptchaEnabledForm、members_role_permissions テーブルがいずれもその短縮リスト外で『未使用宣言』の false positive として誤検出されるため。宣言自体はプラグインが実際に触るものを正確に表しているので残す。Core リポジトリの .claude/plans/handoff-plugin-core-access-cleanup.md を参照。"
+            "en": "Reads site_settings via App\\Facades\\SiteSettings for admin-mode detection and mail-test status. Reads captcha_enabled_forms (no core contract yet) for the dashboard 'captcha not enabled' notification — wrapped in DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() so the v0.2 migration to CaptchaServiceInterface is a one-method change. database.core_tables_read is listed under _optional because the core scanner's DatabaseDetectionPattern regex only recognises a hardcoded shortlist of models (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) and tables (users|members|plugins|media|settings|site_settings|security_settings); facade access (SiteSettings) and CaptchaEnabledForm both fall outside that shortlist and are reported as 'unused declaration' false positives. The declaration is kept because it accurately describes what the plugin touches. See Core repo .claude/plans/handoff-plugin-core-access-cleanup.md.",
+            "ja": "site_settings は App\\Facades\\SiteSettings 経由で管理モード判定とメールテスト状態に参照。captcha_enabled_forms はダッシュボードの『CAPTCHA 未設定』通知で参照 (core 契約が未提供のため一時的な直接アクセス) — DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() に隔離してあり、v0.2 で CaptchaServiceInterface に置き換える際は 1 メソッドの差し替えで済む。database.core_tables_read を _optional に入れているのは、コアスキャナの DatabaseDetectionPattern 正規表現が固定のモデル短縮リスト (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) とテーブル短縮リスト (users|members|plugins|media|settings|site_settings|security_settings) しか認識せず、ファサード経由 (SiteSettings) と CaptchaEnabledForm がいずれもその短縮リスト外で『未使用宣言』の false positive として誤検出されるため。宣言自体はプラグインが実際に触るものを正確に表しているので残す。Core リポジトリの .claude/plans/handoff-plugin-core-access-cleanup.md を参照。"
         }
     },
     "declares": {
@@ -179,7 +176,7 @@
         "NOTICE.ja": "sha256:3a720359396b89279305774940d40ce223cfba0b2a71aa9e8a0081e56332cad3",
         "README.md": "sha256:642ed04c74857280e8fa93a2ecd29e07cbdeea7b2886190baa3cd40c5417a7a5",
         "app/Enums/InquiryStatus.php": "sha256:cc193a0534f977287fc68738808ebbd3907a9eead214fe9cdd73299dbe0729b8",
-        "app/Helpers/DixlaseInquiryHelpers.php": "sha256:661fb6cac4b01523ea3d8dded867dad050bec45184ce3b6a7ce0510baf052731",
+        "app/Helpers/DixlaseInquiryHelpers.php": "sha256:b294d19f9e88e3151f6fc5f573708ae0f95f9ed1da805c1986dc2eea5a244c54",
         "app/Http/Controllers/Admin/DixlaseInquiryAdminController.php": "sha256:e2fb9b48b46d135dcd5d963094b7d5aba5ed5afe262e9b18111c321cf603ae32",
         "app/Http/Controllers/Front/DixlaseInquiryFrontController.php": "sha256:0d826a22235301c9e2817dd78e260c98fb9a9ea6aaba7158f55ad36dbbb7543f",
         "app/Http/Requests/Admin/DixlaseInquiryAdminNotificationRequest.php": "sha256:23e7d1d684588b2fffbe565deb6e67e9455cb71cf8f58af8f9cf946f59ec8762",
@@ -192,7 +189,7 @@
         "app/Mail/DixlaseInquiryAutoReply.php": "sha256:885039837c7d0d5d299dc015ccf222858803d5878e8b6921f513f104117a389a",
         "app/Models/DixlaseInquiry.php": "sha256:d5319ab687f05d3116da5d084dda285ca68145baf26f0a96c7dc55015a583e2e",
         "app/Models/DixlaseInquirySetting.php": "sha256:65e007bc613e00d3c2514d6189f023fa38c94a040205ebdf63ed6bc05ddf0f3f",
-        "app/Multilingual/InquirySettingsProvider.php": "sha256:d201fc0d4b2d5a5a670209fe0f024dde1c90702df1877acd403d7b47ce52df7e",
+        "app/Multilingual/InquirySettingsProvider.php": "sha256:076cb799f229c27ff702822c159b0675102e7acc681302c33bc91415d7c5e242",
         "app/Providers/DixlaseInquiryServiceProvider.php": "sha256:896fdc40347dac984a5a61a283d8c11584ca43290bb0ca7b57c6e6eb85324833",
         "app/Services/DixlaseInquiryCaptchaFormProvider.php": "sha256:1bd1dd6b157819e74898fe3ca5331f3550f320eb3e555227e04e7993ac266b91",
         "app/Services/DixlaseInquiryDashboardProvider.php": "sha256:041793e54ff1f07e773fece58add6c98f9bb44d727fabb166fc91c45287bca99",
@@ -212,9 +209,8 @@
         "database/migrations/0001_01_01_000003_add_name_kana_to_inquiries_table.php": "sha256:897c200afd826109ad88f176c1e2260e6feeb8c13d0c44f3e32f57bd5b62a25d",
         "database/migrations/0001_01_01_000004_create_inquiry_settings_aggregate_table.php": "sha256:1fbdbaea81ed2dc6954d5d950553cfa377a933505d3ab33f999246a30f096bb8",
         "database/migrations/0001_01_01_000005_drop_inquiry_settings_aggregate_table.php": "sha256:aaf0353286b5c2ab4531b9f39425cfdb55bb24fbc1c46a519417c02ed5e53db4",
-        "database/seeders/DatabaseSeeder.php": "sha256:9503835a6e3f33a6927089fbef0620ace763d088c4643880f5c6a46f2fcae6dc",
+        "database/seeders/DatabaseSeeder.php": "sha256:af505d9be07a98f9e1a0b3671da5ee3855caf3325b712d01ce951187ca55f9cb",
         "database/seeders/InquiriesSeeder.php": "sha256:353c9ae3087e681201d2a2ceeb3eab80be4af51f29605ebc6cfa07a8ce88905b",
-        "database/seeders/InquiryRolePermissionSeeder.php": "sha256:974b41493a6485035f655773c53b4494cf5067ad65ddff6d24fd18aa43b13887",
         "database/seeders/InquirySettingsSeeder.php": "sha256:b08368dc89d890734442632a16c942004e0d09d29fbe4147176a68af7fde8420",
         "docs/admin-settings.md": "sha256:38568da59c1b8f73af722866d681d9ad3a33a95dd0e85f96f226b17902d0e1ca",
         "docs/embed-form-usage.md": "sha256:081c2be076e5e8482594bf8a86175300630b90c726a5fb9f1dab28ac3f56c5a9",
@@ -282,7 +278,7 @@
         "tests/Unit/FrontFormFieldTest.php": "sha256:0e744ab9ac9788951dc2ad4066a19a9f390d674a84eaf60ab128ac7cd61777ad",
         "tests/Unit/InquiryLocaleSupportTest.php": "sha256:8684de2631a961cfbb60d8b20f9cc8aa1a9efdfdf9eed8c55b9988e0e9763a16",
         "tests/Unit/InquiryPluginPermissionResolutionTest.php": "sha256:1b1ad58f809a6b2b0f61d7e1869a15391c231d5ee83633f3bbe6236e4872b25f",
-        "tests/Unit/InquirySettingsLocalizationTest.php": "sha256:6bbd0fe406311c04418a54706b851fdcc0c81e2c61ad781a900cfd30bff5a2fc",
+        "tests/Unit/InquirySettingsLocalizationTest.php": "sha256:c0ee3de9442a043055a00e11a6bf89c2dd59002a1b19a20843cfe068eef2d581",
         "tests/Unit/InquiryStatusEnumTest.php": "sha256:796f0c4d153e8ba4c91766fdb19cbc71dcb6fc2d29236a331c27fdde10cf8a6d",
         "tests/Unit/InquiryTranslationTest.php": "sha256:12379be9682e1b268d536ffcb8abbc34ca4be226838da1014ae5170fcfa3ba5f",
         "tests/Unit/MigrationTest.php": "sha256:b076704e27163ecef1a66f18fb23c175cf80a091ec665f6ba6b82da6f4e35561",
@@ -298,6 +294,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-05-30T06:55:47+00:00"
+        "signed_at": "2026-05-31T16:54:26+00:00"
     }
 }

@@ -44,7 +44,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             InquirySettingsSeeder::class,
-            InquiryRolePermissionSeeder::class,
         ]);
     }
 }
