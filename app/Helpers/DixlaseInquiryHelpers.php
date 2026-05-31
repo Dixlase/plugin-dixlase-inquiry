@@ -197,11 +197,22 @@ if (! function_exists('dls_inquiry_localized_setting')) {
      *
      * Lookup chain:
      *
+     *   0. If the current locale equals the provider's primary locale
+     *      (derived from the `lang` setting, or the site default when
+     *      `lang = 'auto'`), skip the resolver and return the primary
+     *      value directly — the primary IS the value for that locale.
      *   1. DixlaseMultilingual's SingletonTranslationResolver for the
      *      current locale (anchored on
      *      `(translatable_type='dixlase-inquiry:settings', translatable_id=1)`)
      *   2. Same resolver for the site's default locale
      *   3. The primary value from `plg_dixlase_inquiry_settings`
+     *
+     * Empty-string translations (`""`) are treated the same as "no
+     * translation" — the central translation manager UI persists every
+     * field of a locale row even when the operator leaves them blank,
+     * so a brand-new locale tab saves `""` for each field on first
+     * save. Without this guard the helper would return `""` and the
+     * caller would render empty text instead of the primary fallback.
      *
      * On single-language sites (no DixlaseMultilingual installed) steps
      * 1 and 2 are skipped because no resolver is bound, and the helper
@@ -215,12 +226,24 @@ if (! function_exists('dls_inquiry_localized_setting')) {
     function dls_inquiry_localized_setting(string $key): ?string
     {
         try {
+            // Step 0: current locale == primary locale → short-circuit.
+            try {
+                $primaryLocale = (new \Plugins\DixlaseInquiry\App\Multilingual\InquirySettingsProvider())->getPrimaryLocale();
+            } catch (\Throwable) {
+                $primaryLocale = null;
+            }
+            if ($primaryLocale !== null && $primaryLocale === app()->getLocale()) {
+                $primary = DixlaseInquirySetting::get($key);
+
+                return $primary === null ? null : (string) $primary;
+            }
+
             if (app()->bound(\App\Contracts\Multilingual\SingletonTranslationResolver::class)) {
                 /** @var \App\Contracts\Multilingual\SingletonTranslationResolver $resolver */
                 $resolver = app(\App\Contracts\Multilingual\SingletonTranslationResolver::class);
 
                 $value = $resolver->resolve('dixlase-inquiry:settings', $key, app()->getLocale());
-                if ($value !== null) {
+                if ($value !== null && $value !== '') {
                     return (string) $value;
                 }
 
@@ -232,7 +255,7 @@ if (! function_exists('dls_inquiry_localized_setting')) {
 
                 if (is_string($siteDefault) && $siteDefault !== app()->getLocale()) {
                     $value = $resolver->resolve('dixlase-inquiry:settings', $key, $siteDefault);
-                    if ($value !== null) {
+                    if ($value !== null && $value !== '') {
                         return (string) $value;
                     }
                 }

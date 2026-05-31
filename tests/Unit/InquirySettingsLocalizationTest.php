@@ -87,13 +87,13 @@ class InquirySettingsLocalizationTest extends TestCase
 
         $this->assertSame(
             'プライマリ見出し',
-            (new InquirySettingsProvider)->getPrimaryValue('form_heading'),
+            (new InquirySettingsProvider())->getPrimaryValue('form_heading'),
         );
     }
 
     public function test_provider_returns_null_for_missing_setting(): void
     {
-        $this->assertNull((new InquirySettingsProvider)->getPrimaryValue('form_heading'));
+        $this->assertNull((new InquirySettingsProvider())->getPrimaryValue('form_heading'));
     }
 
     public function test_helper_returns_primary_value_when_no_resolver_bound(): void
@@ -110,6 +110,11 @@ class InquirySettingsLocalizationTest extends TestCase
     public function test_helper_returns_resolver_value_for_current_locale(): void
     {
         DixlaseInquirySetting::set('form_heading', 'プライマリ見出し');
+        // Pin the primary locale to 'en' so the ja-viewer path below is
+        // forced through the resolver — without an explicit `lang`, the
+        // primary-locale short-circuit could match `ja` when the site
+        // default locale is `ja`, and the resolver would be skipped.
+        DixlaseInquirySetting::set('lang', 'en');
 
         $this->bindResolverReturning('form_heading', 'ja', '日本語見出し');
         app()->setLocale('ja');
@@ -136,6 +141,67 @@ class InquirySettingsLocalizationTest extends TestCase
         app()->setLocale('en');
 
         $this->assertNull(dls_inquiry_localized_setting('form_heading'));
+    }
+
+    /**
+     * Empty-string translations must be treated as "no translation".
+     *
+     * The central translation manager UI persists every field of a
+     * locale row even when the operator leaves them blank, so a
+     * brand-new locale tab saves `""` for each field on first save.
+     * Without this guard the helper returns `""` and the rendered
+     * inquiry form shows blank labels.
+     */
+    public function test_helper_treats_empty_translation_as_fallthrough(): void
+    {
+        DixlaseInquirySetting::set('form_heading', 'プライマリ見出し');
+        DixlaseInquirySetting::set('lang', 'ja'); // not 'en', so the en-locale branch hits the resolver
+
+        $this->bindResolverReturning('form_heading', 'en', '');
+        app()->setLocale('en');
+
+        $this->assertSame('プライマリ見出し', dls_inquiry_localized_setting('form_heading'));
+    }
+
+    /**
+     * When the current locale equals the provider's primary locale, the
+     * helper must short-circuit straight to the primary value — no
+     * resolver call. This prevents the resolver UI's empty-locale row
+     * for the primary locale from rendering as blank content.
+     */
+    public function test_helper_short_circuits_primary_locale_to_primary_value(): void
+    {
+        DixlaseInquirySetting::set('form_heading', 'Primary heading');
+        DixlaseInquirySetting::set('lang', 'en');
+
+        // Bind a resolver that would return a different value if called —
+        // if the short-circuit works, it should NOT be called for `en`.
+        $this->bindResolverReturning('form_heading', 'en', 'should-not-be-returned');
+        app()->setLocale('en');
+
+        $this->assertSame('Primary heading', dls_inquiry_localized_setting('form_heading'));
+    }
+
+    public function test_provider_primary_locale_uses_lang_setting_when_explicit(): void
+    {
+        DixlaseInquirySetting::set('lang', 'ja');
+
+        $this->assertSame('ja', (new InquirySettingsProvider())->getPrimaryLocale());
+    }
+
+    public function test_provider_primary_locale_falls_back_to_site_default_when_lang_is_auto(): void
+    {
+        DixlaseInquirySetting::set('lang', 'auto');
+
+        // LocaleHelper::getSiteDefaultLocale() returns the site default;
+        // we just assert the result is a non-empty string (the resolver
+        // is real-app config-driven). The point of the test is the
+        // 'auto' branch returns SOMETHING rather than 'auto' itself.
+        $primary = (new InquirySettingsProvider())->getPrimaryLocale();
+
+        $this->assertIsString($primary);
+        $this->assertNotSame('auto', $primary);
+        $this->assertNotSame('', $primary);
     }
 
     public function test_plugin_json_declares_singleton_with_provider(): void
