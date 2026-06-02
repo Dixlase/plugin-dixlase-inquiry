@@ -88,6 +88,7 @@ return [
         'auto_reply_from_email_invalid' => 'Auto-reply from email address is invalid.',
         'inquiry_url_slug_required' => 'URL slug is required.',
         'inquiry_url_slug_format' => 'URL slug can only contain lowercase letters, numbers, and hyphens (-).',
+        'privacy_policy_url_format' => 'Privacy Policy URL must be either a server-absolute path like "/page/privacy-policy" or a fully-qualified URL starting with "https://".',
     ],
 
     'messages' => [

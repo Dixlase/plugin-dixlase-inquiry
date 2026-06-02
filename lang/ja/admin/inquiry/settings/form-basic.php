@@ -111,7 +111,7 @@ return [
     'privacy_consent_enabled' => 'プライバシー同意チェックを有効にする',
     'privacy_consent_enabled_help' => '有効にすると、ユーザーはフォーム送信前にプライバシーポリシーへの同意が必要になります。',
     'privacy_policy_url' => 'プライバシーポリシーURL',
-    'privacy_policy_url_help' => 'プライバシーポリシーページのURLを入力してください。法務プラグインがインストールされている場合、URLは自動取得されます。',
+    'privacy_policy_url_help' => 'プライバシーポリシーページのURL(「https://...」)またはサーバー絶対パス(「/page/privacy-policy」など)を入力してください。',
     'privacy_consent_text' => '同意文テキスト',
     'privacy_consent_text_placeholder' => 'プライバシーポリシーに同意します',
     'privacy_consent_text_help' => '同意チェックボックスのカスタムテキスト。空欄の場合はデフォルトのテキストが使用されます。',
