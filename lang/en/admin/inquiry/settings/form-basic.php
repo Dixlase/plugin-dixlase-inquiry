@@ -111,7 +111,7 @@ return [
     'privacy_consent_enabled' => 'Enable Privacy Consent Checkbox',
     'privacy_consent_enabled_help' => 'When enabled, users must agree to the privacy policy before submitting the form.',
     'privacy_policy_url' => 'Privacy Policy URL',
-    'privacy_policy_url_help' => 'Enter the URL of your privacy policy page. If a legal plugin is installed, the URL will be automatically retrieved.',
+    'privacy_policy_url_help' => 'Enter a fully-qualified URL ("https://...") or a server-absolute path (e.g. "/page/privacy-policy").',
     'privacy_consent_text' => 'Consent Text',
     'privacy_consent_text_placeholder' => 'I agree to the privacy policy',
     'privacy_consent_text_help' => 'Custom text for the consent checkbox. Leave empty to use the default text.',

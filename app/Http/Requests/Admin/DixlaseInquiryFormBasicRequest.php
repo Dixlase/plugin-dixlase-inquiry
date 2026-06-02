@@ -76,7 +76,22 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             'require_kana' => 'boolean',
             'show_confirmation_page' => 'boolean',
             'privacy_consent_enabled' => 'boolean',
-            'privacy_policy_url' => 'nullable|url|max:500',
+            'privacy_policy_url' => [
+                'nullable',
+                'string',
+                'max:500',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+                    if (is_string($value) && str_starts_with($value, '/')) {
+                        return;
+                    }
+                    if (! is_string($value) || filter_var($value, FILTER_VALIDATE_URL) === false) {
+                        $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
+                    }
+                },
+            ],
             'privacy_consent_text' => 'nullable|string|max:500',
             'throttle_enabled' => 'boolean',
             'throttle_max_attempts' => 'required_if:throttle_enabled,true|integer|min:1|max:100',

@@ -88,6 +88,7 @@ return [
         'auto_reply_from_email.email' => '自動返信の送信元メールアドレスが無効です。',
         'inquiry_url_slug_required' => 'URLスラッグは必須です。',
         'inquiry_url_slug_format' => 'URLスラッグは半角英数字とハイフン(-)のみ使用できます。',
+        'privacy_policy_url_format' => 'プライバシーポリシーURLには「/page/privacy-policy」のようなサーバー絶対パス、または「https://...」で始まる完全なURLを入力してください。',
         'last_name_required' => '姓は必須です。',
         'first_name_required' => '名は必須です。',
         'email_required' => 'メールアドレスは必須です。',

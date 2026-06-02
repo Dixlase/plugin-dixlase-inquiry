@@ -340,11 +340,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             <div :class="{ 'opacity-50 pointer-events-none': privacyConsentEnabled === '0' }" class="space-y-3 ml-4 pl-3 border-l-2 border-gray-200 dark:border-gray-700">
                 <div>
                     <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_policy_url')" />
-                    <input type="url"
+                    <input type="text"
                            name="privacy_policy_url"
                            x-model="privacyPolicyUrl"
                            :disabled="privacyConsentEnabled === '0'"
-                           placeholder="https://example.com/privacy"
+                           placeholder="/page/privacy-policy"
                            class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 dark:text-white">
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.privacy_policy_url_help')" />
                 </div>
