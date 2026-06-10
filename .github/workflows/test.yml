@@ -43,8 +43,9 @@ jobs:
 
       - name: Place plugin into core directory
         run: |
-          # コアには gitlink で空の plugins/DixlaseInquiry ディレクトリが存在するため
-          # 一度削除してからプラグインを配置する
+          # Core repo no longer tracks plugins/ (excluded via .gitignore.plugins),
+          # so core/plugins/ does not exist after checkout. Create it before mv.
+          mkdir -p core/plugins
           rm -rf core/plugins/DixlaseInquiry
           mv plugin core/plugins/DixlaseInquiry
 
