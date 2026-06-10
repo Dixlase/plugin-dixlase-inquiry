@@ -16,7 +16,7 @@
     "license_template": "license-dual-gpl.txt",
     "commercial_license": {
         "available": true,
-        "file": "LICENSE.commercial",
+        "file": "LICENSE-COMMERCIAL",
         "contact": "info@dixlase.org"
     },
     "assets": {
@@ -170,8 +170,8 @@
         "COPYRIGHT-POLICY.ja.md": "sha256:6594bcc6894ec1e8184781b4982c129c3a57159bb4b5b8e29d7c5c1cfec96024",
         "COPYRIGHT-POLICY.md": "sha256:9211f18eba2ea863768d9028dd18785a17c01eabc4fabb3b79b8c53aaff5a9e3",
         "LICENSE": "sha256:3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
-        "LICENSE.commercial": "sha256:0f4152731607f08e857514a2da559898de4372efbe592a8cafdf007ccc5e5a6f",
-        "LICENSE.commercial-ja": "sha256:65025debdeeff18620e87ad133abf03bf1171cf604f3eaddd79de702f892aa4c",
+        "LICENSE-COMMERCIAL": "sha256:0f4152731607f08e857514a2da559898de4372efbe592a8cafdf007ccc5e5a6f",
+        "LICENSE-COMMERCIAL.ja": "sha256:65025debdeeff18620e87ad133abf03bf1171cf604f3eaddd79de702f892aa4c",
         "NOTICE": "sha256:11551154e488210813ee4a3f0a8c1ad4540ef4698c6845eda50c2ca4991df87f",
         "NOTICE.ja": "sha256:3a720359396b89279305774940d40ce223cfba0b2a71aa9e8a0081e56332cad3",
         "README.md": "sha256:642ed04c74857280e8fa93a2ecd29e07cbdeea7b2886190baa3cd40c5417a7a5",
