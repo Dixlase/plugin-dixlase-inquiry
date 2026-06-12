@@ -45,6 +45,7 @@ return new class extends Migration
             $table->id();
             $table->string('status')->default('new');
             $table->string('name');
+            $table->string('name_kana')->nullable();
             $table->string('email');
             $table->string('subject')->nullable();
             $table->string('phone')->nullable();
