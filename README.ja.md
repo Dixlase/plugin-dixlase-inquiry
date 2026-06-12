@@ -1,0 +1,97 @@
+# Dixlase Inquiry
+
+For English, see [README.md](./README.md).
+
+Dixlase 用の問い合わせフォームプラグイン。
+
+- 固定 URL プレフィックス配下(既定 `/inquiry`)の問い合わせフォーム
+- 氏名・メール・本文は必須、ふりがな / 件名 / 電話 / 郵便番号 / 住所 / 性別は個別に表示・必須を切り替え可能
+- 1 ページ完結 / 確認ページ分離の 2 モード
+- 管理者通知メール + 自動返信メール(テンプレート変数あり)
+- プライバシーポリシー同意のオプション(完全 URL またはサーバー絶対パスをリンク先に指定可)
+- DixlaseMultilingual と連携した 6 フィールドの多言語化(singleton cardinality)
+- CAPTCHA capability への opt-in(任意の CAPTCHA プラグインがウィジェットを取り付け可能)
+- IP 単位の送信スロットリング
+- 固定ページ等に貼れるショートコード対応
+
+## 機能
+
+- **公開フォーム**
+  設定可能な URL スラッグ(既定 `/inquiry`)で公開します。入力 → 確認 → 完了を 1 ページに収めるシングルページモードと、確認ページを別画面にするスプリットモードを選択可能です。locale URL ルーティングが有効なサイトでは `/{locale}/inquiry` 配下にも自動でミラーされます。
+- **項目の表示・必須切り替え**
+  `name`(氏名)、`email`(メール)、`message`(本文)は常に必須です。`name_kana`(ふりがな)、`subject`(題名)、`phone`(電話)、`postal_code`(郵便番号)、`address`(住所)、`gender`(性別)は表示・必須を個別に切り替えられます。性別は「その他」「回答しない」を任意で追加できます。
+- **名前順モード**
+  `auto`(ロケールから自動判定)、西洋順(名 → 姓)、日本順(姓 → 名)から選択。入力欄の並びとメールテンプレートでの合成順に反映されます。
+- **プライバシーポリシー同意**
+  任意のチェックボックスとカスタム同意文。リンク先は完全 URL(`https://example.com/privacy`)に加え、サーバー絶対パス(`/page/privacy-policy` など)も受け入れます。
+- **管理者通知メール**
+  指定アドレス宛に通知メールを送信。件名・本文をテンプレート編集でき、`{{name}}`、`{{email}}`、`{{subject}}`、`{{message}}`、`{{postal_code}}`、`{{address}}`、`{{phone}}` の変数が送信時に展開されます。
+- **自動返信メール**
+  問い合わせ送信者宛に確認メールを返す機能。件名・本文・送信元アドレスを個別に設定でき、上記と同じ変数が使えます。送信の有効・無効を切り替え可能。
+- **多言語ストアフロントテキスト**
+  `form_heading`(フォーム見出し)、`form_description`(フォーム説明)、`completion_title`(完了画面タイトル)、`completion_message`(完了画面メッセージ)、`auto_reply_subject`(自動返信件名)、`auto_reply_body`(自動返信本文)の 6 フィールドを DixlaseMultilingual の singleton cardinality 翻訳タイプとして公開しています。中央翻訳 UI ではこの 6 フィールドが 1 カードとして表示され、ヘルパー経由でロケールに応じた値を解決します。
+- **CAPTCHA opt-in**
+  フォームを `dixlase-inquiry:form` として `CaptchaFormProviderInterface` 経由で登録しているため、互換 CAPTCHA プラグイン(reCAPTCHA、Turnstile 等)を Inquiry 側のコード変更なしに組み込めます。
+- **送信スロットリング**
+  IP 単位の連投制限。最大試行回数・解除までの分数を設定でき、超過時はフレンドリーなエラー表示を返します。
+- **問い合わせ管理**
+  受信した問い合わせを一覧で確認できます。検索 / ステータスフィルタ(新着 / 既読) / 列ソート、詳細画面、既読化、一括削除に対応。
+- **ショートコード埋め込み**
+  `[dixlase-inquiry-form]` ショートコードで、DixlasePages / DixlaseBlog などのホストページ内に問い合わせフォームを埋め込めます。ホストページのレイアウトを保ったまま、フォーム本体だけがインライン表示されます。
+- **ダッシュボード通知**
+  新着問い合わせの件数や、CAPTCHA 未設定の警告などを `DashboardNotificationProviderInterface` 経由で管理ダッシュボードに表示します。
+- **ロール権限**
+  Inquiry の管理メニューに対する既定権限は `config/admin/roles.php` で宣言し、コアの `PermissionRegistry` が実行時に解決します。
+- **内部リンクプロバイダ**
+  `RouteSlugProvider` を実装しているため、設定された URL スラッグが他プラグイン横断の唯一の真実(single source of truth)になります。例えば DixlaseMenus から問い合わせページへリンクを張ると、ハードコードされた `/inquiry` ではなく現行スラッグが解決されます。
+
+## インストール
+
+1. プラグインを Dixlase インストール先の `plugins/DixlaseInquiry` に配置します。
+2. 管理画面の **ダッシュボード → プラグイン** から有効化するか、お使いの環境の CLI インストールコマンドを実行します。
+3. 有効化すると、本プラグインのマイグレーションが自動実行され、既定の URL スラッグ(`inquiry`)、初期テキスト(現在のロケールの翻訳ファイル由来)、管理メニューに対する既定のロール権限が seed されます。
+
+## 使い方
+
+有効化すると、管理画面のサイドバーに **問い合わせ管理** が表示されます。
+
+- **一覧画面**:
+  受信した問い合わせを検索 / ステータスフィルタ(新着 / 既読) / 列単位ソートで閲覧でき、一括削除にも対応します。
+- **詳細画面**:
+  問い合わせの全内容を表示し、既読化やメールクライアントからの返信が行えます。
+- **設定** (管理者のみ):
+  以下のタブに分かれています。
+  - **フォーム基本** — URL スラッグ、1 ページ / スプリットモード切り替え、項目の表示・必須切り替え、名前順、プライバシー同意設定
+  - **管理者通知** — 受信アドレス、件名テンプレート、本文テンプレート
+  - **自動返信** — 有効・無効切り替え、送信元アドレス、件名テンプレート、本文テンプレート
+  - **完了画面** — 送信完了時に表示するタイトルとメッセージ
+  - **CAPTCHA** — 切り替えと、対応 CAPTCHA プラグインの組み込み状況
+  - **スロットリング** — 有効・無効切り替え、最大試行回数、解除までの分数
+
+公開 URL は設定スラッグから組み立てられます。既定の `inquiry` の場合は `/inquiry` で公開され、locale URL ルーティングを使うサイトでは同じフォームが `/{locale}/inquiry` 配下にミラーされます。
+
+他のページ(DixlasePages の固定ページ等)にフォームを埋め込みたい場合は、`[dixlase-inquiry-form]` ショートコードを目的の位置に挿入してください。ホストページのレイアウトはそのまま保たれ、フォーム本体のみがインラインで描画されます。
+
+## Capabilities
+
+本プラグインは `plugin.json` で以下の capability を宣言しており、他プラグインとの連携が可能です。
+
+- **`captcha`**
+  — 互換 CAPTCHA プラグインから、問い合わせフォームにウィジェットを取り付けるための契約。フォームは `CaptchaFormProviderInterface` 経由で `dixlase-inquiry:form` として登録されているため、CAPTCHA プラグイン側は Inquiry に変更を加えることなく opt-in できます。
+- **`multilingual-content`**
+  — DixlaseMultilingual から、6 つのフォーム向けテキストフィールドへロケール別の翻訳を提供するための契約。singleton cardinality 翻訳タイプ(`dixlase-inquiry:settings`)として宣言されているので、サイトあたり論理的な設定レコードは 1 件のみとなり、中央翻訳 UI ではこの 6 フィールドが 1 カードとして表示されます。
+
+## ライセンス
+
+Dixlase Inquiry は **デュアルライセンス** で配布されています。
+
+- **オープンソースライセンス**: [GNU General Public License v3](./LICENSE)
+- **商用ライセンス**: GPL v3 の遵守が現実的でないユースケース向けに、別途商用ライセンスの提供を予定しています。**現時点では商用ライセンスはまだ提供しておりません**(雛形のみ [LICENSE-COMMERCIAL](./LICENSE-COMMERCIAL) に Draft として置いています)。提供開始時期や条件に関するお問い合わせは **info@dixlase.org** までご連絡ください。
+
+各ファイルの関係概要は [NOTICE.ja](./NOTICE.ja)([English](./NOTICE))にあります。
+
+本プラグインリポジトリへのコントリビューションは、[Dixlase Copyright Policy](https://github.com/Dixlase/dixlase-core/blob/main/COPYRIGHT-POLICY.md) および Dixlase Contributor License Agreement の対象となります(詳細は CONTRIBUTING.md を参照)。
+
+---
+
+(C) exc-D inc. - 2026
