@@ -2,7 +2,7 @@
 
 For Japanese, see [README.ja.md](./README.ja.md).
 
-Contact-form plugin for Dixlase: a configurable inquiry form under a fixed URL prefix (`/inquiry` by default) with toggleable optional fields (kana, phone, postal code, address, gender, etc.), single-page or split-step submission, admin and customer email notifications with template variables, privacy-consent linking, CAPTCHA opt-in, multilingual storefront text via DixlaseMultilingual, per-IP submission throttling, and an embeddable shortcode for placing the form on any page.
+Contact-form plugin for Dixlase: a configurable inquiry form under a fixed URL prefix (`/inquiry` by default) with toggleable optional fields (kana, phone, postal code, address, gender, etc.), single-page or split-step submission, admin and customer email notifications with template variables, privacy-consent linking, CAPTCHA opt-in, per-IP submission throttling, and an embeddable shortcode for placing the form on any page.
 
 ## Features
 
@@ -12,7 +12,6 @@ Contact-form plugin for Dixlase: a configurable inquiry form under a fixed URL p
 - **Privacy-consent gate** — Optional checkbox with a customisable consent text and a link target that accepts either a fully-qualified URL (`https://example.com/privacy`) or a server-absolute path (`/page/privacy-policy`).
 - **Admin notification mail** — Outgoing notification to a configurable admin address with editable subject / body. Template variables (`{{name}}`, `{{email}}`, `{{subject}}`, `{{message}}`, `{{postal_code}}`, `{{address}}`, `{{phone}}`) are substituted at send time.
 - **Auto-reply mail** — Optional acknowledgement to the inquirer with its own subject / body, from-email override, and the same set of template variables.
-- **Multilingual storefront text** — Six form-facing texts (`form_heading`, `form_description`, `completion_title`, `completion_message`, `auto_reply_subject`, `auto_reply_body`) are exposed to DixlaseMultilingual as a singleton-cardinality translatable type, so the central translation UI surfaces them as one card and the helper resolves per-locale values at runtime.
 - **CAPTCHA opt-in** — The form is registered as `dixlase-inquiry:form` via `CaptchaFormProviderInterface`, so any compatible CAPTCHA plugin (e.g. reCAPTCHA, Turnstile) can attach its widget without an Inquiry-side change.
 - **Submission throttling** — Per-IP rate limit with configurable max attempts and decay minutes; presents a friendly error when exceeded.
 - **Inquiry management** — Admin list view with search / status filter / sort, detail view, read / unread status, manual mark-as-read, and bulk delete.
@@ -23,9 +22,7 @@ Contact-form plugin for Dixlase: a configurable inquiry form under a fixed URL p
 
 ## Installation
 
-1. Place the plugin at `plugins/DixlaseInquiry` inside your Dixlase installation.
-2. Enable it from the admin panel under **Dashboard → Plugins**, or run the equivalent CLI install command for your environment.
-3. After enable, the plugin's migrations run automatically and seed the default URL slug (`inquiry`), default texts (from the active locale's translation files), and default role permissions for the inquiry admin menus.
+Open the admin panel under **Dashboard → Plugins**, find this plugin, then download and enable it. The plugin's tables are created automatically on enable, and the default URL slug (`inquiry`), default texts (from the active locale's translation files), and default role permissions for the inquiry admin menus are seeded at the same time.
 
 ## Usage
 
@@ -50,7 +47,6 @@ To embed the form inside another page (e.g. a DixlasePages static page), insert 
 This plugin declares the following capabilities in `plugin.json` so other plugins can plug into it through stable contracts:
 
 - **`captcha`** — Contract through which a CAPTCHA plugin attaches its widget to the inquiry form. The form is registered as `dixlase-inquiry:form` via `CaptchaFormProviderInterface`, so any compatible CAPTCHA plugin can opt in without modifying Inquiry.
-- **`multilingual-content`** — Contract through which DixlaseMultilingual provides per-locale translation for the six form-facing text fields. Declared as a singleton-cardinality translatable type (`dixlase-inquiry:settings`) so there is exactly one logical settings record per site and the central translation UI surfaces all six fields as a single card.
 
 ## License
 
@@ -61,7 +57,9 @@ Dixlase Inquiry is distributed under a **dual license**:
 
 A short overview of how these files fit together is in [NOTICE](./NOTICE) ([日本語](./NOTICE.ja)).
 
-Contributions to this plugin repository are governed by the [Dixlase Copyright Policy](https://github.com/Dixlase/dixlase-core/blob/main/COPYRIGHT-POLICY.md) and the Dixlase Contributor License Agreement (see CONTRIBUTING.md).
+## Contributing
+
+The Contributor License Agreement (CLA) is still under review, so code Pull Requests are not being accepted at this time. Once the CLA is finalized, contributions will open under the [Dixlase Copyright Policy](https://github.com/Dixlase/dixlase-core/blob/main/COPYRIGHT-POLICY.md) and the Dixlase CLA (see CONTRIBUTING.md). Bug reports and proposals via Issues are welcome in the meantime.
 
 ---
 (C) exc-D inc. - 2026
