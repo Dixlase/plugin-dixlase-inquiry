@@ -9,7 +9,6 @@ Dixlase 用の問い合わせフォームプラグイン。
 - 1 ページ完結 / 確認ページ分離の 2 モード
 - 管理者通知メール + 自動返信メール(テンプレート変数あり)
 - プライバシーポリシー同意のオプション(完全 URL またはサーバー絶対パスをリンク先に指定可)
-- DixlaseMultilingual と連携した 6 フィールドの多言語化(singleton cardinality)
 - CAPTCHA capability への opt-in(任意の CAPTCHA プラグインがウィジェットを取り付け可能)
 - IP 単位の送信スロットリング
 - 固定ページ等に貼れるショートコード対応
@@ -28,8 +27,6 @@ Dixlase 用の問い合わせフォームプラグイン。
   指定アドレス宛に通知メールを送信。件名・本文をテンプレート編集でき、`{{name}}`、`{{email}}`、`{{subject}}`、`{{message}}`、`{{postal_code}}`、`{{address}}`、`{{phone}}` の変数が送信時に展開されます。
 - **自動返信メール**
   問い合わせ送信者宛に確認メールを返す機能。件名・本文・送信元アドレスを個別に設定でき、上記と同じ変数が使えます。送信の有効・無効を切り替え可能。
-- **多言語ストアフロントテキスト**
-  `form_heading`(フォーム見出し)、`form_description`(フォーム説明)、`completion_title`(完了画面タイトル)、`completion_message`(完了画面メッセージ)、`auto_reply_subject`(自動返信件名)、`auto_reply_body`(自動返信本文)の 6 フィールドを DixlaseMultilingual の singleton cardinality 翻訳タイプとして公開しています。中央翻訳 UI ではこの 6 フィールドが 1 カードとして表示され、ヘルパー経由でロケールに応じた値を解決します。
 - **CAPTCHA opt-in**
   フォームを `dixlase-inquiry:form` として `CaptchaFormProviderInterface` 経由で登録しているため、互換 CAPTCHA プラグイン(reCAPTCHA、Turnstile 等)を Inquiry 側のコード変更なしに組み込めます。
 - **送信スロットリング**
@@ -47,9 +44,7 @@ Dixlase 用の問い合わせフォームプラグイン。
 
 ## インストール
 
-1. プラグインを Dixlase インストール先の `plugins/DixlaseInquiry` に配置します。
-2. 管理画面の **ダッシュボード → プラグイン** から有効化するか、お使いの環境の CLI インストールコマンドを実行します。
-3. 有効化すると、本プラグインのマイグレーションが自動実行され、既定の URL スラッグ(`inquiry`)、初期テキスト(現在のロケールの翻訳ファイル由来)、管理メニューに対する既定のロール権限が seed されます。
+管理画面の **ダッシュボード → プラグイン** から本プラグインを検索し、ダウンロード → 有効化します。有効化すると本プラグイン用のテーブルが自動で作成され、同時に既定の URL スラッグ(`inquiry`)、初期テキスト(現在のロケールの翻訳ファイル由来)、管理メニューに対する既定のロール権限が seed されます。
 
 ## 使い方
 
@@ -78,19 +73,25 @@ Dixlase 用の問い合わせフォームプラグイン。
 
 - **`captcha`**
   — 互換 CAPTCHA プラグインから、問い合わせフォームにウィジェットを取り付けるための契約。フォームは `CaptchaFormProviderInterface` 経由で `dixlase-inquiry:form` として登録されているため、CAPTCHA プラグイン側は Inquiry に変更を加えることなく opt-in できます。
-- **`multilingual-content`**
-  — DixlaseMultilingual から、6 つのフォーム向けテキストフィールドへロケール別の翻訳を提供するための契約。singleton cardinality 翻訳タイプ(`dixlase-inquiry:settings`)として宣言されているので、サイトあたり論理的な設定レコードは 1 件のみとなり、中央翻訳 UI ではこの 6 フィールドが 1 カードとして表示されます。
 
 ## ライセンス
 
 Dixlase Inquiry は **デュアルライセンス** で配布されています。
 
 - **オープンソースライセンス**: [GNU General Public License v3](./LICENSE)
-- **商用ライセンス**: GPL v3 の遵守が現実的でないユースケース向けに、別途商用ライセンスの提供を予定しています。**現時点では商用ライセンスはまだ提供しておりません**(雛形のみ [LICENSE-COMMERCIAL](./LICENSE-COMMERCIAL) に Draft として置いています)。提供開始時期や条件に関するお問い合わせは **info@dixlase.org** までご連絡ください。
+- **商用ライセンス**: GPL v3 の遵守が現実的でないユースケース向けに、別途商用ライセンスの提供を予定しています。
+
+**現時点では商用ライセンスはまだ提供しておりません。
+**(雛形のみ [LICENSE-COMMERCIAL](./LICENSE-COMMERCIAL) に Draft として置いています)。
+提供開始時期や条件に関するお問い合わせは **info@dixlase.org** までご連絡ください。
 
 各ファイルの関係概要は [NOTICE.ja](./NOTICE.ja)([English](./NOTICE))にあります。
 
-本プラグインリポジトリへのコントリビューションは、[Dixlase Copyright Policy](https://github.com/Dixlase/dixlase-core/blob/main/COPYRIGHT-POLICY.md) および Dixlase Contributor License Agreement の対象となります(詳細は CONTRIBUTING.md を参照)。
+## コントリビューションについて
+
+CLA (Contributor License Agreement) のレビュー中のため、現在 Pull Request を受け付けていません。
+CLA 確定後に受付を開始し、その時点から [Dixlase Copyright Policy](https://github.com/Dixlase/dixlase-core/blob/main/COPYRIGHT-POLICY.md) と Dixlase CLA(詳細は CONTRIBUTING.md)の対象となります。
+それまでも Issue での不具合報告・機能提案は歓迎しています。
 
 ---
 
