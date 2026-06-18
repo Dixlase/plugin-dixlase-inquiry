@@ -246,6 +246,7 @@
         "lang/ja/multilingual_types.php": "sha256:5e6e3e1ffa5cf95850baa39732390a36de6ea73933b0f3cfd7db768c0b29fa9d",
         "lang/ja/route-slug.php": "sha256:3c48be0addde24017766ed8d30cf24ea02015d2e37e7593d39e1165ea2788d1b",
         "phpunit.xml": "sha256:5af224233d2b1a5dd0fb482b2b0ef525a5a821044a0c25e8eff2f8f3a52190d7",
+        "resources/assets/thumbnail.png": "sha256:784a1a917904bc92a039027c667b1b590f0030c7a29e039344fa7a5cba80b89e",
         "resources/src/css/components/embed-form.scss": "sha256:4adf5cc847d1110c620591d57ddc9ff798690e6d61369df8907c06b26b5ffcc4",
         "resources/src/css/style.scss": "sha256:7177983c0ffe8cdc71126b9043042dfda8927de56cb5ef14a4b6d10d74a5a5bc",
         "resources/src/js/app.js": "sha256:f0e353994bd1aa8ddd7377d66b3cc6833d8355c1442b060dc9067dbf7783b42d",
@@ -293,6 +294,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-06-18T09:18:29+00:00"
+        "signed_at": "2026-06-18T15:56:16+00:00"
     }
 }
