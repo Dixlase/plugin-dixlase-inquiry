@@ -86,3 +86,37 @@ jobs:
         env:
           APP_KEY: base64:dGVzdGtleWZvcmRpeGxhc2VpbnF1aXJ5Y2l0ZXN0czEyMzQ1Njc4OQ==
         run: ../../vendor/bin/phpunit
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    name: Verify frontend build
+    # Runs `npm run build` on every PR / push so a broken vite config
+    # or a missing import surfaces here rather than at release-tag
+    # time. The compiled output is discarded — this job only proves
+    # the build succeeds; `release.yml` is what actually ships the
+    # built artefacts to operators.
+
+    steps:
+      - name: Checkout plugin
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build
+        run: NODE_ENV=production npm run build
+
+      - name: Verify build output exists
+        run: |
+          if [ ! -d resources/assets ]; then
+            echo "::error::resources/assets/ was not produced by the build"
+            exit 1
+          fi
+          echo "Built:"
+          find resources/assets -type f | head -20

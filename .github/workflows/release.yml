@@ -1,0 +1,144 @@
+name: Build release ZIP
+
+# Produces the operator-facing release archive that the core
+# `dls:plugin:update` command downloads from GitHub Releases. The ZIP
+# ships the built `resources/assets/` (CSS / JS / manifest) inside the
+# plugin tree so an admin-panel update on a production box without
+# Node / npm applies the prebuilt frontend with no build step on the
+# server.
+#
+# A versionless copy (DixlaseInquiry.zip) is attached alongside so
+# external links can use the static
+#   releases/latest/download/DixlaseInquiry.zip
+# URL — GitHub resolves it to whichever release is currently "Latest".
+#
+# Trigger:
+#   - `release: published` → attaches both ZIPs to the GitHub Release
+#     as downloadable assets.
+#   - `workflow_dispatch` → manual dry-run before cutting a real
+#     release; result is uploaded as a workflow artifact instead.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag or ref to build (default: workflow run ref)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build:
+    name: Build and attach release ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve target ref
+        id: ref
+        run: |
+          REF="${{ github.event.release.tag_name }}"
+          [ -z "$REF" ] && REF="${{ inputs.tag }}"
+          [ -z "$REF" ] && REF="${{ github.ref_name }}"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "Building from ref: $REF"
+
+      - name: Checkout at target ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build frontend assets
+        # `resources/assets/` is gitignored so a plain git archive
+        # would omit the compiled output. Populate it now so the
+        # stage step (below) can include the freshly-built tree.
+        run: NODE_ENV=production npm run build
+
+      - name: Stage release payload
+        id: stage
+        run: |
+          set -e
+          TAG="${{ steps.ref.outputs.ref }}"
+          STAGE="dist/DixlaseInquiry"
+          mkdir -p "$STAGE"
+
+          # rsync the plugin into a wrapper directory so the ZIP
+          # extracts as `DixlaseInquiry/` rather than dumping files
+          # into whatever directory the operator unzips into.
+          #
+          # `resources/assets/` is deliberately NOT excluded — it is
+          # gitignored source-wise, but we specifically want the
+          # freshly-built CSS/JS/manifest in the payload. Everything
+          # else that is dev-only (`.github/`, `node_modules`,
+          # `tests/`, `.backlog/`, `phpunit.xml`, `dist/`) is
+          # excluded.
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.backlog' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='phpunit.xml' \
+            --exclude='dist' \
+            ./ "$STAGE/"
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
+          echo "Staged: $(du -sh "$STAGE" | cut -f1)"
+
+          # Sanity check: fail loudly if the built assets somehow did
+          # not land in the payload. Better to break the release build
+          # than to publish a ZIP that would fail on install.
+          if [ ! -d "$STAGE/resources/assets" ]; then
+            echo "::error::resources/assets/ missing from release payload"
+            exit 1
+          fi
+
+      - name: Build ZIP
+        id: zip
+        run: |
+          ZIP_NAME="DixlaseInquiry-${{ steps.stage.outputs.tag }}.zip"
+          LATEST_ALIAS="DixlaseInquiry.zip"
+          (cd dist && zip -rq "../$ZIP_NAME" DixlaseInquiry)
+          # Versionless alias resolved by GitHub's
+          # `releases/latest/download/<file>` shortcut. Lets docs /
+          # brand-site links point at a stable URL that always tracks
+          # the newest release, so we do not have to edit download
+          # buttons on every tag.
+          cp "$ZIP_NAME" "$LATEST_ALIAS"
+          echo "name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
+          echo "latest_alias=$LATEST_ALIAS" >> "$GITHUB_OUTPUT"
+          ls -lh "$ZIP_NAME" "$LATEST_ALIAS"
+
+      - name: Attach to GitHub release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.zip.outputs.name }}
+            ${{ steps.zip.outputs.latest_alias }}
+
+      - name: Upload as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.zip.outputs.name }}
+          path: ${{ steps.zip.outputs.name }}
+          retention-days: 30
