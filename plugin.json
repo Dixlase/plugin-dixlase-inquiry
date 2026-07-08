@@ -164,6 +164,16 @@
         "commands": false,
         "middleware": false
     },
+    "deploy": {
+        "_notes": {
+            "en": "Runtime-data protection surface consumed by DixlaseDeploy (and any other deploy tool that resolves App\\Contracts\\PluginIntegration\\DeployProtectionRegistryInterface). plg_dixlase_inquiries stores the actual contact submissions from real site visitors — data that only exists on the environment they visited, and would be destroyed by a push from a dev environment whose inquiries table is empty or contains test rows. plg_dixlase_inquiry_settings is form configuration (recipient email, thank-you copy, spam thresholds) that the operator edits in dev and pushes to prod, so it is NOT protected. Attachments are not currently persisted to storage (mails carry them through and forget them); protected_storage_paths is empty for now and will be populated when a future feature adds attachment persistence.",
+            "ja": "DixlaseDeploy (および App\\Contracts\\PluginIntegration\\DeployProtectionRegistryInterface を解決する任意のデプロイツール) が参照するランタイムデータ保護対象。plg_dixlase_inquiries は実訪問者からの問い合わせ本体を保存する — ユーザーが訪問した環境にのみ存在するデータで、inquiries テーブルが空 or テスト行の dev からの push で消滅する。plg_dixlase_inquiry_settings はフォーム設定 (宛先メール、サンクスコピー、スパム閾値) で運用者が dev で編集して prod に push するので保護対象**外**。現状 attachments はストレージに永続化されない (メール添付として通過するのみ) ため protected_storage_paths は空、将来添付永続化機能が入った際に追記する。"
+        },
+        "protected_tables": [
+            "dls_plg_dixlase_inquiries"
+        ],
+        "protected_storage_paths": []
+    },
     "files": {
         "CONTRIBUTING.ja.md": "sha256:d98e76df6aa66152f06fe7b909c20a1e2c18f7a0f9cea3ee2c79f7793437aa74",
         "CONTRIBUTING.md": "sha256:324958932f7cf65a897f8a983bfbf9dbce68b1e053c79a207208f6fa3133d1fa",
