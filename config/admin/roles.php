@@ -73,8 +73,13 @@ return [
                             'access_roles' => MemberRole::ADMIN->value,
                             'view_roles' => MemberRole::ADMIN->value,
                         ],
+                        // Notification recipient routing: whoever edits this
+                        // sets the address that receives every inquiry
+                        // (visitor PII + message body). Admins may VIEW the
+                        // setting, but only SUPER_ADMIN may EDIT it, so a
+                        // delegated admin cannot silently redirect submissions.
                         'admin-notification' => [
-                            'access_roles' => MemberRole::ADMIN->value,
+                            'access_roles' => MemberRole::SUPER_ADMIN->value,
                             'view_roles' => MemberRole::ADMIN->value,
                         ],
                         'auto-reply' => [
