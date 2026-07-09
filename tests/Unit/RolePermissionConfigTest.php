@@ -64,8 +64,13 @@ class RolePermissionConfigTest extends TestCase
     }
 
     /**
-     * All inquiry menu_keys default to ADMIN so the menu is visible to
-     * admins out of the box. Operators can lower this via the admin UI.
+     * Most inquiry menu_keys default to ADMIN so the menu is visible
+     * and editable to admins out of the box. `admin-notification` is
+     * intentionally omitted — that leaf sets the address every
+     * visitor's inquiry (with their PII and message body) is forwarded
+     * to, so its edit right defaults to SUPER_ADMIN. That exception is
+     * covered by `test_admin_notification_defaults_to_super_admin_edit`
+     * below.
      */
     public function test_all_inquiry_menu_keys_default_to_admin(): void
     {
@@ -74,7 +79,6 @@ class RolePermissionConfigTest extends TestCase
             ['inquiry', 'settings', 'index'],
             ['inquiry', 'settings', 'form-basic'],
             ['inquiry', 'settings', 'completion'],
-            ['inquiry', 'settings', 'admin-notification'],
             ['inquiry', 'settings', 'auto-reply'],
         ];
 
@@ -97,6 +101,35 @@ class RolePermissionConfigTest extends TestCase
                 'view_roles default should be ADMIN for: '.implode('.', $path),
             );
         }
+    }
+
+    /**
+     * `admin-notification` sets the address every visitor's inquiry
+     * (with their PII and message body) is forwarded to. Only
+     * SUPER_ADMIN may EDIT it, so a delegated admin cannot silently
+     * redirect submissions off-site. ADMIN may still VIEW the setting
+     * so the sidebar entry remains discoverable and the surrounding
+     * form-basic / completion / auto-reply pages stay editable in the
+     * same sitting.
+     */
+    public function test_admin_notification_defaults_to_super_admin_edit(): void
+    {
+        $node = $this->roles['permissions'];
+        foreach (['inquiry', 'settings', 'admin-notification'] as $segment) {
+            $node = $node[$segment] ?? $node['children'][$segment] ?? null;
+            $this->assertIsArray($node, 'Missing permission segment for admin-notification');
+        }
+
+        $this->assertSame(
+            MemberRole::SUPER_ADMIN->value,
+            $node['access_roles'],
+            'admin-notification edit default must be SUPER_ADMIN only',
+        );
+        $this->assertSame(
+            MemberRole::ADMIN->value,
+            $node['view_roles'],
+            'admin-notification must remain visible to ADMIN',
+        );
     }
 
     /**

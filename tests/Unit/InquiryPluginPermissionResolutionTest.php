@@ -67,6 +67,17 @@ class InquiryPluginPermissionResolutionTest extends TestCase
         'inquiry.settings.auto-reply',
     ];
 
+    /**
+     * Menu keys whose EDIT (`access_roles`) default is SUPER_ADMIN
+     * instead of the plain ADMIN default the rest of the plugin ships.
+     * See `config/admin/roles.php` for the rationale — currently only
+     * `admin-notification`, which routes visitor PII to a configurable
+     * recipient address.
+     */
+    private const SUPER_ADMIN_EDIT_MENU_KEYS = [
+        'inquiry.settings.admin-notification',
+    ];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -80,6 +91,11 @@ class InquiryPluginPermissionResolutionTest extends TestCase
     public function test_each_menu_key_resolves_to_admin_default(): void
     {
         foreach (self::MENU_KEYS as $menuKey) {
+            if (in_array($menuKey, self::SUPER_ADMIN_EDIT_MENU_KEYS, true)) {
+                // Covered by test_super_admin_edit_menu_keys_resolve_to_super_admin.
+                continue;
+            }
+
             $effective = PermissionRegistry::getPluginEffective(self::PLUGIN_SLUG, $menuKey);
 
             $this->assertNotNull($effective, "PermissionRegistry returned null for {$menuKey}");
@@ -89,9 +105,31 @@ class InquiryPluginPermissionResolutionTest extends TestCase
         }
     }
 
+    /**
+     * Mirror of `test_each_menu_key_resolves_to_admin_default` for the
+     * SUPER_ADMIN-only leaves: EDIT resolves to SUPER_ADMIN, VIEW stays
+     * at ADMIN, no override present.
+     */
+    public function test_super_admin_edit_menu_keys_resolve_to_super_admin(): void
+    {
+        foreach (self::SUPER_ADMIN_EDIT_MENU_KEYS as $menuKey) {
+            $effective = PermissionRegistry::getPluginEffective(self::PLUGIN_SLUG, $menuKey);
+
+            $this->assertNotNull($effective, "PermissionRegistry returned null for {$menuKey}");
+            $this->assertSame(MemberRole::SUPER_ADMIN->value, $effective['access_roles'], "access_roles default for {$menuKey}");
+            $this->assertSame(MemberRole::ADMIN->value, $effective['view_roles'], "view_roles default for {$menuKey}");
+            $this->assertFalse($effective['is_overridden'], "is_overridden should be false for {$menuKey} with no DB row");
+        }
+    }
+
     public function test_admin_role_can_access_all_inquiry_menus_by_default(): void
     {
         foreach (self::MENU_KEYS as $menuKey) {
+            if (in_array($menuKey, self::SUPER_ADMIN_EDIT_MENU_KEYS, true)) {
+                // Covered by test_admin_role_cannot_edit_super_admin_only_menus.
+                continue;
+            }
+
             $this->assertTrue(
                 PermissionRegistry::canAccessPlugin(self::PLUGIN_SLUG, $menuKey, MemberRole::ADMIN),
                 "ADMIN should have access to {$menuKey} by default",
@@ -99,6 +137,25 @@ class InquiryPluginPermissionResolutionTest extends TestCase
             $this->assertTrue(
                 PermissionRegistry::canViewPlugin(self::PLUGIN_SLUG, $menuKey, MemberRole::ADMIN),
                 "ADMIN should be able to view {$menuKey} by default",
+            );
+        }
+    }
+
+    /**
+     * ADMIN can still VIEW the SUPER_ADMIN-only leaves (so the menu
+     * remains discoverable in the sidebar), but cannot EDIT them —
+     * that is the whole point of the elevation.
+     */
+    public function test_admin_role_cannot_edit_super_admin_only_menus(): void
+    {
+        foreach (self::SUPER_ADMIN_EDIT_MENU_KEYS as $menuKey) {
+            $this->assertFalse(
+                PermissionRegistry::canAccessPlugin(self::PLUGIN_SLUG, $menuKey, MemberRole::ADMIN),
+                "ADMIN should NOT be able to edit {$menuKey} (super_admin only by default)",
+            );
+            $this->assertTrue(
+                PermissionRegistry::canViewPlugin(self::PLUGIN_SLUG, $menuKey, MemberRole::ADMIN),
+                "ADMIN should still be able to view {$menuKey}",
             );
         }
     }
