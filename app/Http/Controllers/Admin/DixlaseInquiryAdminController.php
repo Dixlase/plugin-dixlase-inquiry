@@ -341,6 +341,12 @@ class DixlaseInquiryAdminController extends Controller
     {
         $this->authorizeView('inquiry.settings.admin-notification');
 
+        // Disable the save button for members who may view but not edit this
+        // page. Core's <x-admin.save-button> reads the shared `menuEditable`
+        // flag (normally set by CheckMenuAccess, which does not run on plugin
+        // admin routes), so share it here from the plugin permission.
+        \Illuminate\Support\Facades\View::share('menuEditable', AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.settings.admin-notification'));
+
         $settings = DixlaseInquirySetting::getSettings();
 
         // メールテスト状態を取得
