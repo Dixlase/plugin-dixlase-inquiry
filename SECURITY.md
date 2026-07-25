@@ -24,4 +24,4 @@ This policy covers code in the [`plugin-dixlase-inquiry`](https://github.com/Dix
 
 ---
 
-**Contact:** info@dixlase.org
+**Contact:** security@dixlase.org
