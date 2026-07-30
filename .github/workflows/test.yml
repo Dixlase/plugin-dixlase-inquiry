@@ -1,12 +1,31 @@
 name: Test
 
 on:
+  # Fire on every feature-branch push so CI runs as soon as work
+  # reaches the remote, independent of PR-event timing. Also fire on
+  # PR open/sync against `main` so the check block on the PR page
+  # populates on the first push after fork/branch. `main` itself is
+  # covered by deploy.yml; running Test on the merge commit here
+  # would just be a duplicate of the PR run.
+  #
+  # Deliberately different from the earlier `push: branches: [main]`
+  # + `pull_request` shape: on 2026-07-30 the `pull_request` webhook
+  # for PR #17 (fix/remove-load-migrations-from) never scheduled a
+  # check_suite — a known intermittent GitHub Actions failure mode.
+  # Sibling plugins on the `branches-ignore: [main]` pattern (Menus,
+  # Legal, SEO, Cookie, Multilingual) were unaffected because the
+  # feature-branch push had already fired their run. Match that shape
+  # here so a lost `pull_request` webhook is no longer a single point
+  # of failure. `workflow_dispatch` gives operators a manual re-trigger
+  # (`gh workflow run Test --ref <branch>`) for the residual case
+  # where both push and pull_request events are lost.
   push:
-    branches:
-      - main
+    branches-ignore:
+      - main  # main は deploy.yml が実行する
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 # GitHub OAuth token for composer to clone the private
 # `dixlase/dixlase-onepage` dependency referenced by Core's
