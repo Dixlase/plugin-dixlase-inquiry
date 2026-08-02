@@ -36,6 +36,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div class="dixlase-inquiry">
         <div class="container mx-auto pt-32 pb-16 px-4 sm:px-6 lg:px-8">
             <article class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-2xl mx-auto">
+                @if(url()->previous() !== url()->current())
+                <div class="px-8 pt-6">
+                    <a href="{{ url()->previous() }}"
+                        class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        {{ __('dixlase-inquiry::front.buttons.back') }}
+                    </a>
+                </div>
+                @endif
+
                 {{-- ページヘッダー（見出し+説明文） --}}
                 <header class="px-8 pt-10 pb-8 mb-12 text-center">
                     @php
