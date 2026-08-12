@@ -47,6 +47,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <form action="{{ ($isPreview ?? false) ? route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.send') : route('inquiry.send') }}" method="POST">
                         @csrf
 
+                        {{-- Carry the CAPTCHA response through to send(), which is
+                             where it is verified. The widget is rendered on the
+                             form page, so without this the token would be dropped
+                             at this hop and every submission would fail. --}}
+                        @foreach($captchaFields ?? [] as $captchaField)
+                            <input type="hidden" name="{{ $captchaField }}" value="{{ $data[$captchaField] ?? '' }}">
+                        @endforeach
+
                         <dl class="space-y-3">
                             {{-- 名前 --}}
                             <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
