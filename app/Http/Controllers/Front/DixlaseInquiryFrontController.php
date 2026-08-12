@@ -32,6 +32,7 @@
 
 namespace Plugins\DixlaseInquiry\App\Http\Controllers\Front;
 
+use App\Captcha\CaptchaDriver;
 use App\Helpers\CaptchaHelper;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -97,17 +98,39 @@ class DixlaseInquiryFrontController extends Controller
 
         $this->applyFormLocale($settings);
 
+        // The CAPTCHA widget lives on the form page, so its response token
+        // arrives here -- but send() is where it is verified, and these tokens
+        // are single-use. Forwarding the field names lets the confirm form
+        // re-emit the token untouched instead of consuming it on this hop.
+        // Without this the confirmation step would silently strip the token and
+        // every legitimate submission would fail CAPTCHA validation at send().
+        $captchaFields = CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY)
+            ? array_keys(app(CaptchaDriver::class)->rules())
+            : [];
+
         return view('dixlase-inquiry::front.inquiries.confirm', [
             'settings' => $settings,
             'data' => $request->all(),
             'genderOptions' => $this->getGenderOptions($settings),
+            'captchaFields' => $captchaFields,
         ]);
     }
 
     /**
      * 送信処理（別ページモード）
      */
-    public function send(Request $request)
+    /**
+     * Final submit for the separate-page flow.
+     *
+     * Type-hinted with DixlaseInquirySubmitRequest so validation and the
+     * CAPTCHA rules actually run. This used to take a bare Request and call
+     * $request->all(), which meant the only unauthenticated write endpoint in
+     * the plugin accepted anything: no size limits, no type checks, and no
+     * CAPTCHA at all. Combined with the auto-reply below -- which mails an
+     * address taken straight from the submission -- that turned the site into
+     * a relay an attacker could point at arbitrary recipients.
+     */
+    public function send(DixlaseInquirySubmitRequest $request)
     {
         $settings = DixlaseInquirySetting::getSettings();
 
@@ -118,7 +141,7 @@ class DixlaseInquiryFrontController extends Controller
 
         $this->applyFormLocale($settings);
 
-        $validated = $request->all();
+        $validated = $request->validated();
 
         // 問い合わせデータを準備
         $inquiryData = $this->prepareInquiryData($validated, $settings);
@@ -229,7 +252,6 @@ class DixlaseInquiryFrontController extends Controller
                 'success' => true,
                 'message' => __('dixlase-inquiry::front.messages.submit_success'),
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Inquiry send failed: '.$e->getMessage());
 
@@ -277,7 +299,6 @@ class DixlaseInquiryFrontController extends Controller
             }
 
             return redirect($redirectUrl)->with('inquiry_success', true);
-
         } catch (\Exception $e) {
             \Log::error('Inquiry embed send failed: '.$e->getMessage());
 
