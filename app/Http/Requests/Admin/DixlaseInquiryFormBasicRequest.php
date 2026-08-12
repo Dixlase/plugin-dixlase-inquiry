@@ -84,10 +84,56 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
                     if ($value === null || $value === '') {
                         return;
                     }
-                    if (is_string($value) && str_starts_with($value, '/')) {
+
+                    if (! is_string($value)) {
+                        $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
+
                         return;
                     }
-                    if (! is_string($value) || filter_var($value, FILTER_VALIDATE_URL) === false) {
+
+                    // This value is interpolated into an href by
+                    // __('...privacy_consent', ['url' => $privacyUrl]), and
+                    // __() does not escape its replacements. A site-relative
+                    // path used to be accepted with no further checking, so
+                    //
+                    //     /policy" onmouseover="alert(1)
+                    //
+                    // passed validation and closed the attribute in the
+                    // rendered consent label -- on the public form, not just
+                    // the admin preview. Characters that can end an attribute
+                    // or open a tag are refused here regardless of the form
+                    // the value takes.
+                    if (preg_match('/["\'<>]/', $value) === 1) {
+                        $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
+
+                        return;
+                    }
+
+                    // Site-relative path. `//host` is excluded: it carries no
+                    // scheme but inherits the page's and leaves the origin.
+                    if (str_starts_with($value, '/')) {
+                        if (str_starts_with($value, '//')) {
+                            $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
+                        }
+
+                        return;
+                    }
+
+                    if (filter_var($value, FILTER_VALIDATE_URL) === false) {
+                        $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
+
+                        return;
+                    }
+
+                    // FILTER_VALIDATE_URL accepts javascript://%0aalert(1), so
+                    // the scheme is checked separately. Control characters go
+                    // first because browsers ignore them inside a scheme.
+                    $scheme = strtolower((string) parse_url(
+                        preg_replace('/[\x00-\x20]/', '', $value) ?? '',
+                        PHP_URL_SCHEME
+                    ));
+
+                    if (! in_array($scheme, ['http', 'https'], true)) {
                         $fail(__('dixlase-inquiry::admin.validation.privacy_policy_url_format'));
                     }
                 },
