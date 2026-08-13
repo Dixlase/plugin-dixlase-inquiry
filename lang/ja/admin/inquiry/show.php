@@ -61,6 +61,6 @@ return [
 
     'delete' => '削除',
     'delete_confirm_title' => '問い合わせの削除',
-    'delete_confirm_message' => 'この問い合わせを削除してもよろしいですか？この操作は元に戻せません。',
+    'delete_confirm_message' => 'この問い合わせをゴミ箱に移動します。30 日以内であればゴミ箱から復元できます。',
     'status_updated' => 'ステータスが更新されました。',
 ];

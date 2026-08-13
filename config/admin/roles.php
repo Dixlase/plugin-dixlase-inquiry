@@ -43,9 +43,12 @@ use App\Enums\MemberRole;
  *
  * Settings default to ADMIN so the configuration screens are admin-only
  * out of the box. The inquiry-handling routes (list, detail, status
- * changes) default to EDITOR instead: answering submissions is delegated
- * work, and it cannot be done without reading the submission. Deleting a
- * submission and closing the public form stay at ADMIN.
+ * changes, and the reversible destroy that moves a submission to the
+ * trash) default to EDITOR: answering submissions is delegated work and
+ * cannot be done without reading them. Permanent deletion — emptying
+ * the trash and per-row force-destroy — stays at ADMIN because it
+ * bypasses restore. Closing the public form is also ADMIN as a
+ * site-availability decision.
  *
  * Operators can move any threshold via the "Member role permissions"
  * admin screen; changes are persisted in `role_permission_overrides` as
@@ -88,18 +91,58 @@ return [
                     'view_roles' => MemberRole::EDITOR->value,
                 ],
 
-                // destroy() calls delete() on a model without SoftDeletes,
-                // so the submission and its PII are gone for good. Nothing
-                // in the handling workflow needs that.
+                // destroy() now runs on a SoftDeletes-enabled model: it
+                // moves the row to the trash where the retention window
+                // and the trash screen restore path apply. An accidental
+                // click no longer loses the submission, so this is safe
+                // to hand to EDITOR alongside the rest of the handling
+                // workflow. Permanent deletion lives under `trash` below.
                 'destroy' => [
-                    'access_roles' => MemberRole::ADMIN->value,
-                    'view_roles' => MemberRole::ADMIN->value,
+                    'access_roles' => MemberRole::EDITOR->value,
+                    'view_roles' => MemberRole::EDITOR->value,
                 ],
                 // Closes the public form for the whole site. That is a
                 // site-availability decision, not inquiry handling.
                 'toggle-accepting' => [
                     'access_roles' => MemberRole::ADMIN->value,
                     'view_roles' => MemberRole::ADMIN->value,
+                ],
+
+                // Trash: list, restore, force-destroy, empty.
+                //
+                // Split on "can this be taken back?" Restoring is
+                // reversible so it stays with the handling role
+                // (EDITOR). Force-destroy and empty bypass the trash
+                // and drop the PII permanently, so they need ADMIN.
+                //
+                // The parent node is children-only; the list page's
+                // permission lives in `trash.index`. Every existing
+                // nested node in this plugin (and in core / sibling
+                // plugins) follows this shape — a parent that carries
+                // both `access_roles` and `children` has no working
+                // example in the codebase and, per resolver history,
+                // only takes effect when core includes the fix that
+                // reconciles the two. Keeping the list key at
+                // `trash.index` sidesteps that dependency.
+                'trash' => [
+                    'children' => [
+                        'index' => [
+                            'access_roles' => MemberRole::EDITOR->value,
+                            'view_roles' => MemberRole::EDITOR->value,
+                        ],
+                        'restore' => [
+                            'access_roles' => MemberRole::EDITOR->value,
+                            'view_roles' => MemberRole::EDITOR->value,
+                        ],
+                        'force-destroy' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        'empty' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                    ],
                 ],
 
                 // Settings hub and per-section pages.
