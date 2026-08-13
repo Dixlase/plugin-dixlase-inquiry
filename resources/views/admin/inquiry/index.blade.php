@@ -212,12 +212,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                         title="{{ __('dixlase-inquiry::admin/inquiry/index.view') }}">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    @if($canDeleteInquiries)
                                     <button type="button"
                                         @click="$store.inquiryDelete.id = {{ $inquiry->id }}; openModal('deleteInquiryModal')"
                                         class="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
                                         title="{{ __('dixlase-inquiry::admin/inquiry/index.delete') }}">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -258,6 +260,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 {{-- 削除確認モーダル --}}
 @push('modals')
+    {{-- Trigger and modal share this condition on purpose: rendering one
+         without the other leaves a button that opens nothing (ui-modal now
+         warns about exactly that). --}}
+    @if($canDeleteInquiries)
     <x-ui-modal id="deleteInquiryModal"
         :title="__('dixlase-inquiry::admin/inquiry/index.confirm_delete_title')"
         :message="__('dixlase-inquiry::admin/inquiry/index.confirm_delete')"
@@ -284,6 +290,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
             </form>
         @endslot
     </x-ui-modal>
+    @endif
 @endpush
 
 {{-- 一括ステータス更新確認モーダル --}}
