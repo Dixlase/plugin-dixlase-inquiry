@@ -41,19 +41,63 @@ use App\Enums\MemberRole;
  * dot-notation keys like `inquiry.settings.form-basic` by walking the
  * nested `children` arrays.
  *
- * Defaults are intentionally set to ADMIN so that the inquiry menus are
- * visible and editable to admins out of the box. Operators can lower the
- * threshold (e.g. allow EDITOR to manage inquiry replies) via the
- * "Member role permissions" admin screen; any change is persisted in
- * `role_permission_overrides` as a delta.
+ * Settings default to ADMIN so the configuration screens are admin-only
+ * out of the box. The inquiry-handling routes (list, detail, status
+ * changes) default to EDITOR instead: answering submissions is delegated
+ * work, and it cannot be done without reading the submission. Deleting a
+ * submission and closing the public form stay at ADMIN.
+ *
+ * Operators can move any threshold via the "Member role permissions"
+ * admin screen; changes are persisted in `role_permission_overrides` as
+ * a delta rather than edited here.
  */
 
 return [
     'permissions' => [
         'inquiry' => [
             'children' => [
-                // Inquiry list + detail + status updates + delete.
+                // Handling submissions is delegated work, so the routes an
+                // operator uses to triage them are EDITOR: open the list,
+                // read one, move it through its statuses.
+                //
+                // This grants EDITOR sight of visitor PII -- name, address,
+                // phone, email, IP, message body. That is inherent to the
+                // job rather than incidental: an inquiry cannot be answered
+                // without reading it. Anything that goes beyond answering
+                // stays above EDITOR, below.
                 'index' => [
+                    'access_roles' => MemberRole::EDITOR->value,
+                    'view_roles' => MemberRole::EDITOR->value,
+                ],
+                'show' => [
+                    'access_roles' => MemberRole::EDITOR->value,
+                    'view_roles' => MemberRole::EDITOR->value,
+                ],
+                // Status transitions, single and bulk. Reversible: any
+                // status can be set again afterwards.
+                'status' => [
+                    'children' => [
+                        'update' => [
+                            'access_roles' => MemberRole::EDITOR->value,
+                            'view_roles' => MemberRole::EDITOR->value,
+                        ],
+                    ],
+                ],
+                'bulk-status' => [
+                    'access_roles' => MemberRole::EDITOR->value,
+                    'view_roles' => MemberRole::EDITOR->value,
+                ],
+
+                // destroy() calls delete() on a model without SoftDeletes,
+                // so the submission and its PII are gone for good. Nothing
+                // in the handling workflow needs that.
+                'destroy' => [
+                    'access_roles' => MemberRole::ADMIN->value,
+                    'view_roles' => MemberRole::ADMIN->value,
+                ],
+                // Closes the public form for the whole site. That is a
+                // site-availability decision, not inquiry handling.
+                'toggle-accepting' => [
                     'access_roles' => MemberRole::ADMIN->value,
                     'view_roles' => MemberRole::ADMIN->value,
                 ],

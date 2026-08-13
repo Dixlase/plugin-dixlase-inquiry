@@ -144,6 +144,12 @@ class DixlaseInquiryAdminController extends Controller
             'unreadCount' => $unreadCount,
             'statuses' => $statuses,
             'statusLabels' => $statusLabels,
+            // Deleting an inquiry is ADMIN-only (see
+            // config/admin/roles.php): destroy() removes the row and
+            // its PII outright, with no SoftDeletes to fall back on.
+            // Editors handle inquiries but do not erase them, so the
+            // control is hidden rather than left to answer with a 403.
+            'canDeleteInquiries' => AdminHelper::canEditPluginMenu('DixlaseInquiry', 'inquiry.destroy'),
         ]));
     }
 
@@ -174,6 +180,12 @@ class DixlaseInquiryAdminController extends Controller
             'inquiry' => $inquiry,
             'statuses' => $statuses,
             'statusLabels' => $statusLabels,
+            // Deleting an inquiry is ADMIN-only (see
+            // config/admin/roles.php): destroy() removes the row and
+            // its PII outright, with no SoftDeletes to fall back on.
+            // Editors handle inquiries but do not erase them, so the
+            // control is hidden rather than left to answer with a 403.
+            'canDeleteInquiries' => AdminHelper::canEditPluginMenu('DixlaseInquiry', 'inquiry.destroy'),
         ]));
     }
 
