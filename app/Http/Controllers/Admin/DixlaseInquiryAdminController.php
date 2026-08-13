@@ -194,7 +194,10 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $this->authorizeEdit('inquiry.index');
+        // Not inquiry.index: this is the ADMIN-only delete. Authorising
+        // against the list key would follow whatever the list is set to,
+        // which is EDITOR.
+        $this->authorizeEdit('inquiry.destroy');
 
         $inquiry = DixlaseInquiry::findOrFail($id);
         $inquiry->delete();
@@ -208,7 +211,7 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function updateStatus(Request $request, int $id): RedirectResponse
     {
-        $this->authorizeEdit('inquiry.index');
+        $this->authorizeEdit('inquiry.status.update');
 
         $inquiry = DixlaseInquiry::findOrFail($id);
 
@@ -227,7 +230,7 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function bulkUpdateStatus(Request $request): RedirectResponse
     {
-        $this->authorizeEdit('inquiry.index');
+        $this->authorizeEdit('inquiry.bulk-status');
 
         $validated = $request->validate([
             'ids' => 'required|array',
@@ -247,7 +250,9 @@ class DixlaseInquiryAdminController extends Controller
      */
     public function toggleAccepting(Request $request): \Illuminate\Http\JsonResponse
     {
-        $this->authorizeEdit('inquiry.index');
+        // Closing the public form is ADMIN-only; see destroy() above for
+        // why the list key is the wrong thing to authorise against.
+        $this->authorizeEdit('inquiry.toggle-accepting');
 
         $current = filter_var(DixlaseInquirySetting::get('accepting_inquiries', true), FILTER_VALIDATE_BOOLEAN);
         $newValue = ! $current;

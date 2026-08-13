@@ -261,4 +261,40 @@ class InquiryPluginPermissionResolutionTest extends TestCase
             );
         }
     }
+
+    /**
+     * The gate stops an editor at the route, but the controller carries its
+     * own authorizeEdit() call as a second layer. Those calls all named
+     * `inquiry.index`, which was harmless while every key was ADMIN and
+     * became wrong the moment the list moved to EDITOR: delete and
+     * toggle-accepting would have authorised against the list's role.
+     *
+     * Asserted from the source because authorizeEdit() is private and the
+     * actions it guards need a full request to reach.
+     */
+    public function test_each_action_authorises_against_its_own_permission_key(): void
+    {
+        $source = file_get_contents(
+            dirname(__DIR__, 2).'/app/Http/Controllers/Admin/DixlaseInquiryAdminController.php'
+        );
+
+        foreach ([
+            'destroy' => 'inquiry.destroy',
+            'updateStatus' => 'inquiry.status.update',
+            'bulkUpdateStatus' => 'inquiry.bulk-status',
+            'toggleAccepting' => 'inquiry.toggle-accepting',
+        ] as $action => $key) {
+            $this->assertStringContainsString(
+                "authorizeEdit('{$key}')",
+                $source,
+                "{$action}() must authorise against {$key}, not against whatever the list key happens to be."
+            );
+        }
+
+        $this->assertStringNotContainsString(
+            "authorizeEdit('inquiry.index')",
+            $source,
+            'No action should authorise against the list key: it is EDITOR, and the destructive actions are not.'
+        );
+    }
 }
