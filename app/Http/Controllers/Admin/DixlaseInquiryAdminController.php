@@ -144,12 +144,16 @@ class DixlaseInquiryAdminController extends Controller
             'unreadCount' => $unreadCount,
             'statuses' => $statuses,
             'statusLabels' => $statusLabels,
-            // Deleting an inquiry is ADMIN-only (see
-            // config/admin/roles.php): destroy() removes the row and
-            // its PII outright, with no SoftDeletes to fall back on.
-            // Editors handle inquiries but do not erase them, so the
-            // control is hidden rather than left to answer with a 403.
-            'canDeleteInquiries' => AdminHelper::canEditPluginMenu('DixlaseInquiry', 'inquiry.destroy'),
+            // destroy() now moves the inquiry to the trash (soft delete)
+            // rather than dropping the row, so it is EDITOR-safe: an
+            // accidental click can be undone from the trash within the
+            // retention window. `canDeleteInquiries` keeps its name so
+            // both blades and PermissionRegistry-facing code paths still
+            // read left-to-right; the underlying key `inquiry.destroy`
+            // reflects the routed name. `canViewTrash` gates the
+            // "View Trash" link on the toolbar.
+            'canDeleteInquiries' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.destroy'),
+            'canViewTrash' => AdminHelper::canViewPluginMenu(self::PLUGIN_SLUG, 'inquiry.trash.index'),
         ]));
     }
 
@@ -180,23 +184,24 @@ class DixlaseInquiryAdminController extends Controller
             'inquiry' => $inquiry,
             'statuses' => $statuses,
             'statusLabels' => $statusLabels,
-            // Deleting an inquiry is ADMIN-only (see
-            // config/admin/roles.php): destroy() removes the row and
-            // its PII outright, with no SoftDeletes to fall back on.
-            // Editors handle inquiries but do not erase them, so the
-            // control is hidden rather than left to answer with a 403.
-            'canDeleteInquiries' => AdminHelper::canEditPluginMenu('DixlaseInquiry', 'inquiry.destroy'),
+            // Same guard as index(): destroy() now soft-deletes, so
+            // this is EDITOR-visible. See index() for the full note.
+            'canDeleteInquiries' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.destroy'),
         ]));
     }
 
     /**
-     * 問い合わせ削除
+     * 問い合わせ削除（ソフトデリート）
+     *
+     * The model uses SoftDeletes, so this sets `deleted_at` and the row
+     * moves to the trash screen instead of dropping. Restore and
+     * permanent-delete live under trash() / restore() / forceDestroy().
      */
     public function destroy(int $id): RedirectResponse
     {
-        // Not inquiry.index: this is the ADMIN-only delete. Authorising
-        // against the list key would follow whatever the list is set to,
-        // which is EDITOR.
+        // Not inquiry.index: authorising against the list key would
+        // follow whatever the list is set to. `inquiry.destroy` is the
+        // key that carries this action's role in config/admin/roles.php.
         $this->authorizeEdit('inquiry.destroy');
 
         $inquiry = DixlaseInquiry::findOrFail($id);
@@ -204,6 +209,107 @@ class DixlaseInquiryAdminController extends Controller
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.index')
             ->with('success', __('dixlase-inquiry::admin/inquiry/index.deleted'));
+    }
+
+    /**
+     * ゴミ箱一覧（ソフトデリート済み）
+     *
+     * Only rows with a non-null `deleted_at` appear here, sorted by
+     * most-recently-trashed first. The retention cleanup (30 days) is
+     * registered in config/admin/database-cleanup.php; a permanent
+     * delete happens either through that job or through the
+     * force-destroy / empty controls on this screen.
+     */
+    public function trash(Request $request): View
+    {
+        $this->authorizeView('inquiry.trash.index');
+
+        $search = $request->input('search');
+
+        $perPage = (int) $request->input('per_page', 25);
+        $allowedPerPage = [10, 25, 50, 100];
+        if (! in_array($perPage, $allowedPerPage)) {
+            $perPage = 25;
+        }
+
+        $inquiries = DixlaseInquiry::onlyTrashed()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%')
+                        ->orWhere('subject', 'like', '%'.$search.'%')
+                        ->orWhere('message', 'like', '%'.$search.'%');
+                });
+            })
+            ->orderBy('deleted_at', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('dixlase-inquiry::admin.inquiry.trash', array_merge($this->viewParams, [
+            'inquiries' => $inquiries,
+            'search' => $search,
+            // Permanent delete (per-row and bulk empty) is ADMIN-only
+            // because it bypasses the retention window and the row
+            // cannot be restored afterwards. Editors see the trash so
+            // they can restore, but the destructive controls are
+            // hidden rather than left to answer with a 403.
+            'canForceDestroyInquiries' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.trash.force-destroy'),
+            'canEmptyTrash' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.trash.empty'),
+        ]));
+    }
+
+    /**
+     * ゴミ箱から復元
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        $this->authorizeEdit('inquiry.trash.restore');
+
+        $inquiry = DixlaseInquiry::onlyTrashed()->findOrFail($id);
+        $inquiry->restore();
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/trash.restore_success'));
+    }
+
+    /**
+     * ゴミ箱内の問い合わせを完全削除
+     *
+     * ADMIN only. The row and its PII are gone for good; there is no
+     * further undo. A privacy-driven deletion request (GDPR etc.) is
+     * only satisfied once this path has run — a soft-deleted row still
+     * carries the data.
+     */
+    public function forceDestroy(int $id): RedirectResponse
+    {
+        $this->authorizeEdit('inquiry.trash.force-destroy');
+
+        $inquiry = DixlaseInquiry::onlyTrashed()->findOrFail($id);
+        $inquiry->forceDelete();
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/trash.force_destroy_success'));
+    }
+
+    /**
+     * ゴミ箱を空にする（一括完全削除）
+     *
+     * ADMIN only. Iterates per-model rather than issuing a bulk DELETE
+     * so any `forceDeleted` model hooks (added later for e.g. attachment
+     * cleanup) still fire.
+     */
+    public function emptyTrash(): RedirectResponse
+    {
+        $this->authorizeEdit('inquiry.trash.empty');
+
+        $count = 0;
+        DixlaseInquiry::onlyTrashed()->each(function ($inquiry) use (&$count) {
+            $inquiry->forceDelete();
+            $count++;
+        });
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/trash.empty_trash_success', ['count' => $count]));
     }
 
     /**

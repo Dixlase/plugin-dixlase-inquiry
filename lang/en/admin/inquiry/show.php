@@ -61,6 +61,6 @@ return [
 
     'delete' => 'Delete',
     'delete_confirm_title' => 'Delete Inquiry',
-    'delete_confirm_message' => 'Are you sure you want to delete this inquiry? This action cannot be undone.',
+    'delete_confirm_message' => 'This will move the inquiry to the trash. You can restore it from the trash within 30 days before it is permanently deleted.',
     'status_updated' => 'The inquiry status has been updated.',
 ];

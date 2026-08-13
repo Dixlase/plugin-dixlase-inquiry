@@ -100,4 +100,28 @@ class DixlaseInquiryModelTest extends TestCase
             class_exists(\Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory::class)
         );
     }
+
+    /**
+     * Model opts into Eloquent's SoftDeletes so `destroy()` moves the row
+     * to the trash rather than dropping it. If this trait is ever
+     * removed the trash controller's `onlyTrashed()` queries would
+     * silently return empty and every delete would become permanent —
+     * assert against the trait itself so regressions surface here
+     * rather than through a lost inquiry in production.
+     */
+    public function test_uses_soft_deletes_trait(): void
+    {
+        $this->assertContains(
+            \Illuminate\Database\Eloquent\SoftDeletes::class,
+            class_uses_recursive(DixlaseInquiry::class),
+            'DixlaseInquiry must use SoftDeletes so destroy() is reversible.',
+        );
+
+        $model = new DixlaseInquiry();
+        $this->assertArrayHasKey(
+            'deleted_at',
+            $model->getCasts(),
+            'deleted_at must be cast as datetime for the trash UI and 30-day retention job.',
+        );
+    }
 }

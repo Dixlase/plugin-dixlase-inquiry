@@ -144,7 +144,7 @@
     "declares": {
         "configs": {
             "roles": true,
-            "database_cleanup": false,
+            "database_cleanup": true,
             "navigation": true
         },
         "assets": {
