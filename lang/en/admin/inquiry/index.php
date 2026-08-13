@@ -62,7 +62,14 @@ return [
     'no_inquiries' => 'No inquiries found.',
     'view' => 'View',
     'delete' => 'Delete',
-    'confirm_delete_title' => 'Delete Inquiry',
-    'confirm_delete' => 'Are you sure you want to delete this inquiry? This action cannot be undone.',
-    'deleted' => 'The inquiry has been deleted.',
+    // Wording reflects the soft-delete behaviour: destroy() moves the
+    // inquiry to the trash rather than dropping the row, so the operator
+    // has 30 days to restore before the retention cleanup runs.
+    'confirm_delete_title' => 'Move to Trash',
+    'confirm_delete' => 'This will move the inquiry to the trash. You can restore it from the trash within 30 days before it is permanently deleted.',
+    'deleted' => 'The inquiry has been moved to the trash.',
+
+    // Trash access from the index toolbar. The link is rendered only when
+    // the current viewer can access the trash screen (per config/admin/roles.php).
+    'view_trash' => 'View Trash',
 ];

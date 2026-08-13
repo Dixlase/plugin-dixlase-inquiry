@@ -40,13 +40,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 }" x-init="$store.inquiryDelete = { id: null }; $store.inquiryBulk = { ids: [], status: '' }"
    x-effect="$store.inquiryBulk.ids = selectedIds; $store.inquiryBulk.status = bulkStatus">
 
-    {{-- 未読バッジ --}}
-    @if($unreadCount > 0)
-        <div class="mb-4">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                <i class="fas fa-envelope mr-1.5"></i>
-                {{ __('dixlase-inquiry::admin/inquiry/index.unread_count', ['count' => $unreadCount]) }}
-            </span>
+    {{-- 未読バッジとゴミ箱リンクを 1 行にまとめる --}}
+    @if($unreadCount > 0 || $canViewTrash)
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <div>
+                @if($unreadCount > 0)
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                        <i class="fas fa-envelope mr-1.5"></i>
+                        {{ __('dixlase-inquiry::admin/inquiry/index.unread_count', ['count' => $unreadCount]) }}
+                    </span>
+                @endif
+            </div>
+            @if($canViewTrash)
+                <a href="{{ route('dixlase-inquiry::admin.inquiry.trash.index') }}"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                    <i class="fas fa-trash mr-2"></i>
+                    {{ __('dixlase-inquiry::admin/inquiry/index.view_trash') }}
+                </a>
+            @endif
         </div>
     @endif
 

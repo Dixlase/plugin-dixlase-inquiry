@@ -75,10 +75,11 @@ class InquiryPluginPermissionResolutionTest extends TestCase
      */
     /**
      * Handling an inquiry -- opening the list, reading one, moving it
-     * through its statuses -- is delegated work, so these resolve to
-     * EDITOR. Deleting (`inquiry.destroy`, no SoftDeletes behind it) and
-     * closing the public form (`inquiry.toggle-accepting`) are not part of
-     * handling and stay at ADMIN; they are covered by
+     * through its statuses, moving it to the trash, and pulling it back
+     * out -- is delegated work, so these resolve to EDITOR. Closing the
+     * public form (`inquiry.toggle-accepting`) and the two permanent-
+     * delete paths (`inquiry.trash.force-destroy`, `inquiry.trash.empty`)
+     * are not part of handling and stay at ADMIN; they are covered by
      * test_handling_is_editor_but_destructive_actions_are_not below.
      */
     private const EDITOR_MENU_KEYS = [
@@ -86,6 +87,9 @@ class InquiryPluginPermissionResolutionTest extends TestCase
         'inquiry.show',
         'inquiry.status.update',
         'inquiry.bulk-status',
+        'inquiry.destroy',
+        'inquiry.trash.index',
+        'inquiry.trash.restore',
     ];
 
     private const SUPER_ADMIN_EDIT_MENU_KEYS = [
@@ -214,14 +218,17 @@ class InquiryPluginPermissionResolutionTest extends TestCase
     }
 
     /**
-     * The point of the split: an editor can work a submission end to end,
-     * and cannot destroy it or take the public form offline.
+     * The point of the split: an editor can work a submission end to end
+     * -- including sending it to the trash and pulling it back -- and
+     * cannot permanently drop the row or take the public form offline.
      *
-     * inquiry.destroy calls delete() on a model with no SoftDeletes, so the
-     * row and the visitor PII it holds are gone for good. Granting EDITOR
-     * the handling routes without pinning these two would hand that out
-     * silently, since undeclared keys fall back to ADMIN and a later edit
-     * to roles.php could move them without anything failing.
+     * `destroy` is safe for EDITOR now that SoftDeletes moves the row to
+     * the trash instead of dropping it, but `trash.force-destroy` and
+     * `trash.empty` bypass the trash and drop visitor PII for good.
+     * Granting EDITOR the handling routes without pinning those two
+     * would hand that out silently, since undeclared keys fall back to
+     * ADMIN and a later edit to roles.php could move them without
+     * anything failing.
      */
     public function test_handling_is_editor_but_destructive_actions_are_not(): void
     {
@@ -236,7 +243,11 @@ class InquiryPluginPermissionResolutionTest extends TestCase
             );
         }
 
-        foreach (['inquiry.destroy', 'inquiry.toggle-accepting'] as $menuKey) {
+        foreach ([
+            'inquiry.toggle-accepting',
+            'inquiry.trash.force-destroy',
+            'inquiry.trash.empty',
+        ] as $menuKey) {
             $effective = PermissionRegistry::getPluginEffective(self::PLUGIN_SLUG, $menuKey);
 
             $this->assertSame(
@@ -283,6 +294,9 @@ class InquiryPluginPermissionResolutionTest extends TestCase
             'updateStatus' => 'inquiry.status.update',
             'bulkUpdateStatus' => 'inquiry.bulk-status',
             'toggleAccepting' => 'inquiry.toggle-accepting',
+            'restore' => 'inquiry.trash.restore',
+            'forceDestroy' => 'inquiry.trash.force-destroy',
+            'emptyTrash' => 'inquiry.trash.empty',
         ] as $action => $key) {
             $this->assertStringContainsString(
                 "authorizeEdit('{$key}')",
@@ -290,6 +304,13 @@ class InquiryPluginPermissionResolutionTest extends TestCase
                 "{$action}() must authorise against {$key}, not against whatever the list key happens to be."
             );
         }
+
+        // The trash list also has its own view-side guard.
+        $this->assertStringContainsString(
+            "authorizeView('inquiry.trash.index')",
+            $source,
+            'trash() must authorise against inquiry.trash.index, not the destroy or main list key.',
+        );
 
         $this->assertStringNotContainsString(
             "authorizeEdit('inquiry.index')",

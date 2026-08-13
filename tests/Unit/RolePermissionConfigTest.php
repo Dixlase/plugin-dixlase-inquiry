@@ -192,15 +192,19 @@ class RolePermissionConfigTest extends TestCase
     }
 
     /**
-     * Handling routes are EDITOR; the two that cannot be taken back are not.
+     * Handling routes -- including the reversible soft-delete -- are EDITOR;
+     * only the operations that cannot be taken back stay above.
      * Asserted against the config file itself, so a future edit that widens
-     * `destroy` has to fail here rather than only in a resolution test.
+     * permanent-delete has to fail here rather than only in a resolution test.
      */
     public function test_inquiry_handling_keys_are_editor(): void
     {
         $children = $this->roles['permissions']['inquiry']['children'];
 
-        foreach (['index', 'show', 'bulk-status'] as $key) {
+        // destroy() is EDITOR now that it moves the inquiry to the trash
+        // instead of dropping the row; permanent delete lives in
+        // trash.force-destroy / trash.empty and stays ADMIN below.
+        foreach (['index', 'show', 'bulk-status', 'destroy'] as $key) {
             $this->assertSame(
                 MemberRole::EDITOR->value,
                 $children[$key]['access_roles'] ?? null,
@@ -214,11 +218,55 @@ class RolePermissionConfigTest extends TestCase
             'inquiry.status.update is a reversible status change and should be EDITOR.'
         );
 
-        foreach (['destroy', 'toggle-accepting'] as $key) {
+        // toggle-accepting closes the public form -- a site-availability
+        // decision -- so it stays out of the handling role.
+        $this->assertSame(
+            MemberRole::ADMIN->value,
+            $children['toggle-accepting']['access_roles'] ?? null,
+            'inquiry.toggle-accepting closes the public form and must stay above EDITOR.'
+        );
+    }
+
+    /**
+     * The trash subtree splits reversible actions (view, restore) from
+     * irreversible ones (force-destroy, empty). Restoring is the whole
+     * point of the trash so it must be reachable by the same role that
+     * can send items there; permanent deletion bypasses restore and
+     * needs to stay at ADMIN.
+     *
+     * The parent `trash` node is children-only. Every existing nested
+     * key in this plugin follows that shape; a parent that carries
+     * both `access_roles` and `children` has no working example in the
+     * codebase and, per resolver history, needs the core fix that
+     * merges the two. Keeping the list key at `trash.index` sidesteps
+     * that dependency.
+     */
+    public function test_trash_keys_have_expected_roles(): void
+    {
+        $trash = $this->roles['permissions']['inquiry']['children']['trash'] ?? null;
+        $this->assertIsArray($trash, 'inquiry.trash node must exist.');
+        $this->assertArrayNotHasKey(
+            'access_roles',
+            $trash,
+            'inquiry.trash must be children-only; a parent+access_roles+children shape has no working example in the codebase.',
+        );
+        $this->assertArrayHasKey('children', $trash, 'inquiry.trash must have children.');
+
+        $trashChildren = $trash['children'];
+
+        foreach (['index', 'restore'] as $key) {
+            $this->assertSame(
+                MemberRole::EDITOR->value,
+                $trashChildren[$key]['access_roles'] ?? null,
+                "inquiry.trash.{$key} is reversible (viewing or restoring) and should be EDITOR."
+            );
+        }
+
+        foreach (['force-destroy', 'empty'] as $key) {
             $this->assertSame(
                 MemberRole::ADMIN->value,
-                $children[$key]['access_roles'] ?? null,
-                "inquiry.{$key} must stay above EDITOR."
+                $trashChildren[$key]['access_roles'] ?? null,
+                "inquiry.trash.{$key} permanently deletes visitor PII and must stay above EDITOR."
             );
         }
     }

@@ -197,7 +197,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </dl>
             </div>
 
-            {{-- 削除ボタン (ADMIN 以上のみ) --}}
+            {{-- 削除ボタン（EDITOR 以上、SoftDeletes でゴミ箱行き） --}}
             @if($canDeleteInquiries)
             <div class="bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-800 p-6" x-data="{ showDeleteConfirm: false }">
                 <x-form-button

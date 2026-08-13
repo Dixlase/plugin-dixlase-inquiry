@@ -35,6 +35,7 @@ namespace Plugins\DixlaseInquiry\App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
 
@@ -58,12 +59,14 @@ use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
  * @property \Illuminate\Support\Carbon|null $privacy_agreed_at
  * @property \Illuminate\Support\Carbon $submitted_at
  * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
 class DixlaseInquiry extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'plg_dixlase_inquiries';
 
@@ -98,6 +101,7 @@ class DixlaseInquiry extends Model
             'submitted_at' => 'datetime',
             'read_at' => 'datetime',
             'privacy_agreed_at' => 'datetime',
+            'deleted_at' => 'datetime',
         ];
     }
 

@@ -66,6 +66,23 @@ Route::prefix('inquiry')
         // 受付状態のトグル（AJAX）
         Route::patch('/toggle-accepting', [DixlaseInquiryAdminController::class, 'toggleAccepting'])->name('toggle-accepting');
 
+        // ゴミ箱（ソフトデリート済みの一覧・復元・完全削除）
+        //
+        // destroy() は SoftDeletes 対応でゴミ箱行き。ここは戻す/完全に消す
+        // 経路と、ゴミ箱一覧そのもの。/{id} の numeric 制約のおかげで
+        // /trash は先の show/destroy 経路にはぶつからない。
+        //
+        // 一覧ページはグループ内 `index` で trash.index を割り当てる。
+        // config/admin/roles.php は parent+access_roles+children を使わない
+        // (現状のコードベースに例が無く、コア #271 まで動かない場合がある)
+        // ため、`trash.children.index` で単葉として権限を持たせる。
+        Route::prefix('trash')->name('trash.')->group(function () {
+            Route::get('/', [DixlaseInquiryAdminController::class, 'trash'])->name('index');
+            Route::post('/empty', [DixlaseInquiryAdminController::class, 'emptyTrash'])->name('empty');
+            Route::post('/{id}/restore', [DixlaseInquiryAdminController::class, 'restore'])->name('restore')->where('id', '[0-9]+');
+            Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'forceDestroy'])->name('force-destroy')->where('id', '[0-9]+');
+        });
+
         // 設定サブメニュー
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [DixlaseInquiryAdminController::class, 'settingsIndex'])->name('index');
