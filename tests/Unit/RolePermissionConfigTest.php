@@ -74,8 +74,10 @@ class RolePermissionConfigTest extends TestCase
      */
     public function test_all_inquiry_menu_keys_default_to_admin(): void
     {
+        // inquiry.index moved to EDITOR with the rest of the handling
+        // routes; it is asserted in
+        // test_inquiry_handling_keys_are_editor below.
         $expected = [
-            ['inquiry', 'index'],
             ['inquiry', 'settings', 'index'],
             ['inquiry', 'settings', 'form-basic'],
             ['inquiry', 'settings', 'completion'],
@@ -187,5 +189,37 @@ class RolePermissionConfigTest extends TestCase
             (bool) ($pluginJson['declares']['configs']['roles'] ?? false),
             'plugin.json declares.configs.roles must be true',
         );
+    }
+
+    /**
+     * Handling routes are EDITOR; the two that cannot be taken back are not.
+     * Asserted against the config file itself, so a future edit that widens
+     * `destroy` has to fail here rather than only in a resolution test.
+     */
+    public function test_inquiry_handling_keys_are_editor(): void
+    {
+        $children = $this->roles['permissions']['inquiry']['children'];
+
+        foreach (['index', 'show', 'bulk-status'] as $key) {
+            $this->assertSame(
+                MemberRole::EDITOR->value,
+                $children[$key]['access_roles'] ?? null,
+                "inquiry.{$key} is part of handling an inquiry and should be EDITOR."
+            );
+        }
+
+        $this->assertSame(
+            MemberRole::EDITOR->value,
+            $children['status']['children']['update']['access_roles'] ?? null,
+            'inquiry.status.update is a reversible status change and should be EDITOR.'
+        );
+
+        foreach (['destroy', 'toggle-accepting'] as $key) {
+            $this->assertSame(
+                MemberRole::ADMIN->value,
+                $children[$key]['access_roles'] ?? null,
+                "inquiry.{$key} must stay above EDITOR."
+            );
+        }
     }
 }
