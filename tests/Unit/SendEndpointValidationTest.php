@@ -12,6 +12,7 @@ namespace Plugins\DixlaseInquiry\Tests\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Plugins\DixlaseInquiry\App\Http\Controllers\Front\DixlaseInquiryFrontController;
 use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySubmitRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Front\DixlaseInquiryEmbedSendRequest;
 use ReflectionMethod;
 use Tests\TestCase;
 
@@ -118,5 +119,35 @@ class SendEndpointValidationTest extends TestCase
             is_array($rules['email']) ? implode('|', $rules['email']) : $rules['email'],
             'The address the auto-reply is sent to must be validated as an email address.'
         );
+    }
+
+    /**
+     * VerifiesCaptcha only verifies the token when its withValidator() hook
+     * is the one Laravel calls. A request that declared its own would
+     * shadow it silently, and the CAPTCHA would be back to a presence check.
+     */
+    public function test_both_requests_leave_the_captcha_hook_to_the_trait(): void
+    {
+        foreach ([DixlaseInquirySubmitRequest::class, DixlaseInquiryEmbedSendRequest::class] as $class) {
+            $method = new ReflectionMethod($class, 'withValidator');
+            $this->assertStringEndsWith(
+                'VerifiesCaptcha.php',
+                (string) $method->getFileName(),
+                "{$class} must not override withValidator(); the trait's hook is what verifies the token."
+            );
+        }
+    }
+
+    /**
+     * The form key gates verification on the form's own CAPTCHA setting and
+     * lets reCAPTCHA Enterprise match the action the widget was rendered with.
+     */
+    public function test_both_requests_name_the_inquiry_captcha_form(): void
+    {
+        foreach ([DixlaseInquirySubmitRequest::class, DixlaseInquiryEmbedSendRequest::class] as $class) {
+            $method = new ReflectionMethod($class, 'captchaFormKey');
+            $method->setAccessible(true);
+            $this->assertSame('dixlase-inquiry.inquiry_contact', $method->invoke(new $class()));
+        }
     }
 }
