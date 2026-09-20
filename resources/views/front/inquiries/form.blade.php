@@ -64,6 +64,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div class="px-8 pt-8 pb-10">
                     <form action="{{ $settings->show_confirmation_page ? route('inquiry.confirm') : route('inquiry.send') }}" method="POST">
                         @csrf
+                        {{-- Validation errors (same block as the embed form). The
+                             fields below only flag privacy consent inline, so a
+                             rejected CAPTCHA token or a missing field would
+                             otherwise bring the visitor back here with no reason. --}}
+                        @if($errors->any())
+                            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-6" role="alert">
+                                <ul class="list-disc list-inside space-y-1">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         @include('dixlase-inquiry::front.inquiries.partials.form-fields')
                     </form>
                 </div>
