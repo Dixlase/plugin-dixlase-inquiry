@@ -37,7 +37,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     <div x-ref="heightContainer" class="overflow-hidden transition-[height] duration-300 ease-out" style="height: auto;">
 
     {{-- エラー表示エリア（AJAX用） --}}
-    <div class="inquiry-errors hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+    <div class="inquiry-errors hidden scroll-mt-24 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4" role="alert" aria-live="polite"></div>
 
     @if($errors->any())
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">

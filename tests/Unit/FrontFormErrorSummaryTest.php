@@ -28,4 +28,23 @@ class FrontFormErrorSummaryTest extends TestCase
             $this->assertStringContainsString('$errors->all()', $source, "{$view}.blade.php must list every validation error.");
         }
     }
+
+    /**
+     * The embed form submits by fetch. Its failure handling has to read both
+     * validation payload shapes core can return, hand the visitor a fresh
+     * CAPTCHA token, and bring the error box into view — otherwise a rejected
+     * token looks like "the form just came back".
+     */
+    public function test_embed_form_script_recovers_from_a_rejected_submission(): void
+    {
+        $source = (string) file_get_contents(__DIR__.'/../../resources/src/js/components/embed-form.js');
+
+        $this->assertStringContainsString("'Accept': 'application/json'", $source);
+        $this->assertStringContainsString('data.error.details', $source, 'must read the Dixlase API error envelope');
+        $this->assertStringContainsString('data.errors', $source, 'must read the default Laravel validation payload');
+        $this->assertStringContainsString('response.redirected', $source, 'a followed redirect is not a completed submission');
+        $this->assertStringContainsString('resetCaptchaWidget()', $source);
+        $this->assertStringContainsString('scrollToErrors()', $source);
+        $this->assertSame(2, substr_count($source, 'this.scrollToErrors()'), 'both submit paths must scroll to the error box');
+    }
 }
