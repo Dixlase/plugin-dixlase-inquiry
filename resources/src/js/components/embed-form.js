@@ -6,6 +6,52 @@
  * @param {boolean} nameOrderWestern - 名前の順序が欧米式かどうか
  * @returns {object} Alpine.jsコンポーネントオブジェクト
  */
+// Ask for JSON explicitly so a validation failure comes back as JSON in every
+// core configuration; the body is read by extractErrors() below.
+const FETCH_HEADERS = { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' };
+
+/**
+ * Pull the field => messages map out of a failed response body.
+ * Laravel's default validation payload is `{ errors }`; Dixlase's API error
+ * envelope (bootstrap/app.php, used when the request asks for JSON) is
+ * `{ error: { details } }`. Returns null when neither is present.
+ */
+function extractErrors(data) {
+    if (!data || typeof data !== 'object') {
+        return null;
+    }
+    if (data.errors && typeof data.errors === 'object') {
+        return data.errors;
+    }
+    if (data.error && data.error.details && typeof data.error.details === 'object') {
+        return data.error.details;
+    }
+    return null;
+}
+
+/**
+ * Give the visitor a fresh CAPTCHA token for the retry. Tokens are single-use,
+ * so resubmitting after a failure with the same token is rejected as
+ * "timeout-or-duplicate". Prefers the core-provided hook and falls back to
+ * the provider APIs the widget scripts expose.
+ */
+function resetCaptchaWidget() {
+    try {
+        if (typeof window.dixlaseCaptchaReset === 'function') {
+            window.dixlaseCaptchaReset();
+            return;
+        }
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            window.turnstile.reset();
+        }
+        if (window.grecaptcha && typeof window.grecaptcha.reset === 'function') {
+            window.grecaptcha.reset();
+        }
+    } catch {
+        // Nothing to recover here: the widget is rebuilt on the next page load.
+    }
+}
+
 export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWestern = false) {
     if (!showConfirmationPage) {
         // 確認画面なしの場合は最低限のAJAX送信機能のみ
@@ -29,14 +75,18 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                     const response = await fetch(form.action, {
                         method: 'POST',
                         body: formData,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        headers: FETCH_HEADERS,
                     });
-                    if (response.ok) {
+                    // A followed redirect (expired session, maintenance page)
+                    // is a 200 too, but not a completed submission.
+                    if (response.ok && !response.redirected) {
                         await this.transitionTo('complete');
                     } else {
-                        const data = await response.json().catch(() => null);
-                        if (data && data.errors) {
-                            this.showValidationErrors(data.errors);
+                        const errors = extractErrors(await response.json().catch(() => null));
+                        if (errors) {
+                            this.showValidationErrors(errors);
+                            resetCaptchaWidget();
+                            this.scrollToErrors();
                         } else {
                             form.submit();
                         }
@@ -57,7 +107,11 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 container.innerHTML = '<ul class="list-disc list-inside">' +
                     messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
                 container.classList.remove('hidden');
-                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            scrollToErrors() {
+                const container = this.$el.querySelector('.inquiry-errors');
+                (container || this.$el).scrollIntoView({ behavior: 'smooth', block: 'center' });
             },
 
             async transitionTo(view) {
@@ -268,15 +322,22 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    headers: FETCH_HEADERS,
                 });
-                if (response.ok) {
+                // A followed redirect (expired session, maintenance page) is a
+                // 200 too, but not a completed submission.
+                if (response.ok && !response.redirected) {
                     await this.transitionTo('complete');
                 } else {
-                    const data = await response.json().catch(() => null);
-                    if (data && data.errors) {
-                        this.showValidationErrors(data.errors);
+                    const errors = extractErrors(await response.json().catch(() => null));
+                    if (errors) {
+                        this.showValidationErrors(errors);
+                        resetCaptchaWidget();
                         await this.transitionTo('form');
+                        // transitionTo() scrolls to the section top, where a
+                        // fixed header can cover the error box; bring the
+                        // box itself into view last.
+                        this.scrollToErrors();
                     } else {
                         // フォールバック: 通常の送信
                         form.submit();
@@ -299,6 +360,11 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             container.innerHTML = '<ul class="list-disc list-inside">' +
                 messages.map(m => '<li>' + m + '</li>').join('') + '</ul>';
             container.classList.remove('hidden');
+        },
+
+        scrollToErrors() {
+            const container = this.$el.querySelector('.inquiry-errors');
+            (container || this.$el).scrollIntoView({ behavior: 'smooth', block: 'center' });
         },
     };
 }
