@@ -42,6 +42,17 @@ class DixlaseInquirySubmitRequest extends FormRequest
     use VerifiesCaptcha;
 
     /**
+     * The `captcha.forms` key this request is guarded by. VerifiesCaptcha
+     * verifies the posted token against it once the rules pass, and drivers
+     * that assess the token against the action it was rendered with
+     * (reCAPTCHA Enterprise) compare this key as the expected action.
+     */
+    protected function captchaFormKey(): string
+    {
+        return 'dixlase-inquiry.inquiry_contact';
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -174,7 +185,7 @@ class DixlaseInquirySubmitRequest extends FormRequest
         }
 
         // CAPTCHA（ドライバー固有のフィールド名・ルールを動的取得）
-        if (CaptchaHelper::shouldShowCaptcha('dixlase-inquiry.inquiry_contact')) {
+        if (CaptchaHelper::shouldShowCaptcha($this->captchaFormKey())) {
             $rules = array_merge($rules, $this->getCaptchaRules());
         }
 
