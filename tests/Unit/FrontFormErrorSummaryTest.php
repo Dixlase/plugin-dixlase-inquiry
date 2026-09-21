@@ -44,6 +44,10 @@ class FrontFormErrorSummaryTest extends TestCase
         $this->assertStringContainsString('data.errors', $source, 'must read the default Laravel validation payload');
         $this->assertStringContainsString('response.redirected', $source, 'a followed redirect is not a completed submission');
         $this->assertStringContainsString('resetCaptchaWidget()', $source);
+        // Alpine v3 resolves $el to the element carrying the directive (the
+        // submit button / form), so the error box must be looked up from $root.
+        $this->assertStringContainsString("this.\$root.querySelector('.inquiry-errors')", $source);
+        $this->assertStringNotContainsString('this.$el', $source, 'never scope DOM lookups or scrolling to $el');
         $this->assertStringContainsString('scrollToErrors()', $source);
         $this->assertSame(2, substr_count($source, 'this.scrollToErrors()'), 'both submit paths must scroll to the error box');
     }
