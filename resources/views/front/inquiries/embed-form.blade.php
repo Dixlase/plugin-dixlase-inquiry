@@ -31,6 +31,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 {{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
 <div class="dixlase-inquiry-embed" id="inquiry"
     x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
+    data-msg-too-many="{{ __('dixlase-inquiry::front.messages.too_many_requests') }}"
+    data-msg-submit-error="{{ __('dixlase-inquiry::front.messages.submit_error') }}"
     @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
 
     {{-- 高さアニメーション用ラッパー --}}

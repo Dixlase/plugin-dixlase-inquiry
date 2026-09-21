@@ -51,4 +51,28 @@ class FrontFormErrorSummaryTest extends TestCase
         $this->assertStringContainsString('scrollToErrors()', $source);
         $this->assertSame(2, substr_count($source, 'this.scrollToErrors()'), 'both submit paths must scroll to the error box');
     }
+
+    /**
+     * The inquiry rate limit answers 429 with no field errors. The embed form
+     * must explain that in the box instead of falling back to a full-page
+     * submission that renders a bare "429 Too Many Requests".
+     */
+    public function test_embed_form_explains_the_rate_limit_instead_of_a_bare_429(): void
+    {
+        $source = (string) file_get_contents(__DIR__.'/../../resources/src/js/components/embed-form.js');
+        $view = (string) file_get_contents(__DIR__.'/../../resources/views/front/inquiries/embed-form.blade.php');
+
+        $this->assertStringContainsString('response.status === 429', $source);
+        $this->assertSame(2, substr_count($source, 'messageForFailure(response, data, this.$root)'), 'both submit paths must consult the fallback message');
+        $this->assertStringContainsString('data-msg-too-many=', $view);
+
+        // Read the dictionaries directly: the plugin's translation namespace
+        // is only registered when the plugin is active in the database, which
+        // it is not in CI's fresh test database.
+        foreach (['en', 'ja'] as $locale) {
+            $front = require __DIR__.'/../../lang/'.$locale.'/front.php';
+
+            $this->assertNotEmpty($front['messages']['too_many_requests'] ?? null, "{$locale} translation missing");
+        }
+    }
 }
