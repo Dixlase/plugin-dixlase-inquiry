@@ -30,6 +30,23 @@ function extractErrors(data) {
 }
 
 /**
+ * A message for a failure that carries no field errors: the inquiry rate
+ * limit (429) and any other JSON error envelope. Returns null when the
+ * response is not something we can explain, in which case the caller falls
+ * back to a normal form submission so the server can render its own page.
+ */
+function messageForFailure(response, data, root) {
+    const messages = (root && root.dataset) || {};
+    if (response.status === 429) {
+        return messages.msgTooMany || null;
+    }
+    if (data && ((data.error && data.error.message) || data.message)) {
+        return messages.msgSubmitError || null;
+    }
+    return null;
+}
+
+/**
  * Give the visitor a fresh CAPTCHA token for the retry. Tokens are single-use,
  * so resubmitting after a failure with the same token is rejected as
  * "timeout-or-duplicate". Prefers the core-provided hook and falls back to
@@ -82,7 +99,9 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                     if (response.ok && !response.redirected) {
                         await this.transitionTo('complete');
                     } else {
-                        const errors = extractErrors(await response.json().catch(() => null));
+                        const data = await response.json().catch(() => null);
+                        const message = messageForFailure(response, data, this.$root);
+                        const errors = extractErrors(data) || (message ? { _: [message] } : null);
                         if (errors) {
                             this.showValidationErrors(errors);
                             resetCaptchaWidget();
@@ -332,7 +351,9 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 if (response.ok && !response.redirected) {
                     await this.transitionTo('complete');
                 } else {
-                    const errors = extractErrors(await response.json().catch(() => null));
+                    const data = await response.json().catch(() => null);
+                    const message = messageForFailure(response, data, this.$root);
+                    const errors = extractErrors(data) || (message ? { _: [message] } : null);
                     if (errors) {
                         this.showValidationErrors(errors);
                         resetCaptchaWidget();
