@@ -99,7 +99,10 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             },
 
             showValidationErrors(errors) {
-                const container = this.$el.querySelector('.inquiry-errors');
+                // $root, not $el: the handlers run on the submit button /
+                // form, and Alpine v3 resolves $el to that element, so a
+                // querySelector from $el never finds the box at the section top.
+                const container = this.$root.querySelector('.inquiry-errors');
                 if (!container) {
                     return;
                 }
@@ -110,8 +113,8 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             },
 
             scrollToErrors() {
-                const container = this.$el.querySelector('.inquiry-errors');
-                (container || this.$el).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const container = this.$root.querySelector('.inquiry-errors');
+                (container || this.$root).scrollIntoView({ behavior: 'smooth', block: 'center' });
             },
 
             async transitionTo(view) {
@@ -140,7 +143,7 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
                 }
                 await this.nextFrame();
                 this.isTransitioning = false;
-                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' });
             },
 
             sleep(ms) {
@@ -221,7 +224,7 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
             // フェードイン開始
             await this.nextFrame();
             this.isTransitioning = false;
-            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         sleep(ms) {
@@ -352,7 +355,8 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
         },
 
         showValidationErrors(errors) {
-            const container = this.$el.querySelector('.inquiry-errors');
+            // $root, not $el — see the single-page variant above.
+            const container = this.$root.querySelector('.inquiry-errors');
             if (!container) {
                 return;
             }
@@ -363,8 +367,8 @@ export function createInquiryEmbedForm(showConfirmationPage = true, nameOrderWes
         },
 
         scrollToErrors() {
-            const container = this.$el.querySelector('.inquiry-errors');
-            (container || this.$el).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const container = this.$root.querySelector('.inquiry-errors');
+            (container || this.$root).scrollIntoView({ behavior: 'smooth', block: 'center' });
         },
     };
 }
