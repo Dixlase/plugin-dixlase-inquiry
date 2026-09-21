@@ -66,9 +66,13 @@ class FrontFormErrorSummaryTest extends TestCase
         $this->assertSame(2, substr_count($source, 'messageForFailure(response, data, this.$root)'), 'both submit paths must consult the fallback message');
         $this->assertStringContainsString('data-msg-too-many=', $view);
 
+        // Read the dictionaries directly: the plugin's translation namespace
+        // is only registered when the plugin is active in the database, which
+        // it is not in CI's fresh test database.
         foreach (['en', 'ja'] as $locale) {
-            $key = 'dixlase-inquiry::front.messages.too_many_requests';
-            $this->assertNotSame($key, trans($key, [], $locale), "{$locale} translation missing");
+            $front = require __DIR__.'/../../lang/'.$locale.'/front.php';
+
+            $this->assertNotEmpty($front['messages']['too_many_requests'] ?? null, "{$locale} translation missing");
         }
     }
 }
