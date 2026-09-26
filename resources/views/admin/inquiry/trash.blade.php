@@ -30,7 +30,7 @@ GNU General Public License for more details.
 @section('content')
 <div class="max-w-7xl mx-auto">
 
-    {{-- 戻るリンクとゴミ箱操作ヘッダー --}}
+    {{-- Back link and trash action header --}}
     <div class="mb-4 flex items-center justify-between gap-3">
         <a href="{{ route('dixlase-inquiry::admin.inquiry.index') }}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
@@ -38,10 +38,10 @@ GNU General Public License for more details.
             {{ __('dixlase-inquiry::admin/inquiry/trash.back_to_index') }}
         </a>
 
-        {{-- ゴミ箱を空にするボタン（ADMIN のみ、かつ 1 件以上ある場合） --}}
-        {{-- トリガーとモーダルは同じ条件で囲む必要がある(片方だけ描画すると
-             ui-modal が console.warn を出す)。inquiries->total() のガードも
-             ここで共有し、モーダル側も同じ条件を反復する。 --}}
+        {{-- Empty-trash button (ADMIN only, and only when the trash is not empty) --}}
+        {{-- The trigger and its modal must share the same condition (rendering only
+             one of them makes ui-modal log a console.warn). The inquiries->total()
+             guard is shared here, and the modal repeats the same condition. --}}
         @if($canEmptyTrash && $inquiries->total() > 0)
             <button type="button"
                 @click="openModal('emptyTrashModal')"
@@ -52,7 +52,7 @@ GNU General Public License for more details.
         @endif
     </div>
 
-    {{-- 保持期間の告知 --}}
+    {{-- Retention period notice --}}
     <div class="mb-6 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
         <div class="flex gap-3">
             <div class="flex-shrink-0 pt-0.5">
@@ -65,7 +65,7 @@ GNU General Public License for more details.
         </div>
     </div>
 
-    {{-- 検索セクション --}}
+    {{-- Search section --}}
     <section class="mb-6">
         <form action="{{ route('dixlase-inquiry::admin.inquiry.trash.index') }}" method="GET"
             class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
@@ -97,9 +97,9 @@ GNU General Public License for more details.
         </form>
     </section>
 
-    {{-- 一覧セクション --}}
+    {{-- List section --}}
     <section>
-        {{-- ページネーションコントロール --}}
+        {{-- Pagination controls --}}
         <x-ui-pagination-controls
             :paginator="$inquiries"
             :perPageOptions="[10, 25, 50, 100]"
@@ -160,7 +160,7 @@ GNU General Public License for more details.
                                 </td>
                                 <td data-label="{{ __('dixlase-inquiry::admin/inquiry/trash.table.actions') }}">
                                     <div class="flex items-center gap-1">
-                                        {{-- 復元（EDITOR 以上） --}}
+                                        {{-- Restore (EDITOR and above) --}}
                                         <form id="restoreForm-{{ $inquiry->id }}" action="{{ route('dixlase-inquiry::admin.inquiry.trash.restore', $inquiry->id) }}" method="POST" class="inline">
                                             @csrf
                                         </form>
@@ -171,7 +171,7 @@ GNU General Public License for more details.
                                             <i class="fas fa-undo"></i>
                                         </button>
 
-                                        {{-- 完全削除（ADMIN のみ）— トリガーとモーダルを同じ条件で囲む --}}
+                                        {{-- Permanent delete (ADMIN only) — trigger and modal share the same condition --}}
                                         @if($canForceDestroyInquiries)
                                             <form id="forceDestroyForm-{{ $inquiry->id }}" action="{{ route('dixlase-inquiry::admin.inquiry.trash.force-destroy', $inquiry->id) }}" method="POST" class="inline">
                                                 @csrf
@@ -219,19 +219,19 @@ GNU General Public License for more details.
     </section>
 </div>
 
-{{-- 復元 / 完全削除モーダル（各行）--}}
+{{-- Restore / permanent delete modals (one per row) --}}
 @push('modals')
     @foreach($inquiries as $inquiry)
-        {{-- 復元モーダル。form=... で先の hidden form を submit する --}}
+        {{-- Restore modal. form=... submits the hidden form rendered above --}}
         <x-ui-modal id="restoreModal-{{ $inquiry->id }}"
             :title="__('dixlase-inquiry::admin/inquiry/trash.restore')"
-            :message="__('dixlase-inquiry::admin/inquiry/trash.restore') . ': ' . $inquiry->name"
+            :message="__('dixlase-inquiry::admin/inquiry/trash.restore') . ': ' . e($inquiry->name)"
             icon-type="info"
             :form="'restoreForm-' . $inquiry->id"
             confirm-color="blue"
         />
 
-        {{-- 完全削除モーダル。トリガーと同じ条件で囲む(重要) --}}
+        {{-- Permanent delete modal. Must share the trigger's condition (important) --}}
         @if($canForceDestroyInquiries)
             <x-ui-modal id="forceDestroyModal-{{ $inquiry->id }}"
                 :title="__('dixlase-inquiry::admin/inquiry/trash.confirm_force_destroy_title')"
@@ -243,7 +243,7 @@ GNU General Public License for more details.
         @endif
     @endforeach
 
-    {{-- ゴミ箱を空にする確認モーダル。トリガーと同じ条件で囲む --}}
+    {{-- Empty-trash confirmation modal. Shares the trigger's condition --}}
     @if($canEmptyTrash && $inquiries->total() > 0)
         <form id="emptyTrashForm" action="{{ route('dixlase-inquiry::admin.inquiry.trash.empty') }}" method="POST">
             @csrf
