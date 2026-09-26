@@ -31,8 +31,15 @@
  */
 
 return [
-    // プラグイン設定画面のルート名
-    'settings_route' => 'dixlase-inquiry::admin.inquiry.settings',
-    
-    // 注: ナビゲーション設定は config/admin/navigation.php に移動
+    // Route name for the plugin's settings hub.
+    //
+    // Consumed by AdminPluginsSettingsController::getPluginSettingsUrl().
+    // Route::has() returns false for the bare `.settings` group name (that
+    // is Laravel's group prefix, not a registered route), so the "Settings"
+    // button on the plugin card silently disappeared. Point at the actual
+    // leaf `.settings.index` so the button renders and lands on the
+    // settings overview screen.
+    'settings_route' => 'dixlase-inquiry::admin.inquiry.settings.index',
+
+    // Note: navigation settings live in config/admin/navigation.php.
 ];
