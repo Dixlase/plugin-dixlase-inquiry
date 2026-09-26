@@ -318,11 +318,11 @@
         "tests/Unit/TranslationFileTest.php": "sha256:8be71e375628538809a8af500828fc53440af7d7ade586e81e009226c1bda536",
         "tests/Unit/VersionManifestConsistencyTest.php": "sha256:9c1b33f03c784c3d88c04717750d4ecf5ba2a9bff183174cf8263ccfca54196a",
         "thumbnail.png": "sha256:bf1f9d4ac7dfa30814d01707eb11271ce11e7a0877941fe8f15ade43d0a56886",
-        "vite.config.js": "sha256:5eb083264340887cb432f40b9c519e2806a989ef82e288781ccdbb4789e9a335"
+        "vite.config.js": "sha256:9e25c76c8453ab58e0279a0bf688f7e11075a1ce38c370fb8d8ca81e168ba8d6"
     },
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-09-26T07:53:05+00:00"
+        "signed_at": "2026-09-26T13:40:42+00:00"
     }
 }
