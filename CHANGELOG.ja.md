@@ -17,5 +17,4 @@ Dixlase Inquiry プラグインの主要な変更はすべてこのファイル�
   コアの reCAPTCHA v3 および Cloudflare Turnstile ドライバに対応。
 - 問い合わせフォームで CAPTCHA が有効になっていない場合に警告する、
   ダッシュボード通知（`DashboardNotificationProviderInterface`）。
-- 多言語フォームコンテンツ（`multilingual-content` capability）。
 - 設定可能なフォーム URL のために `RouteSlugProvider` 契約を実装。
