@@ -92,10 +92,7 @@ jobs:
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
-            --exclude='.backlog' \
             --exclude='node_modules' \
-            --exclude='tests' \
-            --exclude='phpunit.xml' \
             --exclude='dist' \
             ./ "$STAGE/"
 
