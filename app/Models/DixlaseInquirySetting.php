@@ -112,7 +112,8 @@ class DixlaseInquirySetting extends Model
             'show_kana' => false,
             'require_kana' => false,
             'email_confirm_paste_disabled' => true,
-            'auto_reply_enabled' => true,
+            // Off by default: it mails any address a visitor enters (see the seeder).
+            'auto_reply_enabled' => false,
             'auto_reply_from_email' => '',
             'auto_reply_subject' => 'お問い合わせを受け付けました',
             'auto_reply_body' => "この度は、お問い合わせいただきありがとうございます。\n\n以下の内容で承りました。\n内容を確認の上、担当者よりご連絡させていただきます。\n\nお名前: {{name}}\nメールアドレス: {{email}}\n題名: {{subject}}\n\nお問い合わせ内容:\n{{message}}\n\n今後ともよろしくお願いいたします。",

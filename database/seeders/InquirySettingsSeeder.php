@@ -33,7 +33,6 @@
 namespace Plugins\DixlaseInquiry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 
 class InquirySettingsSeeder extends Seeder
@@ -67,7 +66,9 @@ class InquirySettingsSeeder extends Seeder
             'body' => $texts['body'],
 
             // 自動返信設定（言語別）
-            'auto_reply_enabled' => '1',
+            // Off until the operator turns it on: the auto-reply mails whatever
+            // address a visitor types in, and CAPTCHA is not on by default.
+            'auto_reply_enabled' => '0',
             'auto_reply_subject' => $texts['auto_reply_subject'],
             'auto_reply_body' => $texts['auto_reply_body'],
 
@@ -99,7 +100,6 @@ class InquirySettingsSeeder extends Seeder
                 ['value' => $value]
             );
         }
-
     }
 
     /**

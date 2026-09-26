@@ -195,7 +195,7 @@
         "app/Enums/InquiryStatus.php": "sha256:220a37d9888f6b0d5ac8117200eb22cf810c5d377471bc8c435f6da77cc03084",
         "app/Helpers/DixlaseInquiryHelpers.php": "sha256:5daf376bc708643dd709e9b0c3b6b70ab94bb44013c2d9617ac42c67c3a95005",
         "app/Http/Controllers/Admin/DixlaseInquiryAdminController.php": "sha256:2a47805ac82e87fc3bcb9034bb77a3f529a5ccbcba6b3df63e19c334f6c8407d",
-        "app/Http/Controllers/Front/DixlaseInquiryFrontController.php": "sha256:5ea8f27a878bf38745b1a768ac4e76ee1932e420f52cf9f40bc9c3816fb84fb1",
+        "app/Http/Controllers/Front/DixlaseInquiryFrontController.php": "sha256:7c3337d0b3a0605a87f38319117bc52297258018fb0b58261615767516f80d18",
         "app/Http/Requests/Admin/DixlaseInquiryAdminNotificationRequest.php": "sha256:b84635fcd45ff49720b7c20ef235fb1e18d0ab8eca8d1e54414c7593072c306f",
         "app/Http/Requests/Admin/DixlaseInquiryAutoReplyRequest.php": "sha256:ae0286ccae34c132eb3cb47e75db7efc987567b321ab034322b96744a15b7933",
         "app/Http/Requests/Admin/DixlaseInquiryCompletionRequest.php": "sha256:bad4157794232f6d92fb3ce700d283b75af51139b37e8daafe6c4302e1a5efd0",
@@ -205,7 +205,7 @@
         "app/Mail/DixlaseInquiryAdminNotification.php": "sha256:488d80aa99ba37a0e29adb919e3d79102542e0eccff868d89579520e7db45f44",
         "app/Mail/DixlaseInquiryAutoReply.php": "sha256:1fba3d3ea9cb78112a11c11b549936fb928db61ae8fa0c7383c60ac3229c37a3",
         "app/Models/DixlaseInquiry.php": "sha256:3b017192f1673a089d0114751fe53ca88d7c5ce5a4be986fd61e2bf7f1765cd4",
-        "app/Models/DixlaseInquirySetting.php": "sha256:439fbc52f2f0c3f6dabae5083b272761f1a584a72ec8ee256522b5d637d61d7e",
+        "app/Models/DixlaseInquirySetting.php": "sha256:7ca04b8f1d82a5c57017b424cc101972e980b8937337bcb509b7dfadc7a40d18",
         "app/Multilingual/InquirySettingsProvider.php": "sha256:3dbf66042b6c4fa4bda434e4acf0a8ebab064a23239e5d37ecbf0ef90a66b8ff",
         "app/Providers/DixlaseInquiryServiceProvider.php": "sha256:34eedc84b0e58dfffc10760c1a4dfd5ba517eb971feac9fe2c10402d0f0974b9",
         "app/Services/DixlaseInquiryCaptchaFormProvider.php": "sha256:b9842fba1bf91d016e1a9cce2d68930758ae169aadff2f6624e18845cfe1b495",
@@ -214,6 +214,7 @@
         "app/Shortcodes/DixlaseInquiryFormShortcode.php": "sha256:b69fe01323f577f3f6d7760c9012c9ff9480720e2d799e6d827ed42f469699ab",
         "app/Support/InquiryFormResolver.php": "sha256:c4e33eb7779695c033ec818b76b8f24fab40546ec81165f9a8388824d37fe731",
         "app/Support/InquiryLocaleSupport.php": "sha256:edad50b78cdc987d70a1c60497b3abb5596b93f48e7c005bd2ce71ebf1f9a45e",
+        "app/Support/MailMarkdown.php": "sha256:99d2fdd0abdc12dfd87f64f0fe466ac3cb36668e098df8a68ca95362d7a5a006",
         "app/Traits/InquiryFormDataTrait.php": "sha256:f2f63a5a8d2100e80349b1fb2bb659e1d772e576fe5d6c442a988961e533237a",
         "composer.json": "sha256:3ee5d9587e93b519112dbe341faf17acafb76911313d6f027812cd3653d82781",
         "config/admin.php": "sha256:c0e2a8c3af8c82c7bac338413752b0d32b8c87508dc0911f4826327754f87d57",
@@ -227,7 +228,7 @@
         "database/migrations/0001_01_01_000003_add_deleted_at_to_inquiries_table.php": "sha256:da62ec5dddbe64ec0af42c7885565b1cfec2f5c37c0792286420c83ffeec7a8a",
         "database/seeders/DatabaseSeeder.php": "sha256:73a29544df106c7613021c675052088e3dec58c85085e7f1fbeecde294894379",
         "database/seeders/InquiriesSeeder.php": "sha256:f86f042770c58c785d49d0665b8f2790268f651a200d88398d67289659408173",
-        "database/seeders/InquirySettingsSeeder.php": "sha256:8274a937630f2082ada5ea38589c9f195847678c28bd9e1ad4e024d0d2e2a2cc",
+        "database/seeders/InquirySettingsSeeder.php": "sha256:1c142f65efeefa941bfa4c644ff6118d31f9457bfa102a851db2c3d6836714f9",
         "docs/admin-settings.md": "sha256:38568da59c1b8f73af722866d681d9ad3a33a95dd0e85f96f226b17902d0e1ca",
         "docs/embed-form-usage.md": "sha256:081c2be076e5e8482594bf8a86175300630b90c726a5fb9f1dab28ac3f56c5a9",
         "docs/shortcode-usage.md": "sha256:37e5d155fb90b1523d4d74ea0b0a2d5c58cfb0e95c91f5f3da5e85174b1a6ed8",
@@ -280,8 +281,8 @@
         "resources/views/admin/inquiry/settings/partials/_right-sidebar.blade.php": "sha256:0377bf2f87d4a631ff5d00df38f007500f25a2a9fe74f0843306c391398e411e",
         "resources/views/admin/inquiry/show.blade.php": "sha256:c4b9baaf60047b0095d579616fac4d763a02f03a5ee2870a6f073bdd629e2f7d",
         "resources/views/admin/inquiry/trash.blade.php": "sha256:fe49a60cdb562161e7b22197fe0e92329739cd87b64f7af9ca0fe428407c797e",
-        "resources/views/emails/inquiry-admin.blade.php": "sha256:21cb1f069cbceddd8454a6f5c8299a2009fd4ad44d6b902cac1b74275f71edc6",
-        "resources/views/emails/inquiry-auto-reply.blade.php": "sha256:72488e836368c121e3e951d97407bbe8dcbf3d9c9f1096d0730a9f8d230c0367",
+        "resources/views/emails/inquiry-admin.blade.php": "sha256:b1ec9dff314619387ad2dc1bb9a4a5b626eb802f93865bd8aa2e933ef2459c50",
+        "resources/views/emails/inquiry-auto-reply.blade.php": "sha256:41200592382fd70106f16a2a33bde57b241afe1799402a29a95fc81aa34f129b",
         "resources/views/front/inquiries/complete.blade.php": "sha256:02181e75661d76ad41a67e190451fb0542491f79827b86f904bbd0766285a1ed",
         "resources/views/front/inquiries/confirm.blade.php": "sha256:75e423dad125071b3c528e17356e1f989a00725969dfa1f3ff26f5ac3509e620",
         "resources/views/front/inquiries/embed-form.blade.php": "sha256:aeda0b3df57fdb4095582a6732ea9f66a118a42053a0bd040ebeec47af658d18",
@@ -293,6 +294,7 @@
         "routes/web.php": "sha256:9ccd1c9afb96ed839ae71f58d36877a136dac4cb3c23b8fc2a0bc0374556c6e1",
         "scripts/bump-version.php": "sha256:2842661224a9ec36dd5cb26e7d629bf1db17387b263c5e8e9add4ecb8d4a2ab8",
         "tests/Unit/AdminModalEscapeTest.php": "sha256:b4c027f68b85811f5c4595f07be448eb8b447bfd658e4bf8a3c3df096bd3179c",
+        "tests/Unit/ClosedFormAndMailEscapingTest.php": "sha256:1475057faa5a663a5a4ff10236886c9d561e19fe956931f6892a8395537add79",
         "tests/Unit/DixlaseInquiryDashboardProviderTest.php": "sha256:1986d9775b0e7b0350b0ccddea158a9360ffd3670075c6624d6a0b2ee0394af4",
         "tests/Unit/DixlaseInquiryModelTest.php": "sha256:f43fad95fab342eb0cf2008df25e3f5da572bf6ba4a0f865d66111175548af12",
         "tests/Unit/DixlaseInquiryRouteSlugProviderTest.php": "sha256:b3e513403b79358c8657bad40694fd98b2a7d802325851ab0b8e5d9fdef3d4b4",
@@ -321,6 +323,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-09-26T07:26:25+00:00"
+        "signed_at": "2026-09-26T07:53:05+00:00"
     }
 }

@@ -96,6 +96,11 @@ class DixlaseInquiryFrontController extends Controller
             abort(404);
         }
 
+        // Closed to inquiries: the form is gone (index() 404s), so every step after it is too.
+        if (! $this->isAccepting($settings)) {
+            abort(404);
+        }
+
         $this->applyFormLocale($settings);
 
         // The CAPTCHA widget lives on the form page, so its response token
@@ -139,6 +144,13 @@ class DixlaseInquiryFrontController extends Controller
             abort(404);
         }
 
+        // Closed to inquiries: refuse the submission itself, not only the form.
+        // A client that skips the form could otherwise still store inquiries
+        // and trigger the notification and auto-reply mails.
+        if (! $this->isAccepting($settings)) {
+            abort(404);
+        }
+
         $this->applyFormLocale($settings);
 
         $validated = $request->validated();
@@ -172,7 +184,7 @@ class DixlaseInquiryFrontController extends Controller
     {
         $settings = DixlaseInquirySetting::getSettings();
 
-        if (! $settings || empty($settings->admin_email)) {
+        if (! $settings || empty($settings->admin_email) || ! $this->isAccepting($settings)) {
             return view('dixlase-inquiry::front.inquiries.error', [
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable'),
             ]);
@@ -204,6 +216,14 @@ class DixlaseInquiryFrontController extends Controller
                 'success' => false,
                 'message' => __('dixlase-inquiry::front.messages.service_unavailable'),
             ], 400);
+        }
+
+        // Closed to inquiries: refuse the submission (see send()).
+        if (! $this->isAccepting($settings)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('dixlase-inquiry::front.messages.service_unavailable'),
+            ], 403);
         }
 
         $this->applyFormLocale($settings);
@@ -270,7 +290,7 @@ class DixlaseInquiryFrontController extends Controller
         $settings = DixlaseInquirySetting::getSettings();
 
         // 受付停止中は送信を拒否
-        if (! ($settings->accepting_inquiries ?? true)) {
+        if (! $this->isAccepting($settings)) {
             abort(403);
         }
 
@@ -310,5 +330,19 @@ class DixlaseInquiryFrontController extends Controller
                 ->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])
                 ->withInput();
         }
+    }
+
+    /**
+     * Whether the form is currently open to inquiries.
+     *
+     * The setting is stored as a string ('0' / '1'), so it is read as a
+     * boolean rather than by truthiness ('0' would otherwise count as open
+     * in some paths and closed in others).
+     */
+    private function isAccepting($settings): bool
+    {
+        $value = is_array($settings) ? ($settings['accepting_inquiries'] ?? true) : ($settings->accepting_inquiries ?? true);
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
     }
 }

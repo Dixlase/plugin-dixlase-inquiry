@@ -28,6 +28,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
+{{-- Visitor-supplied values go through MailMarkdown::escape() so Markdown
+     in them (links, images, emphasis) renders as plain text. --}}
 <x-mail::message>
 # {{ __('dixlase-inquiry::front.mail.admin.title') }}
 
@@ -36,41 +38,41 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 ---
 
 **{{ __('dixlase-inquiry::front.form.name') }}**  
-{{ $inquiryData['name'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['name'] ?? '') }}
 
 **{{ __('dixlase-inquiry::front.form.email') }}**  
-{{ $inquiryData['email'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['email'] ?? '') }}
 
 @if(!empty($inquiryData['subject']))
 **{{ __('dixlase-inquiry::front.form.subject') }}**  
-{{ $inquiryData['subject'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['subject'] ?? '') }}
 
 @endif
 @if(!empty($inquiryData['phone']))
 **{{ __('dixlase-inquiry::front.form.phone') }}**  
-{{ $inquiryData['phone'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['phone'] ?? '') }}
 
 @endif
 @if(!empty($inquiryData['postal_code']))
 **{{ __('dixlase-inquiry::front.form.postal_code') }}**  
-{{ $inquiryData['postal_code'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['postal_code'] ?? '') }}
 
 @endif
 @if(!empty($inquiryData['address']))
 **{{ __('dixlase-inquiry::front.form.address') }}**  
-{{ $inquiryData['address'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['address'] ?? '') }}
 
 @endif
 @if(!empty($inquiryData['gender']))
 **{{ __('dixlase-inquiry::front.form.gender') }}**  
-{{ $inquiryData['gender'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['gender'] ?? '') }}
 
 @endif
 ---
 
 **{{ __('dixlase-inquiry::front.form.message') }}**
 
-{{ $inquiryData['message'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['message'] ?? '') }}
 
 ---
 
