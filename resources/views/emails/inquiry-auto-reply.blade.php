@@ -28,31 +28,33 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
+{{-- Visitor-supplied values go through MailMarkdown::escape() so Markdown
+     in them (links, images, emphasis) renders as plain text. --}}
 <x-mail::message>
 # {{ __('dixlase-inquiry::front.mail.auto_reply.title') }}
 
-{{ $inquiryData['name'] ?? '' }} {{ __('dixlase-inquiry::front.mail.auto_reply.greeting') }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['name'] ?? '') }} {{ __('dixlase-inquiry::front.mail.auto_reply.greeting') }}
 
 {{ __('dixlase-inquiry::front.mail.auto_reply.intro') }}
 
 ---
 
 **{{ __('dixlase-inquiry::front.form.name') }}**  
-{{ $inquiryData['name'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['name'] ?? '') }}
 
 **{{ __('dixlase-inquiry::front.form.email') }}**  
-{{ $inquiryData['email'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['email'] ?? '') }}
 
 @if(!empty($inquiryData['subject']))
 **{{ __('dixlase-inquiry::front.form.subject') }}**  
-{{ $inquiryData['subject'] }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['subject'] ?? '') }}
 
 @endif
 ---
 
 **{{ __('dixlase-inquiry::front.form.message') }}**
 
-{{ $inquiryData['message'] ?? '' }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['message'] ?? '') }}
 
 ---
 
