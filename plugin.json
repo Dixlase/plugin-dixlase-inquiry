@@ -179,8 +179,8 @@
         ".backlog/SPINOFF-extension-prebuilt-assets-release.md": "sha256:cb389be98e08fc5839d05e147d3cf1fbe921163de078f577ca8fad5ed2974831",
         "CHANGELOG.ja.md": "sha256:4283d55b373f5ec34243af72fcea0c2d3a3f67a416c4987ebe8bba4e9203a172",
         "CHANGELOG.md": "sha256:5a762bf45452c4130a59ed66b699799138098b60da4d9d67ce24d051f92f167e",
-        "CONTRIBUTING.ja.md": "sha256:d98e76df6aa66152f06fe7b909c20a1e2c18f7a0f9cea3ee2c79f7793437aa74",
-        "CONTRIBUTING.md": "sha256:324958932f7cf65a897f8a983bfbf9dbce68b1e053c79a207208f6fa3133d1fa",
+        "CONTRIBUTING.ja.md": "sha256:3a4caffe44c8894f643ca5f9ba48052ae993ec310a0786046cf96cf085572645",
+        "CONTRIBUTING.md": "sha256:43210e8040acc963eedfde3869e318b6685ac3bcd8284ea160a8741910bec7c4",
         "COPYRIGHT-POLICY.ja.md": "sha256:d4fc70b09d8c14afd862827d3a55a7c3d2368622327bddf4502109b07e4724b2",
         "COPYRIGHT-POLICY.md": "sha256:af26d3c66536807f5e0696d2dfd8ff6b4e7f04f2a1b3831a526dbe1501c55ab9",
         "LICENSE": "sha256:3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
@@ -279,7 +279,7 @@
         "resources/views/admin/inquiry/settings/index.blade.php": "sha256:38bb0836adc39df3b701482509e4d3bed34c05de7c895ba8985c0027cd3f53c1",
         "resources/views/admin/inquiry/settings/partials/_right-sidebar.blade.php": "sha256:0377bf2f87d4a631ff5d00df38f007500f25a2a9fe74f0843306c391398e411e",
         "resources/views/admin/inquiry/show.blade.php": "sha256:c4b9baaf60047b0095d579616fac4d763a02f03a5ee2870a6f073bdd629e2f7d",
-        "resources/views/admin/inquiry/trash.blade.php": "sha256:1db010dd93da2146ab9f3681d1485765e5bcd7b26408237c8c6081cb982071f5",
+        "resources/views/admin/inquiry/trash.blade.php": "sha256:fe49a60cdb562161e7b22197fe0e92329739cd87b64f7af9ca0fe428407c797e",
         "resources/views/emails/inquiry-admin.blade.php": "sha256:21cb1f069cbceddd8454a6f5c8299a2009fd4ad44d6b902cac1b74275f71edc6",
         "resources/views/emails/inquiry-auto-reply.blade.php": "sha256:72488e836368c121e3e951d97407bbe8dcbf3d9c9f1096d0730a9f8d230c0367",
         "resources/views/front/inquiries/complete.blade.php": "sha256:02181e75661d76ad41a67e190451fb0542491f79827b86f904bbd0766285a1ed",
@@ -292,6 +292,7 @@
         "routes/admin.php": "sha256:b14ac861104e9b52f6e808d508a39ebff2f13408742306ec11eb319f0731e89c",
         "routes/web.php": "sha256:9ccd1c9afb96ed839ae71f58d36877a136dac4cb3c23b8fc2a0bc0374556c6e1",
         "scripts/bump-version.php": "sha256:2842661224a9ec36dd5cb26e7d629bf1db17387b263c5e8e9add4ecb8d4a2ab8",
+        "tests/Unit/AdminModalEscapeTest.php": "sha256:b4c027f68b85811f5c4595f07be448eb8b447bfd658e4bf8a3c3df096bd3179c",
         "tests/Unit/DixlaseInquiryDashboardProviderTest.php": "sha256:1986d9775b0e7b0350b0ccddea158a9360ffd3670075c6624d6a0b2ee0394af4",
         "tests/Unit/DixlaseInquiryModelTest.php": "sha256:f43fad95fab342eb0cf2008df25e3f5da572bf6ba4a0f865d66111175548af12",
         "tests/Unit/DixlaseInquiryRouteSlugProviderTest.php": "sha256:b3e513403b79358c8657bad40694fd98b2a7d802325851ab0b8e5d9fdef3d4b4",
@@ -320,6 +321,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-09-25T18:18:51+00:00"
+        "signed_at": "2026-09-26T03:03:34+00:00"
     }
 }
