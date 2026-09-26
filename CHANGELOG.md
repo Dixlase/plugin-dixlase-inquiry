@@ -17,5 +17,4 @@ Initial release. Requires Dixlase `^0.1.0` (Plugin API `^0.1`), PHP `>= 8.3`.
   supports the core reCAPTCHA v3 and Cloudflare Turnstile drivers.
 - Dashboard notification (`DashboardNotificationProviderInterface`) that warns
   when CAPTCHA is not enabled for the inquiry form.
-- Multilingual form content (`multilingual-content` capability).
 - Implements the `RouteSlugProvider` contract for a configurable form URL.
