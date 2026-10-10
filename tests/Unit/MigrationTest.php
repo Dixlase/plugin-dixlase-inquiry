@@ -89,4 +89,29 @@ class MigrationTest extends TestCase
             $this->assertStringContainsString("'{$column}'", $content, "Column '{$column}' not found in migration");
         }
     }
+
+    /**
+     * The expires_at retention anchor lives in its own ALTER migration
+     * (per the beta migration-editing policy — add a new file rather
+     * than edit a released one) and is indexed because the daily prune
+     * query filters on it.
+     */
+    public function test_expires_at_migration_exists(): void
+    {
+        $this->assertFileExists(
+            __DIR__ . '/../../database/migrations/0001_01_01_000004_add_expires_at_to_inquiries_table.php'
+        );
+    }
+
+    public function test_expires_at_migration_adds_indexed_nullable_column(): void
+    {
+        $content = file_get_contents(
+            __DIR__ . '/../../database/migrations/0001_01_01_000004_add_expires_at_to_inquiries_table.php'
+        );
+
+        $this->assertStringContainsString("'expires_at'", $content);
+        $this->assertStringContainsString('nullable', $content);
+        $this->assertStringContainsString('index', $content);
+        $this->assertStringContainsString('plg_dixlase_inquiries', $content);
+    }
 }

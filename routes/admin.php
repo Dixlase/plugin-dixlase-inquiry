@@ -59,6 +59,7 @@ Route::prefix('inquiry')
         Route::get('/{id}', [DixlaseInquiryAdminController::class, 'show'])->name('show')->where('id', '[0-9]+');
         Route::delete('/{id}', [DixlaseInquiryAdminController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
         Route::patch('/{id}/status', [DixlaseInquiryAdminController::class, 'updateStatus'])->name('status.update')->where('id', '[0-9]+');
+        Route::patch('/{id}/expires-at', [DixlaseInquiryAdminController::class, 'updateExpiresAt'])->name('expires-at.update')->where('id', '[0-9]+');
 
         // 一括ステータス更新
         Route::patch('/bulk-status', [DixlaseInquiryAdminController::class, 'bulkUpdateStatus'])->name('bulk-status');
@@ -100,5 +101,7 @@ Route::prefix('inquiry')
             Route::post('/admin-notification', [DixlaseInquiryAdminController::class, 'updateAdminNotification'])->name('admin-notification.update');
             Route::get('/auto-reply', [DixlaseInquiryAdminController::class, 'settingsAutoReply'])->name('auto-reply');
             Route::post('/auto-reply', [DixlaseInquiryAdminController::class, 'updateAutoReply'])->name('auto-reply.update');
+            Route::get('/privacy', [DixlaseInquiryAdminController::class, 'settingsPrivacy'])->name('privacy');
+            Route::post('/privacy', [DixlaseInquiryAdminController::class, 'updatePrivacy'])->name('privacy.update');
         });
     });

@@ -40,5 +40,6 @@ return [
         'completion' => 'Completion Page',
         'admin_notification' => 'Admin Notification',
         'auto_reply' => 'Auto-Reply',
+        'privacy' => 'Privacy',
     ],
 ];

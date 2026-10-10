@@ -59,6 +59,7 @@ use Plugins\DixlaseInquiry\Database\Factories\DixlaseInquiryFactory;
  * @property \Illuminate\Support\Carbon|null $privacy_agreed_at
  * @property \Illuminate\Support\Carbon $submitted_at
  * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon|null $expires_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -87,6 +88,7 @@ class DixlaseInquiry extends Model
         'privacy_agreed_at',
         'submitted_at',
         'read_at',
+        'expires_at',
     ];
 
     /**
@@ -101,6 +103,7 @@ class DixlaseInquiry extends Model
             'submitted_at' => 'datetime',
             'read_at' => 'datetime',
             'privacy_agreed_at' => 'datetime',
+            'expires_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
     }

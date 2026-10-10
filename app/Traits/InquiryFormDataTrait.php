@@ -177,10 +177,26 @@ trait InquiryFormDataTrait
     }
 
     /**
-     * 問い合わせをDBに保存
+     * Persist the inquiry when the opt-in setting is on; otherwise skip.
+     *
+     * Returns null when the site has `store_inquiries` off, so submissions
+     * still trigger the configured notification and auto-reply mails but no
+     * row is written. When persistence is on, the row's `expires_at` is set
+     * from `retention_days` (null = indefinite retention; applied by the
+     * prune command).
+     *
+     * `send()` / `embedSend()` / `submit()` do not use the return value;
+     * `previewSend()` already handles the null case for its complete view.
      */
-    protected function saveInquiry(array $inquiryData, Request $request, object $settings): DixlaseInquiry
+    protected function saveInquiry(array $inquiryData, Request $request, object $settings): ?DixlaseInquiry
     {
+        if (! $this->shouldPersistInquiry($settings)) {
+            return null;
+        }
+
+        $retentionDays = $this->normalizeRetentionDays($settings->retention_days ?? null);
+        $expiresAt = $retentionDays !== null ? now()->addDays($retentionDays) : null;
+
         return DixlaseInquiry::create([
             'status' => InquiryStatus::New,
             'name' => $inquiryData['name'],
@@ -197,7 +213,36 @@ trait InquiryFormDataTrait
             'lang' => $settings->lang ?? 'ja',
             'privacy_agreed_at' => $request->has('privacy_agreed') ? now() : null,
             'submitted_at' => now(),
+            'expires_at' => $expiresAt,
         ]);
+    }
+
+    /**
+     * Decide whether this submission should be written to plg_dixlase_inquiries.
+     *
+     * The KV setting is stored as '0' / '1'; filter_var normalises both the
+     * stored string and a direct boolean default so callers can safely pass
+     * the value from DixlaseInquirySetting::getSettings() without extra casts.
+     */
+    protected function shouldPersistInquiry(object $settings): bool
+    {
+        return filter_var($settings->store_inquiries ?? false, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Normalise the retention_days setting into a positive integer or null.
+     *
+     * Returns null for null, empty string, zero, or any non-positive value
+     * (indefinite retention). Returns a positive int otherwise. Callers add
+     * this many days to submitted_at to compute expires_at.
+     */
+    protected function normalizeRetentionDays(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $days = (int) $value;
+        return $days > 0 ? $days : null;
     }
 
     /**

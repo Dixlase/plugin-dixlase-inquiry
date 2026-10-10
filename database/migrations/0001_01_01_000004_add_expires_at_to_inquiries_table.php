@@ -30,16 +30,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-return [
-    'inquiry' => 'お問い合わせ',
-    'inquiry_list' => 'お問い合わせ一覧',
-    'inquiry_settings' => '設定',
-    'settings_nav' => [
-        'index' => '概要',
-        'form_basic' => 'フォーム設定',
-        'completion' => '完了ページ設定',
-        'admin_notification' => '管理者通知設定',
-        'auto_reply' => '自動返信設定',
-        'privacy' => 'プライバシー設定',
-    ],
-];
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Add retention-policy anchor for inquiries. NULL means the row has no
+     * expiry (indefinite retention or the row pre-dates the policy being
+     * enabled on this site). The prune command deletes rows where
+     * expires_at is NOT NULL and expires_at < now().
+     */
+    public function up(): void
+    {
+        Schema::table('plg_dixlase_inquiries', function (Blueprint $table) {
+            $table->timestamp('expires_at')->nullable()->after('submitted_at')->index();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('plg_dixlase_inquiries', function (Blueprint $table) {
+            $table->dropIndex(['expires_at']);
+            $table->dropColumn('expires_at');
+        });
+    }
+};

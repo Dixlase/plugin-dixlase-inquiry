@@ -141,6 +141,86 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </form>
             </div>
 
+            {{-- 保存期間（expires_at） --}}
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                    {{ __('dixlase-inquiry::admin/inquiry/show.retention_title') }}
+                </h3>
+
+                {{-- 現在の状態 --}}
+                <div class="mb-4 text-sm">
+                    @if($inquiry->expires_at === null)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                            <i class="fas fa-infinity mr-1"></i>
+                            {{ __('dixlase-inquiry::admin/inquiry/show.retention_indefinite') }}
+                        </span>
+                    @else
+                        @php $daysRemaining = (int) round(now()->diffInDays($inquiry->expires_at, false)); @endphp
+                        <div class="text-gray-900 dark:text-white">
+                            {{ $inquiry->expires_at->format('Y-m-d H:i') }}
+                        </div>
+                        <div class="mt-1 text-xs">
+                            @if($daysRemaining < 0)
+                                <span class="text-red-600 dark:text-red-400">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    {{ __('dixlase-inquiry::admin/inquiry/show.retention_expired', ['days' => abs($daysRemaining)]) }}
+                                </span>
+                            @elseif($daysRemaining === 0)
+                                <span class="text-amber-600 dark:text-amber-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/show.retention_expires_today') }}
+                                </span>
+                            @else
+                                <span class="text-gray-600 dark:text-gray-400">
+                                    {{ __('dixlase-inquiry::admin/inquiry/show.retention_days_remaining', ['days' => $daysRemaining]) }}
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                @if($canUpdateExpiresAt)
+                    <form action="{{ route('dixlase-inquiry::admin.inquiry.expires-at.update', $inquiry->id) }}"
+                          method="POST"
+                          x-data="{ mode: 'indefinite' }">
+                        @csrf
+                        @method('PATCH')
+
+                        <x-form-label for="retention-mode" :label="__('dixlase-inquiry::admin/inquiry/show.retention_mode_label')" />
+                        <x-form-select
+                            name="mode"
+                            :options="[
+                                'indefinite' => __('dixlase-inquiry::admin/inquiry/show.retention_option_indefinite'),
+                                '30' => __('dixlase-inquiry::admin/inquiry/show.retention_option_days', ['days' => 30]),
+                                '90' => __('dixlase-inquiry::admin/inquiry/show.retention_option_days', ['days' => 90]),
+                                '180' => __('dixlase-inquiry::admin/inquiry/show.retention_option_days', ['days' => 180]),
+                                '365' => __('dixlase-inquiry::admin/inquiry/show.retention_option_days', ['days' => 365]),
+                                'custom' => __('dixlase-inquiry::admin/inquiry/show.retention_option_custom'),
+                            ]"
+                            value="indefinite"
+                            xModel="mode"
+                        />
+
+                        <div x-show="mode === 'custom'" x-cloak class="mt-2">
+                            <x-form-label for="custom_date" :label="__('dixlase-inquiry::admin/inquiry/show.retention_custom_date_label')" />
+                            <x-form-text
+                                name="custom_date"
+                                type="datetime-local"
+                            />
+                        </div>
+
+                        <div class="mt-3">
+                            <x-form-button
+                                type="submit"
+                                variant="primary"
+                                size="sm"
+                                :label="__('dixlase-inquiry::admin/inquiry/show.retention_update')"
+                                icon="fas fa-check"
+                            />
+                        </div>
+                    </form>
+                @endif
+            </div>
+
             {{-- メタ情報 --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">

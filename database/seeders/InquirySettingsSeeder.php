@@ -92,6 +92,10 @@ class InquirySettingsSeeder extends Seeder
             'inquiry_url_slug' => 'inquiry',
             'name_order_western' => 'auto',
             'lang' => 'auto',
+
+            // Privacy: opt-in persistence (see DixlaseInquirySetting defaults).
+            'store_inquiries' => '0',
+            'retention_days' => '90',
         ];
 
         foreach ($defaults as $name => $value) {
