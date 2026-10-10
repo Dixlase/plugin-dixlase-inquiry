@@ -27,13 +27,6 @@ on:
       - main
   workflow_dispatch:
 
-# GitHub OAuth token for composer to clone the private
-# `dixlase/dixlase-onepage` dependency referenced by Core's
-# composer.json. The PAT lives in the organization secret
-# `COMPOSER_AUTH` with Contents:Read scoped to that repo only.
-env:
-  COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
-
 jobs:
   test:
     runs-on: ubuntu-latest
