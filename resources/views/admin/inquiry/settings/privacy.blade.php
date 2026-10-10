@@ -33,7 +33,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 @section('content')
 <div class="mx-auto"
      x-data="{
-        storeInquiries: {{ old('store_inquiries', $settings->store_inquiries) ? 'true' : 'false' }},
         retentionMode: '{{ old('retention_mode', $retentionMode) }}',
      }">
     <form id="privacy-settings-form" action="{{ route('dixlase-inquiry::admin.inquiry.settings.privacy.update') }}" method="POST">
@@ -54,15 +53,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     name="store_inquiries"
                     :label="__('dixlase-inquiry::admin/inquiry/settings/privacy.store_label')"
                     :checked="old('store_inquiries', $settings->store_inquiries)"
-                    xModel="storeInquiries"
                 />
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     {{ __('dixlase-inquiry::admin/inquiry/settings/privacy.store_help') }}
                 </p>
             </fieldset>
 
-            {{-- 保存期間（保存ONのときだけ表示） --}}
-            <fieldset x-show="storeInquiries" x-cloak>
+            {{-- 保存期間（保存をONにしたときに適用される） --}}
+            <fieldset>
                 <legend>{{ __('dixlase-inquiry::admin/inquiry/settings/privacy.retention_section') }}</legend>
 
                 <x-form-label for="retention_mode" :label="__('dixlase-inquiry::admin/inquiry/settings/privacy.retention_mode_label')" />
