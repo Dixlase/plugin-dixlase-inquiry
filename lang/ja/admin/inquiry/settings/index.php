@@ -48,6 +48,7 @@ return [
         'completion' => '完了ページ設定',
         'admin_notification' => '管理者通知設定',
         'auto_reply' => '自動返信設定',
+        'privacy' => 'プライバシー設定',
     ],
 
     'cards' => [
@@ -55,6 +56,7 @@ return [
         'completion_desc' => 'フォーム送信後に表示される見出しとメッセージ。',
         'admin_notification_desc' => '管理者通知のメールアドレス、件名、本文。',
         'auto_reply_desc' => '自動返信の有効/無効、送信元、件名、本文。',
+        'privacy_desc' => 'お問い合わせを DB に保存するかどうかと、各行の保存期間を設定します。',
     ],
 
     'status' => [
@@ -70,6 +72,10 @@ return [
         'admin_email' => '送信先',
         'auto_reply' => '自動返信',
         'lang' => 'フォーム言語',
+        'store_inquiries' => 'DB 保存',
+        'retention' => '保存期間',
+        'retention_indefinite' => '無期限',
+        'retention_days' => ':days 日',
     ],
 
     // 埋め込み方法（form-previewから移動）

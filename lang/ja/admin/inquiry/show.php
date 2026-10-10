@@ -63,4 +63,18 @@ return [
     'delete_confirm_title' => '問い合わせの削除',
     'delete_confirm_message' => 'この問い合わせをゴミ箱に移動します。30 日以内であればゴミ箱から復元できます。',
     'status_updated' => 'ステータスが更新されました。',
+
+    // 保存期間(expires_at)の個別制御
+    'retention_title' => '保存期間',
+    'retention_indefinite' => '無期限(自動削除なし)',
+    'retention_days_remaining' => '残り :days 日',
+    'retention_expires_today' => '本日期限切れ',
+    'retention_expired' => ':days 日前に期限切れ',
+    'retention_mode_label' => '保存期間を変更',
+    'retention_option_indefinite' => '無期限(自動削除しない)',
+    'retention_option_days' => '今日から :days 日',
+    'retention_option_custom' => 'カスタム日時',
+    'retention_custom_date_label' => '削除予定日時',
+    'retention_update' => '保存期間を更新',
+    'expires_at_updated' => '保存期間を更新しました。',
 ];

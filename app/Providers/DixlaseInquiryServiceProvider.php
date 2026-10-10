@@ -41,6 +41,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Services\DixlaseInquiryDashboardProvider;
@@ -79,6 +80,9 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
         // 注: 静的ルート（routes/web.php, routes/admin.php）はPluginServiceProviderが自動読み込み
         $this->registerDynamicRoutes();
 
+        // 保存期間を過ぎた問い合わせの自動削除をスケジュール登録
+        $this->registerScheduledTasks();
+
         // ショートコード登録
         $this->registerShortcodes();
 
@@ -114,6 +118,26 @@ class DixlaseInquiryServiceProvider extends ServiceProvider implements RouteSlug
         $this->publishes([
             __DIR__.'/../../resources/assets' => public_path('vendor/inquiry'),
         ], 'inquiry-assets');
+    }
+
+    /**
+     * Register the daily retention-prune task.
+     *
+     * Runs at 03:15 to stay out of peak hours and off the top of the hour
+     * where other core cleanup jobs cluster. The command is a no-op when
+     * no row's expires_at is in the past, so scheduling it unconditionally
+     * is cheap even for sites that leave persistence off.
+     *
+     * Core has no dedicated plugin-scheduler hook; the stock L12 Schedule
+     * facade works from a service provider's boot() and is the pattern
+     * core itself uses in routes/console.php.
+     */
+    protected function registerScheduledTasks(): void
+    {
+        Schedule::command('dls:inquiry:prune')
+            ->dailyAt('03:15')
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

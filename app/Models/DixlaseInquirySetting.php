@@ -130,6 +130,14 @@ class DixlaseInquirySetting extends Model
             'throttle_decay_minutes' => 5,
             'completion_title' => '',
             'completion_message' => '',
+            // Privacy: opt-in persistence. Off by default so a site that only
+            // needs the email notification path never grows a plg_dixlase_inquiries
+            // table of submitter PII without the operator explicitly deciding to.
+            'store_inquiries' => false,
+            // Days after submitted_at until the prune command deletes the row.
+            // NULL means indefinite retention (no auto-prune); applies only when
+            // store_inquiries is on.
+            'retention_days' => 90,
         ];
     }
 

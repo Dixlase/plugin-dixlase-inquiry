@@ -63,4 +63,18 @@ return [
     'delete_confirm_title' => 'Delete Inquiry',
     'delete_confirm_message' => 'This will move the inquiry to the trash. You can restore it from the trash within 30 days before it is permanently deleted.',
     'status_updated' => 'The inquiry status has been updated.',
+
+    // Per-row retention (expires_at) controls.
+    'retention_title' => 'Retention',
+    'retention_indefinite' => 'No expiry (indefinite)',
+    'retention_days_remaining' => ':days days remaining',
+    'retention_expires_today' => 'Expires today',
+    'retention_expired' => 'Expired :days days ago',
+    'retention_mode_label' => 'Change retention',
+    'retention_option_indefinite' => 'Indefinite (no auto-delete)',
+    'retention_option_days' => ':days days from today',
+    'retention_option_custom' => 'Custom date',
+    'retention_custom_date_label' => 'Expires at',
+    'retention_update' => 'Update retention',
+    'expires_at_updated' => 'Retention has been updated.',
 ];

@@ -179,6 +179,74 @@ class TranslationFileTest extends TestCase
     }
 
     /**
+     * プライバシー設定の翻訳ファイルが en/ja 両方に存在し、主要キーを含む
+     */
+    public function test_privacy_translation_files_exist(): void
+    {
+        $requiredKeys = [
+            'heading',
+            'intro',
+            'store_section',
+            'store_label',
+            'retention_section',
+            'retention_mode_label',
+            'retention_option_indefinite',
+            'retention_option_days',
+            'retention_option_custom',
+            'settings_updated',
+        ];
+
+        foreach (['en', 'ja'] as $locale) {
+            $file = "{$this->langPath}/{$locale}/admin/inquiry/settings/privacy.php";
+            $this->assertFileExists($file, "Missing privacy translation: {$locale}");
+
+            $translations = require $file;
+            foreach ($requiredKeys as $key) {
+                $this->assertArrayHasKey($key, $translations, "Missing {$key} in {$locale}/settings/privacy.php");
+            }
+        }
+    }
+
+    /**
+     * ナビゲーション翻訳に privacy エントリが含まれる
+     */
+    public function test_navigation_has_privacy_key(): void
+    {
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/navigation.php";
+            $this->assertArrayHasKey(
+                'privacy',
+                $translations['settings_nav'] ?? [],
+                "Missing settings_nav.privacy in {$locale}/navigation.php",
+            );
+        }
+    }
+
+    /**
+     * 詳細画面の翻訳に retention 関連キーが含まれる
+     */
+    public function test_show_has_retention_keys(): void
+    {
+        $retentionKeys = [
+            'retention_title',
+            'retention_indefinite',
+            'retention_days_remaining',
+            'retention_option_indefinite',
+            'retention_option_days',
+            'retention_option_custom',
+            'retention_update',
+            'expires_at_updated',
+        ];
+
+        foreach (['en', 'ja'] as $locale) {
+            $translations = require "{$this->langPath}/{$locale}/admin/inquiry/show.php";
+            foreach ($retentionKeys as $key) {
+                $this->assertArrayHasKey($key, $translations, "Missing {$key} in {$locale}/show.php");
+            }
+        }
+    }
+
+    /**
      * フロント翻訳がjaとenの両方で正しい構造を持つ
      */
     public function test_front_translations_have_correct_structure(): void

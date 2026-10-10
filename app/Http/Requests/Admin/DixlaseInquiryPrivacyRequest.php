@@ -30,16 +30,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-return [
-    'inquiry' => 'お問い合わせ',
-    'inquiry_list' => 'お問い合わせ一覧',
-    'inquiry_settings' => '設定',
-    'settings_nav' => [
-        'index' => '概要',
-        'form_basic' => 'フォーム設定',
-        'completion' => '完了ページ設定',
-        'admin_notification' => '管理者通知設定',
-        'auto_reply' => '自動返信設定',
-        'privacy' => 'プライバシー設定',
-    ],
-];
+namespace Plugins\DixlaseInquiry\App\Http\Requests\Admin;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class DixlaseInquiryPrivacyRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'store_inquiries' => 'nullable|boolean',
+            'retention_mode' => 'required|in:indefinite,30,90,180,365,custom',
+            'retention_days_custom' => 'nullable|integer|min:1|max:3650|required_if:retention_mode,custom',
+        ];
+    }
+}

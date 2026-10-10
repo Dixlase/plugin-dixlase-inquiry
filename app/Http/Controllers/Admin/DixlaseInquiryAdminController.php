@@ -47,6 +47,7 @@ use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificati
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryPrivacyRequest;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
@@ -187,7 +188,46 @@ class DixlaseInquiryAdminController extends Controller
             // Same guard as index(): destroy() now soft-deletes, so
             // this is EDITOR-visible. See index() for the full note.
             'canDeleteInquiries' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.destroy'),
+            // Retention is a policy decision (same tier as the privacy
+            // settings page) rather than part of EDITOR triage work.
+            'canUpdateExpiresAt' => AdminHelper::canEditPluginMenu(self::PLUGIN_SLUG, 'inquiry.expires-at.update'),
         ]));
+    }
+
+    /**
+     * Per-row retention edit from the inquiry detail screen.
+     *
+     * The privacy settings page policy only applies to new submissions, so
+     * rows that pre-date opt-in persistence start with expires_at = NULL
+     * (= indefinite). This endpoint lets an operator set a retention value
+     * on an individual row — pick a preset ("30 days from today"), set a
+     * custom datetime, or clear it back to indefinite.
+     *
+     * Presets add their day count to "today" rather than to submitted_at,
+     * because this edit is a mid-life policy decision, not a correction of
+     * the original retention.
+     */
+    public function updateExpiresAt(Request $request, int $id): RedirectResponse
+    {
+        $this->authorizeEdit('inquiry.expires-at.update');
+
+        $inquiry = DixlaseInquiry::findOrFail($id);
+
+        $validated = $request->validate([
+            'mode' => 'required|in:indefinite,30,90,180,365,custom',
+            'custom_date' => 'nullable|date|after:now|required_if:mode,custom',
+        ]);
+
+        $expiresAt = match ($validated['mode']) {
+            'indefinite' => null,
+            'custom' => \Illuminate\Support\Carbon::parse($validated['custom_date']),
+            default => now()->addDays((int) $validated['mode']),
+        };
+
+        $inquiry->update(['expires_at' => $expiresAt]);
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.show', $id)
+            ->with('success', __('dixlase-inquiry::admin/inquiry/show.expires_at_updated'));
     }
 
     /**
@@ -497,6 +537,71 @@ class DixlaseInquiryAdminController extends Controller
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.admin-notification')
             ->with('success', __('dixlase-inquiry::admin/inquiry/settings/admin-notification.settings_updated'));
+    }
+
+    /**
+     * 設定 - プライバシー設定(保存ポリシーと保存期間)
+     */
+    public function settingsPrivacy(): View
+    {
+        $this->authorizeView('inquiry.settings.privacy');
+
+        $settings = DixlaseInquirySetting::getSettings();
+
+        // Resolve the stored retention_days into the (mode, custom-value) pair
+        // the form widget uses. Preset values collapse to a mode string; any
+        // other positive integer renders as "custom" with the value in the
+        // custom input. Null (or empty string) means indefinite retention.
+        $retentionDays = $settings->retention_days;
+        if ($retentionDays === null || $retentionDays === '') {
+            $retentionMode = 'indefinite';
+            $retentionCustom = '';
+        } else {
+            $daysInt = (int) $retentionDays;
+            if (in_array($daysInt, [30, 90, 180, 365], true)) {
+                $retentionMode = (string) $daysInt;
+                $retentionCustom = '';
+            } else {
+                $retentionMode = 'custom';
+                $retentionCustom = (string) $daysInt;
+            }
+        }
+
+        return view('dixlase-inquiry::admin.inquiry.settings.privacy', array_merge($this->viewParams, [
+            'settings' => $settings,
+            'retentionMode' => $retentionMode,
+            'retentionCustom' => $retentionCustom,
+        ]));
+    }
+
+    /**
+     * 設定 - プライバシー設定の更新
+     *
+     * Writes the two KV rows directly rather than going through
+     * DixlaseInquirySetting::updateSettings(), because the form field
+     * `retention_mode` is a UI helper that collapses into `retention_days`
+     * on the storage side, and the indefinite case persists as NULL.
+     * updateSettings() would store the literal 'indefinite' string.
+     */
+    public function updatePrivacy(DixlaseInquiryPrivacyRequest $request): RedirectResponse
+    {
+        $this->authorizeEdit('inquiry.settings.privacy');
+
+        $validated = $request->validated();
+
+        $storeInquiries = filter_var($validated['store_inquiries'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $retentionDays = match ($validated['retention_mode']) {
+            'indefinite' => null,
+            'custom' => (int) ($validated['retention_days_custom'] ?? 90),
+            default => (int) $validated['retention_mode'],
+        };
+
+        DixlaseInquirySetting::set('store_inquiries', $storeInquiries ? '1' : '0');
+        DixlaseInquirySetting::set('retention_days', $retentionDays === null ? null : (string) $retentionDays);
+
+        return redirect()->route('dixlase-inquiry::admin.inquiry.settings.privacy')
+            ->with('success', __('dixlase-inquiry::admin/inquiry/settings/privacy.settings_updated'));
     }
 
     /**
