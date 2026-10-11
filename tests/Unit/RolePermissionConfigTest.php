@@ -82,6 +82,7 @@ class RolePermissionConfigTest extends TestCase
             ['inquiry', 'settings', 'form-basic'],
             ['inquiry', 'settings', 'completion'],
             ['inquiry', 'settings', 'auto-reply'],
+            ['inquiry', 'settings', 'privacy'],
         ];
 
         foreach ($expected as $path) {
@@ -224,6 +225,32 @@ class RolePermissionConfigTest extends TestCase
             MemberRole::ADMIN->value,
             $children['toggle-accepting']['access_roles'] ?? null,
             'inquiry.toggle-accepting closes the public form and must stay above EDITOR.'
+        );
+    }
+
+    /**
+     * `expires-at.update` is a per-row retention edit from the detail
+     * screen. Retention is a privacy policy decision (same tier as the
+     * settings pages above) rather than EDITOR triage work: editors can
+     * read PII while handling an inquiry, but how long that PII sits
+     * around is the admin's call.
+     */
+    public function test_expires_at_update_defaults_to_admin(): void
+    {
+        $node = $this->roles['permissions'];
+        foreach (['inquiry', 'expires-at', 'update'] as $segment) {
+            $node = $node[$segment] ?? $node['children'][$segment] ?? null;
+            $this->assertIsArray($node, 'Missing permission segment for inquiry.expires-at.update');
+        }
+
+        $this->assertSame(
+            MemberRole::ADMIN->value,
+            $node['access_roles'] ?? null,
+            'inquiry.expires-at.update must be ADMIN (retention is a policy decision).',
+        );
+        $this->assertSame(
+            MemberRole::ADMIN->value,
+            $node['view_roles'] ?? null,
         );
     }
 

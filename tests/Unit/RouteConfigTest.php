@@ -193,4 +193,40 @@ class RouteConfigTest extends TestCase
         $this->assertStringContainsString("mergeConfigFrom", $providerFile);
         $this->assertStringContainsString("'dixlase-inquiry'", $providerFile);
     }
+
+    /**
+     * プライバシー設定ページのルートが登録されている
+     */
+    public function test_routes_contain_privacy(): void
+    {
+        $routeFile = file_get_contents(__DIR__ . '/../../routes/admin.php');
+
+        $this->assertStringContainsString("'/privacy'", $routeFile);
+        $this->assertStringContainsString('settingsPrivacy', $routeFile);
+        $this->assertStringContainsString('updatePrivacy', $routeFile);
+    }
+
+    /**
+     * 詳細画面の expires_at 編集ルートが登録されている
+     */
+    public function test_routes_contain_expires_at_update(): void
+    {
+        $routeFile = file_get_contents(__DIR__ . '/../../routes/admin.php');
+
+        $this->assertStringContainsString('expires-at.update', $routeFile);
+        $this->assertStringContainsString('updateExpiresAt', $routeFile);
+    }
+
+    /**
+     * ServiceProvider が保存期間 prune の daily スケジュールを登録している
+     */
+    public function test_service_provider_registers_prune_schedule(): void
+    {
+        $providerFile = file_get_contents(
+            __DIR__ . '/../../app/Providers/DixlaseInquiryServiceProvider.php'
+        );
+
+        $this->assertStringContainsString('registerScheduledTasks', $providerFile);
+        $this->assertStringContainsString('dls:inquiry:prune', $providerFile);
+    }
 }

@@ -2,7 +2,7 @@
     "name": "Dixlase Inquiry",
     "package_name": "dixlase/dixlase-inquiry",
     "slug": "dixlase-inquiry",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": {
         "ja": "お問い合わせフォーム機能を提供するプラグインです。",
         "en": "This plugin provides inquiry form functionality."
@@ -111,7 +111,7 @@
         },
         "settings": {
             "read_core": true,
-            "write_own": false
+            "write_own": true
         },
         "members": {
             "read": false,
@@ -130,7 +130,7 @@
         "system": {
             "register_shortcodes": true,
             "register_middleware": false,
-            "register_commands": false,
+            "register_commands": true,
             "register_blade_directives": true,
             "modify_routes": false
         },
@@ -162,7 +162,7 @@
             "CaptchaFormProviderInterface"
         ],
         "migrations": true,
-        "commands": false,
+        "commands": true,
         "middleware": false
     },
     "deploy": {

@@ -40,5 +40,6 @@ return [
         'completion' => '完了ページ設定',
         'admin_notification' => '管理者通知設定',
         'auto_reply' => '自動返信設定',
+        'privacy' => 'プライバシー設定',
     ],
 ];

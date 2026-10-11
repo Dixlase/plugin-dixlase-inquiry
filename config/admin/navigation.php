@@ -92,6 +92,12 @@ return [
                         'icon' => 'fas fa-fw fa-reply-all',
                         'can' => 'admin',
                     ],
+                    'privacy' => [
+                        'text' => 'dixlase-inquiry::admin/navigation.settings_nav.privacy',
+                        'route' => 'dixlase-inquiry::admin.inquiry.settings.privacy',
+                        'icon' => 'fas fa-fw fa-shield-alt',
+                        'can' => 'admin',
+                    ],
                 ],
             ],
         ],

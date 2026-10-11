@@ -181,6 +181,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </p>
             </div>
         </a>
+
+        {{-- プライバシー設定 --}}
+        <a href="{{ route('dixlase-inquiry::admin.inquiry.settings.privacy') }}" class="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-indigo-500 text-xl mr-3"></i>
+                    <h3 class="font-semibold text-gray-900 dark:text-white">{{ __('dixlase-inquiry::admin/inquiry/settings/index.nav.privacy') }}</h3>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+                <p>{{ __('dixlase-inquiry::admin/inquiry/settings/index.cards.privacy_desc') }}</p>
+                <p class="text-xs mt-2">
+                    {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.store_inquiries') }}:
+                    {{ $settings->store_inquiries ? __('dixlase-inquiry::admin/inquiry/settings/index.status.enabled') : __('dixlase-inquiry::admin/inquiry/settings/index.status.disabled') }}
+                    @if($settings->store_inquiries)
+                        /
+                        {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.retention') }}:
+                        @if($settings->retention_days === null || $settings->retention_days === '')
+                            {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.retention_indefinite') }}
+                        @else
+                            {{ __('dixlase-inquiry::admin/inquiry/settings/index.status.retention_days', ['days' => (int) $settings->retention_days]) }}
+                        @endif
+                    @endif
+                </p>
+            </div>
+        </a>
     </div>
 
     {{-- 埋め込み方法 --}}

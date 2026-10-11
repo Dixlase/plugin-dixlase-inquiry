@@ -5,6 +5,38 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.2.0] — 2026-10-10
+
+### Added
+
+- Opt-in persistence toggle (`store_inquiries`, default **off**) and a dedicated
+  **Privacy** settings page (#49). When the toggle is off, submissions are
+  delivered by email as before but no row is written to `plg_dixlase_inquiries`.
+- Retention policy with `retention_days` (default `90`, `null` = keep
+  indefinitely) and a new `expires_at` column on `plg_dixlase_inquiries`. The
+  retention form offers presets (30 / 90 / 180 / 365 days, indefinite) and a
+  custom value (1–3650).
+- Per-row retention editing on the inquiry detail screen — change one row's
+  expiry without touching the global policy. Preset days are counted from
+  today, not from the original submission.
+- Artisan command `dls:inquiry:prune` for the retention sweep, with `--soft`
+  (soft-delete into the trash instead of hard delete) and `--dry-run` (count
+  without deleting). Rows are iterated with `chunkById(500)` so a large
+  backlog does not spike memory.
+- Daily scheduled run of `dls:inquiry:prune` at 03:15, registered through
+  Laravel's `Schedule` facade from the plugin's service provider.
+
+### Changed
+
+- **Default behavior:** inquiries are no longer persisted to the database
+  unless the site opts in. Email delivery is unchanged. Existing rows are
+  kept as-is; new submissions will only persist once `store_inquiries` is
+  turned on from the Privacy settings page.
+- `plugin.json`: declared `system.register_commands` and `declares.commands`
+  (the plugin now ships an Artisan command), and corrected
+  `permissions.settings.write_own` to `true` to match the settings-write code
+  paths that already existed.
+
 ## [0.1.1] — 2026-10-01
 
 ### Changed

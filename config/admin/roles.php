@@ -86,6 +86,21 @@ return [
                         ],
                     ],
                 ],
+
+                // Per-row retention edit from the detail screen. This is
+                // a policy decision rather than triage work — the same
+                // tier as the privacy settings page below. An editor can
+                // still read PII during triage; retention controls how
+                // long that PII sits around after triage ends, which is
+                // the admin's call.
+                'expires-at' => [
+                    'children' => [
+                        'update' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                    ],
+                ],
                 'bulk-status' => [
                     'access_roles' => MemberRole::EDITOR->value,
                     'view_roles' => MemberRole::EDITOR->value,
@@ -170,6 +185,17 @@ return [
                             'view_roles' => MemberRole::ADMIN->value,
                         ],
                         'auto-reply' => [
+                            'access_roles' => MemberRole::ADMIN->value,
+                            'view_roles' => MemberRole::ADMIN->value,
+                        ],
+                        // Privacy settings control whether submissions are
+                        // persisted at all and how long rows live before the
+                        // prune job removes them. That shapes what visitor
+                        // PII the site retains, so the same ADMIN tier as
+                        // the other settings pages — not a loosening below
+                        // it, because flipping persistence on retroactively
+                        // starts collecting data under the policy.
+                        'privacy' => [
                             'access_roles' => MemberRole::ADMIN->value,
                             'view_roles' => MemberRole::ADMIN->value,
                         ],

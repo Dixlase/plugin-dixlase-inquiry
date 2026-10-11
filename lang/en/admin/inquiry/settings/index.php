@@ -48,6 +48,7 @@ return [
         'completion' => 'Completion Page Settings',
         'admin_notification' => 'Admin Notification Settings',
         'auto_reply' => 'Auto-Reply Settings',
+        'privacy' => 'Privacy Settings',
     ],
 
     'cards' => [
@@ -55,6 +56,7 @@ return [
         'completion_desc' => 'Title and message shown after form submission.',
         'admin_notification_desc' => 'Email address, subject, and body for admin notifications.',
         'auto_reply_desc' => 'Auto-reply toggle, sender, subject, and body.',
+        'privacy_desc' => 'Whether submissions are saved to the database, and how long each row is kept.',
     ],
 
     'status' => [
@@ -70,6 +72,10 @@ return [
         'admin_email' => 'Recipient',
         'auto_reply' => 'Auto-Reply',
         'lang' => 'Form Language',
+        'store_inquiries' => 'DB Storage',
+        'retention' => 'Retention',
+        'retention_indefinite' => 'Indefinite',
+        'retention_days' => ':days days',
     ],
 
     // 埋め込み方法（form-previewから移動）

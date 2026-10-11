@@ -99,11 +99,43 @@ class SettingsConfigTest extends TestCase
             'throttle_decay_minutes',
             'completion_title',
             'completion_message',
+            'store_inquiries',
+            'retention_days',
         ];
 
         foreach ($requiredKeys as $key) {
             $this->assertObjectHasProperty($key, $defaults, "Missing key: {$key}");
         }
+    }
+
+    /**
+     * Default persistence policy is OFF, retention 90 days.
+     *
+     * Opt-in persistence is the privacy-first default: a fresh install does
+     * not grow a plg_dixlase_inquiries table unless the operator turns the
+     * toggle on. When they do, 90 days is the retention anchor until they
+     * change it.
+     */
+    public function test_default_privacy_settings_are_privacy_first(): void
+    {
+        $defaults = \Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting::getDefaultSettings();
+
+        $this->assertFalse($defaults->store_inquiries, 'store_inquiries must default to false (opt-in persistence).');
+        $this->assertSame(90, $defaults->retention_days, 'retention_days must default to 90.');
+    }
+
+    /**
+     * Seeder covers the new privacy keys so a fresh install writes the
+     * default rows into plg_dixlase_inquiry_settings explicitly, rather
+     * than leaving `get()` to fall through to the model-side default on
+     * every call.
+     */
+    public function test_seeder_includes_privacy_settings(): void
+    {
+        $seederFile = file_get_contents(__DIR__.'/../../database/seeders/InquirySettingsSeeder.php');
+
+        $this->assertStringContainsString("'store_inquiries'", $seederFile);
+        $this->assertStringContainsString("'retention_days'", $seederFile);
     }
 
     /**
