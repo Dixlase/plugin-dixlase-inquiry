@@ -87,20 +87,23 @@ class AdminGetRoutesSmokeTest extends TestCase
         $_ENV['INSTALLED'] = 'true';
         $_SERVER['INSTALLED'] = 'true';
 
-        // Core's phpunit.xml does not set APP_KEY; the dev-app's .env does, so
-        // this gap only surfaces in CI. actingAs() writes to the session,
-        // which needs an Encrypter with a supported cipher key -- without it
-        // the first request throws RuntimeException("Unsupported cipher or
-        // incorrect key length"). Set the config AND replace the already-
-        // resolved encrypter binding directly so no stale instance survives.
-        if (empty(config('app.key'))) {
-            $rawKey = random_bytes(32);
-            config([
-                'app.key' => 'base64:'.base64_encode($rawKey),
-                'app.cipher' => 'AES-256-CBC',
-            ]);
-            $this->app->instance('encrypter', new \Illuminate\Encryption\Encrypter($rawKey, 'AES-256-CBC'));
-        }
+        // Pin a valid 32-byte AES-256-CBC key regardless of what the
+        // surrounding harness supplied. actingAs() writes to the session,
+        // which goes through the Encrypter -- and we have seen two failure
+        // modes in CI: an empty APP_KEY (dev-app's .env hid this locally)
+        // and an APP_KEY that decodes to the wrong number of bytes (the
+        // plugin workflow injects `base64:dGVzdGtleWZvcmRpeGxhc2VpbnF1aXJ5...`
+        // which is 38 bytes after base64_decode, so AES-256-CBC rejects it
+        // with "Unsupported cipher or incorrect key length"). The fix is
+        // the same in both cases: swap in a known-good key and replace the
+        // encrypter binding directly, so no stale closure or stale
+        // instance can resurface.
+        $rawKey = random_bytes(32);
+        config([
+            'app.key' => 'base64:'.base64_encode($rawKey),
+            'app.cipher' => 'AES-256-CBC',
+        ]);
+        $this->app->instance('encrypter', new \Illuminate\Encryption\Encrypter($rawKey, 'AES-256-CBC'));
 
         // The plugin's own migrations are not auto-applied in this harness.
         // Apply them explicitly so the controllers have schema to query.
