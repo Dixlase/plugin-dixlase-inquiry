@@ -44,6 +44,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <h1 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('dixlase-inquiry::front.confirmation.title') }}</h1>
                         <p class="text-gray-600 dark:text-gray-400 text-sm">{!! __('dixlase-inquiry::front.confirmation.message') !!}</p>
                     </div>
+
+                    @if ($mailFailure ?? false)
+                        {{-- Shown when send() re-renders confirm after the admin mail
+                             failed and no DB row was kept, so the visitor is given
+                             an honest signal instead of a silent success page. --}}
+                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-8" role="alert">
+                            <div class="flex items-start gap-3">
+                                <div class="text-red-600 dark:text-red-400 mt-0.5"><i class="fas fa-triangle-exclamation"></i></div>
+                                <div>
+                                    <p class="text-sm font-semibold text-red-800 dark:text-red-200">{{ __('dixlase-inquiry::front.confirmation.mail_failure_title') }}</p>
+                                    <p class="text-sm text-red-700 dark:text-red-300 mt-1">{{ __('dixlase-inquiry::front.confirmation.mail_failure_message') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <form action="{{ ($isPreview ?? false) ? route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview.send') : route('inquiry.send') }}" method="POST">
                         @csrf
 

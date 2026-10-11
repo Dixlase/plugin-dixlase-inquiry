@@ -66,4 +66,20 @@ return [
         'enabled' => true,
         'date_column_type' => 'datetime',
     ],
+
+    // Trim the mail-failure log so the dashboard notification's 24h count stays
+    // responsive and the table does not grow unbounded on a flaky mailer. 90
+    // days is enough to reconstruct a quarterly operations report without
+    // leaving sparse per-event rows around indefinitely.
+    'mail_failures' => [
+        'table' => 'plg_dixlase_inquiry_mail_failures',
+        'date_column' => 'failed_at',
+        'default_days' => 90,
+        'description' => [
+            'ja' => '問い合わせメール送信失敗の記録（一定期間経過したもの）',
+            'en' => 'Inquiry mail delivery failure records older than the retention window',
+        ],
+        'enabled' => true,
+        'date_column_type' => 'datetime',
+    ],
 ];

@@ -5,7 +5,7 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
-## [0.2.0] — 2026-10-10
+## [0.2.0] — 2026-10-11
 
 ### Added
 
@@ -25,6 +25,26 @@ and this plugin follows Semantic Versioning.
   backlog does not spike memory.
 - Daily scheduled run of `dls:inquiry:prune` at 03:15, registered through
   Laravel's `Schedule` facade from the plugin's service provider.
+- Dashboard notification that counts inquiry mail-send failures in the last
+  24 hours (#49). This is the one visible signal when `store_inquiries` is
+  off and the SMTP relay is down — core's error email rides on the same
+  broken mailer, so without this count a quiet outage can hide a day's
+  worth of lost submissions.
+- `plg_dixlase_inquiry_mail_failures` log table and
+  `DixlaseInquiryMailFailure` model behind the dashboard count. Rows carry
+  metadata only (context, recipient role, exception class) — no addresses,
+  subject or body — and are swept after 90 days by the existing
+  `DatabaseCleanupService` pipeline.
+
+### Fixed
+
+- Silent-loss of a submission when `store_inquiries` is off and the admin
+  notification fails to send (#49). `send()` and `embedSend()` used to show
+  the visitor the success page in that case, so neither the operator (no
+  mail) nor the visitor (no error) knew the inquiry had been lost. When
+  nothing acknowledgeable survives — no DB row and no admin mail — the
+  visitor now returns to the confirm screen with an error banner and their
+  input intact, so they can retry.
 
 ### Changed
 

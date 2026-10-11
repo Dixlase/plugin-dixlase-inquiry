@@ -36,6 +36,7 @@ use App\Contracts\PluginIntegration\DashboardNotificationProviderInterface;
 use App\DTO\PluginIntegration\DashboardNotificationDTO;
 use App\Models\CaptchaEnabledForm;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiryMailFailure;
 
 /**
  * Dashboard notification provider for the Inquiry plugin.
@@ -91,6 +92,32 @@ class DixlaseInquiryDashboardProvider implements DashboardNotificationProviderIn
                     level: 'info',
                     message: __('dixlase-inquiry::dashboard.unread_inquiries', ['count' => $unreadCount]),
                     icon: 'fas fa-envelope',
+                    pluginName: __('dixlase-inquiry::admin.plugin.name'),
+                    url: route('dixlase-inquiry::admin.inquiry.index'),
+                    actionLabel: __('dixlase-inquiry::dashboard.view_inquiries'),
+                );
+            }
+        } catch (\Exception $e) {
+            // DB not available or table missing — skip silently
+        }
+
+        // Admin-mail delivery failures over the last 24 hours. This is the only
+        // visible signal when store_inquiries is off and the SMTP relay is down:
+        // the laravel.log line and the core error-mail both ride on the same
+        // broken mailer, so without this count a quiet outage can hide a day's
+        // worth of lost submissions.
+        try {
+            $failureCount = DixlaseInquiryMailFailure::query()
+                ->where('recipient_role', DixlaseInquiryMailFailure::ROLE_ADMIN)
+                ->where('failed_at', '>=', now()->subDay())
+                ->count();
+
+            if ($failureCount > 0) {
+                $notifications[] = new DashboardNotificationDTO(
+                    key: 'inquiry_mail_failures',
+                    level: 'warning',
+                    message: __('dixlase-inquiry::dashboard.mail_failures_24h', ['count' => $failureCount]),
+                    icon: 'fas fa-triangle-exclamation',
                     pluginName: __('dixlase-inquiry::admin.plugin.name'),
                     url: route('dixlase-inquiry::admin.inquiry.index'),
                     actionLabel: __('dixlase-inquiry::dashboard.view_inquiries'),
