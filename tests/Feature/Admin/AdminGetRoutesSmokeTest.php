@@ -99,6 +99,14 @@ class AdminGetRoutesSmokeTest extends TestCase
         $this->app['view']->addNamespace('dixlase-inquiry', base_path('plugins/DixlaseInquiry/resources/views'));
         $this->app['translator']->addNamespace('dixlase-inquiry', base_path('plugins/DixlaseInquiry/lang'));
 
+        // Preview-mode front views extend `themes::layouts.app`, which
+        // production supplies via whatever theme is active. The plugin test
+        // harness does not load a theme, so point `themes::` at the smoke
+        // test's minimal stub -- otherwise the preview GET route would 500
+        // on an unregistered namespace, which is a test-env gap rather than
+        // a product defect this suite is trying to find.
+        $this->app['view']->addNamespace('themes', __DIR__.'/../../stubs/theme');
+
         // Register the plugin's admin routes under the admin URL prefix with a
         // reduced middleware stack. Core's `web + auth:member` is enough to
         // reach every controller; stripping the IP / lockdown / activity-log
