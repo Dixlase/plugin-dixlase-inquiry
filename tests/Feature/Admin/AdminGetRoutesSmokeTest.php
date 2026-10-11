@@ -87,6 +87,16 @@ class AdminGetRoutesSmokeTest extends TestCase
         $_ENV['INSTALLED'] = 'true';
         $_SERVER['INSTALLED'] = 'true';
 
+        // Core's phpunit.xml does not set APP_KEY; the dev-app's .env does, so
+        // this gap only surfaces in CI. actingAs() writes to the session,
+        // which needs an Encrypter with a supported cipher key -- without it
+        // the first request throws RuntimeException("Unsupported cipher or
+        // incorrect key length").
+        if (empty(config('app.key'))) {
+            config(['app.key' => 'base64:'.base64_encode(random_bytes(32))]);
+            $this->app->forgetInstance('encrypter');
+        }
+
         // The plugin's own migrations are not auto-applied in this harness.
         // Apply them explicitly so the controllers have schema to query.
         Artisan::call('migrate', [
