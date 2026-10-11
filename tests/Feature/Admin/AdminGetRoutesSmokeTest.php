@@ -91,10 +91,15 @@ class AdminGetRoutesSmokeTest extends TestCase
         // this gap only surfaces in CI. actingAs() writes to the session,
         // which needs an Encrypter with a supported cipher key -- without it
         // the first request throws RuntimeException("Unsupported cipher or
-        // incorrect key length").
+        // incorrect key length"). Set the config AND replace the already-
+        // resolved encrypter binding directly so no stale instance survives.
         if (empty(config('app.key'))) {
-            config(['app.key' => 'base64:'.base64_encode(random_bytes(32))]);
-            $this->app->forgetInstance('encrypter');
+            $rawKey = random_bytes(32);
+            config([
+                'app.key' => 'base64:'.base64_encode($rawKey),
+                'app.cipher' => 'AES-256-CBC',
+            ]);
+            $this->app->instance('encrypter', new \Illuminate\Encryption\Encrypter($rawKey, 'AES-256-CBC'));
         }
 
         // The plugin's own migrations are not auto-applied in this harness.
