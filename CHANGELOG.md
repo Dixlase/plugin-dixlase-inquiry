@@ -5,6 +5,33 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.4.0] — 2026-10-12
+
+### Fixed
+
+- Silent-loss of a submission when `store_inquiries` is off and the admin
+  notification fails to send. `send()` and `embedSend()` used to show the
+  visitor the success page in that case, so neither the operator (no
+  mail) nor the visitor (no error) knew the inquiry had been lost. With
+  `store_inquiries` off being the default since 0.2.0, a freshly
+  installed site plus an SMTP outage was the most likely path to this
+  bug. When nothing acknowledgeable survives — no DB row and no admin
+  mail — the visitor now returns to the confirm screen with an error
+  banner and their input intact, so they can retry.
+
+### Added
+
+- Dashboard notification that counts inquiry mail-send failures in the
+  last 24 hours. This is the only visible signal when `store_inquiries`
+  is off and the SMTP relay is down — core's error email rides on the
+  same broken mailer, so without this count a quiet outage can hide a
+  day's worth of lost submissions.
+- `plg_dixlase_inquiry_mail_failures` log table and
+  `DixlaseInquiryMailFailure` model behind the dashboard count. Rows
+  carry metadata only (context, recipient role, exception class) — no
+  addresses, subject or body — and are swept after 90 days by the
+  existing `DatabaseCleanupService` pipeline.
+
 ## [0.3.0] — 2026-10-11
 
 ### Fixed

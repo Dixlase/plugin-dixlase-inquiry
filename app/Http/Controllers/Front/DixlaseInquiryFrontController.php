@@ -41,6 +41,7 @@ use Plugins\DixlaseInquiry\App\Http\Requests\DixlaseInquirySubmitRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Front\DixlaseInquiryEmbedSendRequest;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAutoReply;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiryMailFailure;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
 use Plugins\DixlaseInquiry\App\Traits\InquiryFormDataTrait;
 
@@ -161,15 +162,55 @@ class DixlaseInquiryFrontController extends Controller
         // DB保存
         $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
 
-        // メール送信（失敗してもDB保存は維持）
+        // The admin notification is the critical mail: without it (and without a
+        // DB row to look at later), the submission leaves no trace at all. Keep
+        // its try block tight so an auto-reply failure cannot be mistaken for an
+        // admin-notification failure.
+        $adminMailDelivered = false;
         try {
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
-
-            if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
-                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
-            }
+            $adminMailDelivered = true;
         } catch (\Exception $e) {
-            \Log::error('Inquiry mail send failed: '.$e->getMessage());
+            \Log::error('Inquiry admin mail send failed: '.$e->getMessage());
+            $this->recordMailFailure(
+                DixlaseInquiryMailFailure::CONTEXT_SEND,
+                DixlaseInquiryMailFailure::ROLE_ADMIN,
+                $e,
+                DixlaseInquiryAdminNotification::class,
+            );
+        }
+
+        if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
+            try {
+                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
+            } catch (\Exception $e) {
+                \Log::error('Inquiry auto-reply send failed: '.$e->getMessage());
+                $this->recordMailFailure(
+                    DixlaseInquiryMailFailure::CONTEXT_SEND,
+                    DixlaseInquiryMailFailure::ROLE_VISITOR,
+                    $e,
+                    DixlaseInquiryAutoReply::class,
+                );
+            }
+        }
+
+        // Silent-loss guard: when store_inquiries is off AND the admin notification
+        // failed, nothing a human can act on exists -- no DB row, no email in the
+        // operator's inbox. Returning the success view here would tell the visitor
+        // their inquiry was received when it was in fact lost. Instead, re-render
+        // the confirm view with their input intact and an error banner so they can
+        // retry. When a DB row was written, the submission is recoverable through
+        // the admin panel and the success view is honest.
+        if (! $adminMailDelivered && $inquiry === null) {
+            return view('dixlase-inquiry::front.inquiries.confirm', [
+                'settings' => $settings,
+                'data' => $request->all(),
+                'genderOptions' => $this->getGenderOptions($settings),
+                'captchaFields' => CaptchaHelper::shouldShowCaptcha(self::CAPTCHA_FORM_KEY)
+                    ? array_keys(app(CaptchaDriver::class)->rules())
+                    : [],
+                'mailFailure' => true,
+            ]);
         }
 
         return view('dixlase-inquiry::front.inquiries.complete', [
@@ -274,6 +315,16 @@ class DixlaseInquiryFrontController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Inquiry send failed: '.$e->getMessage());
+            // Mail::raw is used here instead of a dedicated Mailable; the recipient
+            // role is still "admin" because the first send() call in this try block
+            // targets the operator address, and any failure cannot easily tell apart
+            // which of the two raw mails faulted.
+            $this->recordMailFailure(
+                DixlaseInquiryMailFailure::CONTEXT_SUBMIT,
+                DixlaseInquiryMailFailure::ROLE_ADMIN,
+                $e,
+                null,
+            );
 
             return response()->json([
                 'success' => false,
@@ -305,23 +356,39 @@ class DixlaseInquiryFrontController extends Controller
         // DB保存
         $inquiry = $this->saveInquiry($inquiryData, $request, $settings);
 
-        // メール送信（失敗してもDB保存は維持）
+        // Separate try blocks so the admin notification's success is tracked and the
+        // auto-reply's failure cannot masquerade as a lost submission.
+        $adminMailDelivered = false;
         try {
             Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
-
-            if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
-                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
-            }
-
-            // AJAXリクエストの場合はJSONレスポンスを返す
-            if ($request->ajax()) {
-                return response()->json(['success' => true]);
-            }
-
-            return redirect($redirectUrl)->with('inquiry_success', true);
+            $adminMailDelivered = true;
         } catch (\Exception $e) {
-            \Log::error('Inquiry embed send failed: '.$e->getMessage());
+            \Log::error('Inquiry embed admin mail send failed: '.$e->getMessage());
+            $this->recordMailFailure(
+                DixlaseInquiryMailFailure::CONTEXT_EMBED_SEND,
+                DixlaseInquiryMailFailure::ROLE_ADMIN,
+                $e,
+                DixlaseInquiryAdminNotification::class,
+            );
+        }
 
+        if ($settings->auto_reply_enabled && ! empty($validated['email'])) {
+            try {
+                Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
+            } catch (\Exception $e) {
+                \Log::error('Inquiry embed auto-reply send failed: '.$e->getMessage());
+                $this->recordMailFailure(
+                    DixlaseInquiryMailFailure::CONTEXT_EMBED_SEND,
+                    DixlaseInquiryMailFailure::ROLE_VISITOR,
+                    $e,
+                    DixlaseInquiryAutoReply::class,
+                );
+            }
+        }
+
+        // Silent-loss guard (see send() for the full rationale): when neither a DB
+        // row nor an admin mail exists, surface an error instead of a success.
+        if (! $adminMailDelivered && $inquiry === null) {
             if ($request->ajax()) {
                 return response()->json(['error' => __('dixlase-inquiry::front.messages.submit_error')], 500);
             }
@@ -330,6 +397,12 @@ class DixlaseInquiryFrontController extends Controller
                 ->withErrors(['message' => __('dixlase-inquiry::front.messages.submit_error')])
                 ->withInput();
         }
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        return redirect($redirectUrl)->with('inquiry_success', true);
     }
 
     /**

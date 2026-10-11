@@ -36,6 +36,7 @@ use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
 use Illuminate\Http\Request;
 use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
+use Plugins\DixlaseInquiry\App\Models\DixlaseInquiryMailFailure;
 
 /**
  * フォームデータ処理の共通トレイト
@@ -227,6 +228,37 @@ trait InquiryFormDataTrait
     protected function shouldPersistInquiry(object $settings): bool
     {
         return filter_var($settings->store_inquiries ?? false, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Record an inquiry mail-send failure for the dashboard notification.
+     *
+     * Metadata only: context, recipient role (admin vs visitor), mailable
+     * class basename and exception class. No addresses, subject, body or
+     * inquiry fields are stored. The exception's own message still lands
+     * in laravel.log via the caller's Log::error for full triage context.
+     *
+     * Wrapped in its own try/catch so a failure to record a failure (DB
+     * down during an SMTP outage, say) never masks the mail error the
+     * caller is handling.
+     */
+    protected function recordMailFailure(
+        string $context,
+        string $recipientRole,
+        \Throwable $e,
+        ?string $mailableClass = null,
+    ): void {
+        try {
+            DixlaseInquiryMailFailure::create([
+                'failed_at' => now(),
+                'context' => $context,
+                'recipient_role' => $recipientRole,
+                'mailable' => $mailableClass !== null ? class_basename($mailableClass) : null,
+                'exception_class' => get_class($e),
+            ]);
+        } catch (\Throwable) {
+            // Deliberately swallowed; see docblock.
+        }
     }
 
     /**

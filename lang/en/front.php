@@ -125,6 +125,8 @@ return [
     'confirmation' => [
         'title' => 'Confirm Your Information',
         'message' => 'Please confirm the information below is correct.<br>If everything looks good, press the submit button.',
+        'mail_failure_title' => 'Your inquiry could not be delivered.',
+        'mail_failure_message' => 'A temporary problem on our end stopped the email from going through. Nothing was saved. Please press the submit button again to retry.',
     ],
 
     'complete' => [
