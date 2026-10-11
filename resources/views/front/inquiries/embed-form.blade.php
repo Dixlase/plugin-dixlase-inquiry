@@ -28,21 +28,21 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
-{{-- 埋め込み用問い合わせフォーム（ショートコード用） --}}
-<div class="dixlase-inquiry-embed" id="inquiry"
+{{-- Embed inquiry form (shortcode entry point) --}}
+<div class="dixlase-inquiry-embed"
     x-data="inquiryEmbedForm({{ ($settings->show_confirmation_page ?? true) ? 'true' : 'false' }}, {{ ($settings->name_order_western ?? false) ? 'true' : 'false' }})"
     data-msg-too-many="{{ __('dixlase-inquiry::front.messages.too_many_requests') }}"
     data-msg-submit-error="{{ __('dixlase-inquiry::front.messages.submit_error') }}"
     @if(session('inquiry_success')) x-init="currentView = 'complete'" @endif>
 
-    {{-- 高さアニメーション用ラッパー --}}
+    {{-- Height animation wrapper --}}
     <div x-ref="heightContainer" class="overflow-hidden transition-[height] duration-300 ease-out" style="height: auto;">
 
-    {{-- エラー表示エリア（AJAX用） --}}
+    {{-- Error display area (AJAX) --}}
     <div class="inquiry-errors hidden scroll-mt-24 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4" role="alert" aria-live="polite"></div>
 
     @if($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4">
             <ul class="list-disc list-inside">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -169,12 +169,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <input type="text" name="first_name" value="{{ old('first_name') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" required>
                     </div>
                     <div>
                         <input type="text" name="last_name" value="{{ old('last_name') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" required>
                     </div>
                 </div>
@@ -183,12 +183,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <input type="text" name="last_name" value="{{ old('last_name') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.last_name_placeholder') }}" required>
                     </div>
                     <div>
                         <input type="text" name="first_name" value="{{ old('first_name') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.first_name_placeholder') }}" required>
                     </div>
                 </div>
@@ -205,13 +205,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <input type="text" name="last_name_kana" value="{{ old('last_name_kana') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.last_name_kana_placeholder') }}"
                             @if($settings->require_kana ?? false) required @endif>
                     </div>
                     <div>
                         <input type="text" name="first_name_kana" value="{{ old('first_name_kana') }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.first_name_kana_placeholder') }}"
                             @if($settings->require_kana ?? false) required @endif>
                     </div>
@@ -225,7 +225,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     {{ __('dixlase-inquiry::front.form.email') }}<x-form-required-badge />
                 </label>
                 <input type="email" name="email" value="{{ old('email') }}"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.email_placeholder') }}" required>
             </div>
 
@@ -235,7 +235,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     {{ __('dixlase-inquiry::front.form.email_confirmation') }}<x-form-required-badge />
                 </label>
                 <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.email_confirmation_placeholder') }}" required
                     @if($settings->email_confirm_paste_disabled ?? true) @paste.prevent @endif>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('dixlase-inquiry::front.form.email_confirmation_help') }}</p>
@@ -251,19 +251,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
                     <input type="text" name="postal_code" value="{{ old('postal_code') }}"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                         placeholder="{{ __('dixlase-inquiry::front.form.postal_code_placeholder') }}"
                         @if($settings->postal_code_required ?? false) required @endif>
                 @else
                     {{-- 日本式: 2分割 --}}
                     <div class="flex items-center gap-2">
                         <input type="text" name="postal_code_1" value="{{ old('postal_code_1') }}" maxlength="3"
-                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.postal_code_1_placeholder') }}"
                             @if($settings->postal_code_required ?? false) required @endif>
                         <span class="text-gray-500 dark:text-gray-400">-</span>
                         <input type="text" name="postal_code_2" value="{{ old('postal_code_2') }}" maxlength="4"
-                            class="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.postal_code_2_placeholder') }}"
                             @if($settings->postal_code_required ?? false) required @endif>
                     </div>
@@ -286,7 +286,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.street_address') }}
                             </label>
                             <input type="text" name="street_address" value="{{ old('street_address') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.street_address_placeholder') }}"
                                 @if($settings->address_required ?? false) required @endif>
                         </div>
@@ -295,7 +295,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.building') }}
                             </label>
                             <input type="text" name="building" value="{{ old('building') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
                         </div>
                         <div>
@@ -303,7 +303,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.city') }}
                             </label>
                             <input type="text" name="city" value="{{ old('city') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
                                 @if($settings->address_required ?? false) required @endif>
                         </div>
@@ -312,7 +312,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.state') }}
                             </label>
                             <input type="text" name="state" value="{{ old('state') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.state_placeholder') }}">
                         </div>
                         <div>
@@ -320,7 +320,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.country') }}
                             </label>
                             <input type="text" name="country" value="{{ old('country') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.country_placeholder') }}">
                         </div>
                     </div>
@@ -332,7 +332,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.prefecture') }}
                             </label>
                             <select name="prefecture"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 @if($settings->address_required ?? false) required @endif>
                                 <option value="">{{ __('dixlase-inquiry::front.form.prefecture_placeholder') }}</option>
                                 @foreach($prefectures as $key => $name)
@@ -345,7 +345,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.city') }}
                             </label>
                             <input type="text" name="city" value="{{ old('city') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.city_placeholder') }}"
                                 @if($settings->address_required ?? false) required @endif>
                         </div>
@@ -354,7 +354,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.address_line') }}
                             </label>
                             <input type="text" name="address_line" value="{{ old('address_line') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.address_line_placeholder') }}"
                                 @if($settings->address_required ?? false) required @endif>
                         </div>
@@ -363,7 +363,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                                 {{ __('dixlase-inquiry::front.form.building') }}
                             </label>
                             <input type="text" name="building" value="{{ old('building') }}"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                                 placeholder="{{ __('dixlase-inquiry::front.form.building_placeholder') }}">
                         </div>
                     </div>
@@ -381,24 +381,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 @if($settings->name_order_western ?? false)
                     {{-- 欧米式: 単一フィールド --}}
                     <input type="tel" name="phone" value="{{ old('phone') }}"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                         placeholder="{{ __('dixlase-inquiry::front.form.phone_placeholder') }}"
                         @if($settings->phone_required ?? false) required @endif>
                 @else
                     {{-- 日本式: 3分割 --}}
                     <div class="flex items-center gap-2">
                         <input type="tel" name="phone_1" value="{{ old('phone_1') }}" maxlength="5"
-                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.phone_1_placeholder') }}"
                             @if($settings->phone_required ?? false) required @endif>
                         <span class="text-gray-500 dark:text-gray-400">-</span>
                         <input type="tel" name="phone_2" value="{{ old('phone_2') }}" maxlength="4"
-                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.phone_2_placeholder') }}"
                             @if($settings->phone_required ?? false) required @endif>
                         <span class="text-gray-500 dark:text-gray-400">-</span>
                         <input type="tel" name="phone_3" value="{{ old('phone_3') }}" maxlength="4"
-                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('dixlase-inquiry::front.form.phone_3_placeholder') }}"
                             @if($settings->phone_required ?? false) required @endif>
                     </div>
@@ -436,7 +436,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     @if($settings->subject_required ?? false)<x-form-required-badge />@endif
                 </label>
                 <input type="text" name="subject" value="{{ old('subject') }}"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.subject_placeholder') }}"
                     @if($settings->subject_required ?? false) required @endif>
             </div>
@@ -448,7 +448,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     {{ __('dixlase-inquiry::front.form.message') }}<x-form-required-badge />
                 </label>
                 <textarea name="message" rows="6"
-                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm transition-colors duration-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 dark:bg-gray-700 dark:text-white"
                     placeholder="{{ __('dixlase-inquiry::front.form.message_placeholder') }}" required>{{ old('message') }}</textarea>
             </div>
 
