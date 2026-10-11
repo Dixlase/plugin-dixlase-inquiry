@@ -5,6 +5,27 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.3.0] — 2026-10-11
+
+### Fixed
+
+- Embedded form backgrounds now fade cleanly when the theme's appearance toggle is
+  used, instead of jumping (#48).
+- Re-signed. The signature no longer matched the tree, so sites reported the plugin
+  as `signature_invalid` and deducted from its health score. 0.2.0 bumped the
+  version and wrote its changelog entry but was never signed or tagged: the change
+  reached `main` through a pull-request merge, which does not run the local signing
+  hook. Sites that report 0.2.0 are running that unsigned build; 0.3.0 is the first
+  signed release that carries the 0.2.0 work.
+
+### Changed
+
+- Built front-end assets are no longer tracked in git; the release build produces
+  them (#46).
+- CI and dependency maintenance: `source-map-js` 1.2.1 → 1.2.2 (#56), the dead
+  `COMPOSER_AUTH` block removed (#52), the checkout token no longer passed as a
+  secret (#57), and the deploy also covers the documentation site (#54).
+
 ## [0.2.0] — 2026-10-10
 
 ### Added
