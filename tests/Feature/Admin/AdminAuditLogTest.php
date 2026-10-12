@@ -66,9 +66,17 @@ class AdminAuditLogTest extends TestCase
 
     private Member $admin;
 
+    /** Snapshot of INSTALLED before setUp; see AdminGetRoutesSmokeTest. */
+    private ?string $installedEnvBefore = null;
+
+    private ?string $installedServerBefore = null;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->installedEnvBefore = array_key_exists('INSTALLED', $_ENV) ? (string) $_ENV['INSTALLED'] : null;
+        $this->installedServerBefore = array_key_exists('INSTALLED', $_SERVER) ? (string) $_SERVER['INSTALLED'] : null;
 
         $_ENV['INSTALLED'] = 'true';
         $_SERVER['INSTALLED'] = 'true';
@@ -104,8 +112,16 @@ class AdminAuditLogTest extends TestCase
 
     protected function tearDown(): void
     {
-        $_ENV['INSTALLED'] = 'false';
-        $_SERVER['INSTALLED'] = 'false';
+        if ($this->installedEnvBefore === null) {
+            unset($_ENV['INSTALLED']);
+        } else {
+            $_ENV['INSTALLED'] = $this->installedEnvBefore;
+        }
+        if ($this->installedServerBefore === null) {
+            unset($_SERVER['INSTALLED']);
+        } else {
+            $_SERVER['INSTALLED'] = $this->installedServerBefore;
+        }
         parent::tearDown();
     }
 
