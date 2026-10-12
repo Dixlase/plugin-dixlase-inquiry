@@ -178,8 +178,8 @@
     "files": {
         ".backlog/SPINOFF-extension-prebuilt-assets-release.ja.md": "sha256:c5b79561e4d94b9909ac2c2d609620b939b632bc65a085ccafbcdb2c278f4ed8",
         ".backlog/SPINOFF-extension-prebuilt-assets-release.md": "sha256:cb389be98e08fc5839d05e147d3cf1fbe921163de078f577ca8fad5ed2974831",
-        "CHANGELOG.ja.md": "sha256:54cc213fc2d8c57c407c0d721b42511b448c8323cb39a39c6d1ee9c9f487ec59",
-        "CHANGELOG.md": "sha256:937e2388b460bc21d9dbd004dd92fbb830d99f60404164ba08ebcad9d16bb504",
+        "CHANGELOG.ja.md": "sha256:189e010af2f3d877ab9488b88045543ea9aa4a4fa274a2450dd9e2fddc2a9652",
+        "CHANGELOG.md": "sha256:c1d94d3907cdc12e13030f2ff53764e0b489c6a63a1101e2dc547e03972b5f73",
         "CONTRIBUTING.ja.md": "sha256:3a4caffe44c8894f643ca5f9ba48052ae993ec310a0786046cf96cf085572645",
         "CONTRIBUTING.md": "sha256:43210e8040acc963eedfde3869e318b6685ac3bcd8284ea160a8741910bec7c4",
         "COPYRIGHT-POLICY.ja.md": "sha256:d4fc70b09d8c14afd862827d3a55a7c3d2368622327bddf4502109b07e4724b2",
@@ -221,7 +221,7 @@
         "app/Support/MailMarkdown.php": "sha256:99d2fdd0abdc12dfd87f64f0fe466ac3cb36668e098df8a68ca95362d7a5a006",
         "app/Traits/EmitsAdminAuditTrait.php": "sha256:6c2bd13baa8b67b4bf870eafca6684b1cc6a0b8bf8c9e175bbabb31546b813bb",
         "app/Traits/InquiryFormDataTrait.php": "sha256:7075cbbfe732338c75dc67d474d125bd772c9c81a814a86d40f017d423d28d79",
-        "composer.json": "sha256:336dac1ff4537031bf65d455a5cee9e04b3f80d46e79a9a3d1c9a4c051066573",
+        "composer.json": "sha256:a577b8bfdfa91afe5f28bc54889ec74caa7fdc37bf9649ea2092fe630bf6b090",
         "config/admin.php": "sha256:0a00da1bd6724b803a781ae3e74d17b039793f10aeba08a9321465036aa374bd",
         "config/admin/database-cleanup.php": "sha256:05b8aba91318bf9f71546e7612485caaf28e6e85c89b321ede89c1701ccbe29c",
         "config/admin/navigation.php": "sha256:23a017fade3c2fc89bd8279ebbb908c50f1f767811ed37031cf99428b8c08e27",
@@ -275,7 +275,7 @@
         "lang/ja/multilingual_types.php": "sha256:bb8fca247c56754df6582e374242b1e6609893ef2f524559af97438f68904ec1",
         "lang/ja/route-slug.php": "sha256:f0112b898cd2517fa59c9ee6b449657aea3ad1a185b6f713d31ec3d7b5f5c937",
         "package-lock.json": "sha256:b241165079958635ae12843bef703fb005707818afc6317a27778dac80ab8e2d",
-        "package.json": "sha256:02f9853ff64b8ede8908369f633cf4a794958bc100d2e211cb6a9a6166006381",
+        "package.json": "sha256:d1278b5c4bb0e6d8fa73091a019e64c7d0ed00120f717e563c68a8befadb60d1",
         "phpunit.xml": "sha256:5af224233d2b1a5dd0fb482b2b0ef525a5a821044a0c25e8eff2f8f3a52190d7",
         "resources/comment-translations/ja/resources/views/front/inquiries/embed-form.blade.php": "sha256:fbde70a9db7157f5158aa202bd376588dfa5e34d8c645a445e2873aa731ae940",
         "resources/src/css/components/embed-form.scss": "sha256:4adf5cc847d1110c620591d57ddc9ff798690e6d61369df8907c06b26b5ffcc4",
@@ -337,6 +337,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-10-12T16:36:56+00:00"
+        "signed_at": "2026-10-12T17:05:48+00:00"
     }
 }
