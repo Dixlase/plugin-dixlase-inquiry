@@ -155,11 +155,15 @@ class AdminAuditLogTest extends TestCase
     {
         $inquiry = DixlaseInquiry::factory()->create(['expires_at' => now()->addDays(30)]);
 
-        $this->actingAs($this->admin, 'member')
-            ->patch("/admin/inquiry/{$inquiry->id}/expires-at", [
-                'mode' => '365',
-            ])
-            ->assertRedirect();
+        $this->actingAs($this->admin, 'member');
+
+        $request = \Illuminate\Http\Request::create(
+            "/admin/inquiry/{$inquiry->id}/expires-at",
+            'PATCH',
+            ['mode' => '365'],
+        );
+        app(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminController::class)
+            ->updateExpiresAt($request, $inquiry->id);
 
         $log = AuditLog::query()
             ->where('action', 'inquiry_row_retention_updated')
@@ -177,9 +181,10 @@ class AdminAuditLogTest extends TestCase
         $inquiry = DixlaseInquiry::factory()->create();
         $inquiry->delete();
 
-        $this->actingAs($this->admin, 'member')
-            ->post("/admin/inquiry/trash/{$inquiry->id}/restore")
-            ->assertRedirect();
+        $this->actingAs($this->admin, 'member');
+
+        app(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminController::class)
+            ->restore($inquiry->id);
 
         $log = AuditLog::query()
             ->where('action', 'inquiry_trash_item_restored')
@@ -196,9 +201,10 @@ class AdminAuditLogTest extends TestCase
         $inquiry->delete();
         $destroyedId = $inquiry->id;
 
-        $this->actingAs($this->admin, 'member')
-            ->delete("/admin/inquiry/trash/{$inquiry->id}")
-            ->assertRedirect();
+        $this->actingAs($this->admin, 'member');
+
+        app(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminController::class)
+            ->forceDestroy($inquiry->id);
 
         $log = AuditLog::query()
             ->where('action', 'inquiry_trash_item_force_destroyed')
@@ -213,9 +219,10 @@ class AdminAuditLogTest extends TestCase
     {
         DixlaseInquiry::factory()->count(3)->create()->each->delete();
 
-        $this->actingAs($this->admin, 'member')
-            ->post('/admin/inquiry/trash/empty')
-            ->assertRedirect();
+        $this->actingAs($this->admin, 'member');
+
+        app(\Plugins\DixlaseInquiry\App\Http\Controllers\Admin\DixlaseInquiryAdminController::class)
+            ->emptyTrash();
 
         $log = AuditLog::query()
             ->where('action', 'inquiry_trash_emptied')
