@@ -33,7 +33,7 @@
 return [
     'inquiry' => 'Inquiry',
     'inquiry_list' => 'Inquiry List',
-    'inquiry_settings' => 'Settings',
+    'inquiry_settings' => 'Inquiry Settings',
     'settings_nav' => [
         'index' => 'Overview',
         'form_basic' => 'Form Settings',

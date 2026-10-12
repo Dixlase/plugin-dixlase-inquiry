@@ -33,7 +33,7 @@
 return [
     'inquiry' => 'お問い合わせ',
     'inquiry_list' => 'お問い合わせ一覧',
-    'inquiry_settings' => '設定',
+    'inquiry_settings' => '問い合わせ設定',
     'settings_nav' => [
         'index' => '概要',
         'form_basic' => 'フォーム設定',

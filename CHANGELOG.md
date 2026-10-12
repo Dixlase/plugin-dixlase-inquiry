@@ -5,6 +5,18 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.1] — 2026-10-12
+
+### Changed
+
+- Admin sidebar label for the plugin's settings group is now **Inquiry
+  Settings** (ja: **問い合わせ設定**), up from the plain **Settings**
+  (ja: **設定**) it used to render as (#63). The sibling entry labelled
+  **Inquiry list** already read self-contained, so a quick glance at the
+  sidebar now anchors both children without having to re-read the
+  parent. No route, permission, or structural change — one translation
+  key on each side.
+
 ## [0.5.0] — 2026-10-12
 
 ### Added
