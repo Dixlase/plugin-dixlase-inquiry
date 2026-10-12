@@ -35,6 +35,10 @@ declare(strict_types=1);
 namespace Plugins\DixlaseInquiry\Tests\Feature\Admin;
 
 use App\Enums\MemberRole;
+use App\Http\Middleware\BlockPluginRoutes;
+use App\Http\Middleware\CheckInstallationReady;
+use App\Http\Middleware\CheckMaintenanceMode;
+use App\Http\Middleware\SafeMode;
 use App\Models\Member;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -216,6 +220,21 @@ class AdminGetRoutesSmokeTest extends TestCase
 
     private function assertScreensOpenFor(MemberRole $role): void
     {
+        // Core-side global middleware that can emit redirects without
+        // the controller ever running. On a fresh test DB they land
+        // when CI pulls a new .env and the test's APP_KEY override has
+        // not been persisted (CheckInstallationReady), or when the
+        // plugin safe-mode guard has nothing to match against
+        // (BlockPluginRoutes). Pulling them off here keeps the suite
+        // measuring plugin behaviour; those gates are covered by core's
+        // own tests.
+        $this->withoutMiddleware([
+            CheckInstallationReady::class,
+            CheckMaintenanceMode::class,
+            SafeMode::class,
+            BlockPluginRoutes::class,
+        ]);
+
         $member = Member::factory()->create(['role' => $role]);
         $this->actingAs($member, 'member');
 
