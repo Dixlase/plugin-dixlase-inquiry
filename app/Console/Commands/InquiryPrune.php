@@ -32,8 +32,10 @@
 
 namespace Plugins\DixlaseInquiry\App\Console\Commands;
 
+use App\Models\AuditLog;
 use Illuminate\Console\Command;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
+use Plugins\DixlaseInquiry\App\Traits\EmitsAdminAuditTrait;
 
 /**
  * Delete inquiries whose retention window has passed.
@@ -48,6 +50,8 @@ use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
  */
 class InquiryPrune extends Command
 {
+    use EmitsAdminAuditTrait;
+
     protected $signature = 'dls:inquiry:prune
                             {--soft : Soft-delete into the trash instead of hard-deleting}
                             {--dry-run : Count affected rows without deleting}';
@@ -64,11 +68,24 @@ class InquiryPrune extends Command
 
         if ($count === 0) {
             $this->info('No expired inquiries to prune.');
+
             return self::SUCCESS;
         }
 
         if ($this->option('dry-run')) {
-            $this->info("Would prune {$count} expired " . ($count === 1 ? 'inquiry' : 'inquiries') . ' (dry-run; no changes made).');
+            $this->info("Would prune {$count} expired ".($count === 1 ? 'inquiry' : 'inquiries').' (dry-run; no changes made).');
+            $this->emitPluginAudit(
+                action: 'inquiry_prune_executed',
+                context: [
+                    'matched_count' => $count,
+                    'deleted_count' => 0,
+                    'soft_delete' => (bool) $this->option('soft'),
+                    'dry_run' => true,
+                ],
+                severity: AuditLog::SEVERITY_INFO,
+                targetLabel: 'dls:inquiry:prune',
+            );
+
             return self::SUCCESS;
         }
 
@@ -86,10 +103,25 @@ class InquiryPrune extends Command
         });
 
         if ($soft) {
-            $this->info("Soft-deleted {$deleted} expired " . ($deleted === 1 ? 'inquiry' : 'inquiries') . ' (moved to trash).');
+            $this->info("Soft-deleted {$deleted} expired ".($deleted === 1 ? 'inquiry' : 'inquiries').' (moved to trash).');
         } else {
-            $this->info("Permanently deleted {$deleted} expired " . ($deleted === 1 ? 'inquiry' : 'inquiries') . '.');
+            $this->info("Permanently deleted {$deleted} expired ".($deleted === 1 ? 'inquiry' : 'inquiries').'.');
         }
+
+        // Severity: WARNING for a hard-delete sweep (visitor PII is gone
+        // for good), NOTICE for a soft move to trash (recoverable until
+        // the 30-day trash cleanup runs).
+        $this->emitPluginAudit(
+            action: 'inquiry_prune_executed',
+            context: [
+                'matched_count' => $count,
+                'deleted_count' => $deleted,
+                'soft_delete' => $soft,
+                'dry_run' => false,
+            ],
+            severity: $soft ? AuditLog::SEVERITY_NOTICE : AuditLog::SEVERITY_WARNING,
+            targetLabel: 'dls:inquiry:prune',
+        );
 
         return self::SUCCESS;
     }

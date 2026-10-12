@@ -35,6 +35,7 @@ namespace Plugins\DixlaseInquiry\App\Http\Controllers\Admin;
 use App\Facades\SiteSettings;
 use App\Helpers\AdminHelper;
 use App\Helpers\CaptchaHelper;
+use App\Models\AuditLog;
 use App\Traits\AdminInterfaceTrait;
 use App\Traits\AdminLoggedInTrait;
 use Illuminate\Http\RedirectResponse;
@@ -58,6 +59,9 @@ class DixlaseInquiryAdminController extends Controller
 {
     use AdminInterfaceTrait;
     use AdminLoggedInTrait;
+
+    // EmitsAdminAuditTrait is pulled in transitively via InquiryFormDataTrait;
+    // declaring it directly here would trigger a trait-method collision.
     use InquiryFormDataTrait;
 
     /**
@@ -224,7 +228,23 @@ class DixlaseInquiryAdminController extends Controller
             default => now()->addDays((int) $validated['mode']),
         };
 
+        // Capture the previous ISO timestamp before the write so the
+        // audit entry records the from/to transition.
+        $previousExpiresAt = $inquiry->expires_at?->toIso8601String();
+
         $inquiry->update(['expires_at' => $expiresAt]);
+
+        $this->emitPluginAudit(
+            action: 'inquiry_row_retention_updated',
+            target: $inquiry,
+            context: [
+                'expires_at' => [
+                    'from' => $previousExpiresAt,
+                    'to' => $expiresAt?->toIso8601String(),
+                ],
+                'mode' => $validated['mode'],
+            ],
+        );
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.show', $id)
             ->with('success', __('dixlase-inquiry::admin/inquiry/show.expires_at_updated'));
@@ -308,6 +328,12 @@ class DixlaseInquiryAdminController extends Controller
         $inquiry = DixlaseInquiry::onlyTrashed()->findOrFail($id);
         $inquiry->restore();
 
+        $this->emitPluginAudit(
+            action: 'inquiry_trash_item_restored',
+            target: $inquiry,
+            context: ['inquiry_id' => $inquiry->id],
+        );
+
         return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
             ->with('success', __('dixlase-inquiry::admin/inquiry/trash.restore_success'));
     }
@@ -325,7 +351,16 @@ class DixlaseInquiryAdminController extends Controller
         $this->authorizeEdit('inquiry.trash.force-destroy');
 
         $inquiry = DixlaseInquiry::onlyTrashed()->findOrFail($id);
+        // Capture the id before forceDelete() detaches the model, so the
+        // audit entry survives even though the row is about to vanish.
+        $destroyedId = (int) $inquiry->id;
         $inquiry->forceDelete();
+
+        $this->emitPluginAudit(
+            action: 'inquiry_trash_item_force_destroyed',
+            context: ['inquiry_id' => $destroyedId],
+            severity: AuditLog::SEVERITY_WARNING,
+        );
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
             ->with('success', __('dixlase-inquiry::admin/inquiry/trash.force_destroy_success'));
@@ -347,6 +382,12 @@ class DixlaseInquiryAdminController extends Controller
             $inquiry->forceDelete();
             $count++;
         });
+
+        $this->emitPluginAudit(
+            action: 'inquiry_trash_emptied',
+            context: ['deleted_count' => $count],
+            severity: AuditLog::SEVERITY_WARNING,
+        );
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.trash.index')
             ->with('success', __('dixlase-inquiry::admin/inquiry/trash.empty_trash_success', ['count' => $count]));
@@ -597,8 +638,24 @@ class DixlaseInquiryAdminController extends Controller
             default => (int) $validated['retention_mode'],
         };
 
+        // Snapshot the previous policy values so the audit entry records
+        // the from/to transition, not just the resulting state. Reads
+        // happen before the writes to catch the actual change set.
+        // getSettings() returns a stdClass (see DixlaseInquirySetting).
+        $settings = DixlaseInquirySetting::getSettings();
+        $previousStoreInquiries = (bool) ($settings->store_inquiries ?? false);
+        $previousRetentionDays = $this->normalizeRetentionDays($settings->retention_days ?? null);
+
         DixlaseInquirySetting::set('store_inquiries', $storeInquiries ? '1' : '0');
         DixlaseInquirySetting::set('retention_days', $retentionDays === null ? null : (string) $retentionDays);
+
+        $this->emitPluginAudit(
+            action: 'inquiry_settings_privacy_updated',
+            context: [
+                'store_inquiries' => ['from' => $previousStoreInquiries, 'to' => $storeInquiries],
+                'retention_days' => ['from' => $previousRetentionDays, 'to' => $retentionDays],
+            ],
+        );
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.privacy')
             ->with('success', __('dixlase-inquiry::admin/inquiry/settings/privacy.settings_updated'));
