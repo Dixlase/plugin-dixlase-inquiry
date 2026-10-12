@@ -154,15 +154,23 @@ class AdminGetRoutesSmokeTest extends TestCase
         );
         View::addNamespace('themes', [$this->themeDirectory]);
 
-        // Register the plugin's admin routes with the role-gating
-        // middleware in the stack. web + auth:member supply session and
-        // authentication; plugin.admin.access supplies the role gate
-        // the Inquiry 0.3.0 class of regression would land in. We
-        // intentionally do NOT include admin.ip / admin.no-cache /
-        // member.active / verified / log.admin.activity /
-        // CheckLockdown — those are core-side gates covered by core
-        // tests, and the plugin never crashes inside them.
-        $adminUrl = (string) config('admin.admin_url', 'admin');
+        // Register the plugin's admin routes under a unique prefix so
+        // we never collide with the routes PluginServiceProvider has
+        // already auto-loaded at boot. In CI the auto-loaded routes
+        // carry the full admin middleware stack (admin.ip /
+        // admin.no-cache / member.active / verified / log.admin.activity
+        // / CheckLockdown / plugin.admin.access), and a GET against the
+        // real admin URL would meet those gates instead of the trimmed
+        // stack this test wants to exercise — a 302 from admin.ip or
+        // admin.no-cache would read as the controller mis-responding
+        // when it never ran.
+        //
+        // web + auth:member supply session and authentication;
+        // plugin.admin.access supplies the role gate the Inquiry 0.3.0
+        // class of regression would land in. The rest of the core
+        // stack is covered by core-side tests.
+        $adminUrl = 'smoke-admin-'.uniqid();
+        config(['admin.admin_url' => $adminUrl]);
         $router = app('router');
         $router->group([
             'prefix' => $adminUrl,
