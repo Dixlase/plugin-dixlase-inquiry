@@ -5,6 +5,22 @@ Dixlase Inquiry プラグインの主要な変更はすべてこのファイル�
 フォーマットは [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) に準拠し、
 本プラグインはセマンティックバージョニングに従います。
 
+## [0.5.4] — 2026-10-13
+
+### 修正
+
+- `plugin.json` の `permissions.settings.write_own` を、スキャナが最初から
+  期待していたとおり `false` に戻した(#69)。0.2.0 でプラグイン自身の設定
+  書き込みコードパスに合わせて `true` にしていたが、
+  `App\Services\Plugin\Scanning\SettingsDetectionPattern` がマッチするのは
+  コアの `SiteSetting` / `SecuritySetting` への書き込みだけ。本プラグインは
+  自前の `plg_dixlase_inquiry_settings` に `DixlaseInquirySetting` 経由で書く
+  のみで、これは既に `database.own_tables` で宣言されている。0.2.0 から 0.5.3
+  までこの不一致を抱えたまま出荷しており、管理画面のプラグイン監査パネルに
+  「権限の不一致: `settings.write_own` — 未使用の権限宣言」として表示されて
+  いた。`_notes`(英日)にも、なぜ false なのかを記述して次の読者が再び
+  `true` に戻してしまわないようにした。
+
 ## [0.5.3] — 2026-10-12
 
 ### 変更
