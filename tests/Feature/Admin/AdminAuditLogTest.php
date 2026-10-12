@@ -110,12 +110,24 @@ class AdminAuditLogTest extends TestCase
 
     public function test_update_privacy_emits_audit_entry(): void
     {
-        $this->actingAs($this->admin, 'member')
+        $response = $this->actingAs($this->admin, 'member')
             ->post('/admin/inquiry/settings/privacy', [
                 'store_inquiries' => '1',
                 'retention_mode' => '180',
-            ])
-            ->assertRedirect();
+            ]);
+
+        // DEBUG: this test passes on dev-app but failed in CI with "No
+        // query results for model [AuditLog]" — surface response status,
+        // Location header, any session errors, and the full audit_logs
+        // table so we can tell whether the request even reached updatePrivacy.
+        fwrite(STDERR, "[privacy-debug] status={$response->baseResponse->getStatusCode()}\n");
+        fwrite(STDERR, '[privacy-debug] location='.($response->baseResponse->headers->get('Location') ?? '(none)')."\n");
+        fwrite(STDERR, '[privacy-debug] session.errors='.json_encode(session('errors')?->toArray() ?? null)."\n");
+        fwrite(STDERR, '[privacy-debug] audit_count='.AuditLog::query()->count()."\n");
+        fwrite(STDERR, '[privacy-debug] audit_actions='.AuditLog::query()->pluck('action')->implode(',')."\n");
+        fwrite(STDERR, '[privacy-debug] settings_rows='.\Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting::query()->count()."\n");
+
+        $response->assertRedirect();
 
         $log = AuditLog::query()
             ->where('action', 'inquiry_settings_privacy_updated')
