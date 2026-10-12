@@ -5,6 +5,24 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.0] — 2026-10-12
+
+### Added
+
+- Audit log for policy-affecting administrator actions (#59). Entries are
+  emitted whenever an operator changes retention policy, edits a single
+  row's expiry, restores or permanently removes a trashed inquiry, empties
+  the trash, runs `dls:inquiry:prune`, or when an admin mail delivery
+  fails. All entries flow through core's `App\Facades\Audit` with
+  `category=plugin`, `plugin_name=dixlase-inquiry`, and a free-form
+  `context` payload. Visitor PII (name / email / message / phone) is
+  deliberately kept out of the context — the audit stream tracks the
+  operator's actions, not the visitor's content, so a site that leaves
+  `store_inquiries` off is not re-collecting the data it promised not to.
+  First plugin to adopt core's `App\DTO\Audit\AuditLogPayload` /
+  `App\Events\AuditLogCreated` surface; the shape doubles as a worked
+  example for other plugins.
+
 ## [0.4.0] — 2026-10-12
 
 ### Fixed

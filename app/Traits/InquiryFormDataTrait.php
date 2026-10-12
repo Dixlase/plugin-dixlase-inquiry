@@ -33,6 +33,7 @@
 namespace Plugins\DixlaseInquiry\App\Traits;
 
 use App\Contracts\PluginIntegration\PrivacyPolicyProviderInterface;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
@@ -44,6 +45,8 @@ use Plugins\DixlaseInquiry\App\Models\DixlaseInquiryMailFailure;
  */
 trait InquiryFormDataTrait
 {
+    use EmitsAdminAuditTrait;
+
     /**
      * CAPTCHA フォームキー（{slug}.{form_key} 形式）
      * CaptchaService がプラグインslugをプレフィックスに付与するため
@@ -249,13 +252,35 @@ trait InquiryFormDataTrait
         ?string $mailableClass = null,
     ): void {
         try {
-            DixlaseInquiryMailFailure::create([
+            $failure = DixlaseInquiryMailFailure::create([
                 'failed_at' => now(),
                 'context' => $context,
                 'recipient_role' => $recipientRole,
                 'mailable' => $mailableClass !== null ? class_basename($mailableClass) : null,
                 'exception_class' => get_class($e),
             ]);
+
+            // Mirror to the audit stream so a mail outage shows up alongside
+            // other operator actions (settings changes, prune runs) in one
+            // place. Only metadata flows through: the recipient address and
+            // the message body are deliberately not written.
+            //
+            // recordMailFailure() is reached from the public submit path
+            // where there is no authenticated member; emitPluginAudit will
+            // write a null actor in that case, which is the right shape for
+            // a system-level event.
+            $this->emitPluginAudit(
+                action: 'inquiry_mail_delivery_failed',
+                target: $failure,
+                context: [
+                    'send_context' => $context,
+                    'recipient_role' => $recipientRole,
+                    'mailable' => $mailableClass !== null ? class_basename($mailableClass) : null,
+                    'exception_class' => get_class($e),
+                ],
+                severity: AuditLog::SEVERITY_WARNING,
+                outcome: AuditLog::OUTCOME_FAILURE,
+            );
         } catch (\Throwable) {
             // Deliberately swallowed; see docblock.
         }
@@ -274,6 +299,7 @@ trait InquiryFormDataTrait
             return null;
         }
         $days = (int) $value;
+
         return $days > 0 ? $days : null;
     }
 
