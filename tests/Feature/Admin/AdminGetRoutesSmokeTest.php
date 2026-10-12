@@ -30,40 +30,51 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace Plugins\DixlaseInquiry\Tests\Feature\Admin;
 
 use App\Enums\MemberRole;
 use App\Models\Member;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Plugins\DixlaseInquiry\App\Models\DixlaseInquiry;
 use Tests\TestCase;
 
 /**
  * Admin GET smoke test.
  *
- * Opens every admin GET route this plugin registers and asserts the
- * server does not return 5xx, for both the admin and the editor role.
+ * Opens every admin GET route this plugin registers, and asserts the
+ * role-specific status it should produce. Captures the class of release
+ * regression that showed up in the Inquiry 0.3.0 incident (a controller
+ * / view / lang-key crash that only surfaces during the real request
+ * lifecycle: middleware stack → controller → view resolution → Blade
+ * compile).
  *
- * This catches the class of release regression that produced the 0.3.0
- * incident: a controller / view / lang-key crash that only surfaces
- * during the real request lifecycle (middleware stack → controller →
- * view resolution → Blade compile). Unit tests on route config or
- * permissions do not fire that lifecycle, so a page can declare clean
- * and still crash on open.
+ * In scope:
+ *   - every GET route under `dixlase-inquiry::admin.inquiry.*`
+ *   - **both** roles — ADMIN and EDITOR — with the status each should
+ *     receive, not just "below 500"
+ *   - the plugin admin middleware stack that gates by role
+ *     (`plugin.admin.access`), so an editor hitting an admin-only route
+ *     meets the gate rather than slipping past a reduced test stack
+ *   - a route whose placeholder has no supplied value fails the test
+ *     loudly instead of silently returning 404 on a literal path
+ *   - a discovery pass that finds nothing fails the test
+ *     (`assertContains` on anchor route names)
  *
- * The test is deliberately narrow:
- *
- *   - **In scope**: status < 500 for every admin GET route under
- *     `dixlase-inquiry::admin.inquiry.*` for admin and editor roles.
- *   - **Out of scope**: 200 vs 403 role boundaries
- *     (RolePermissionConfigTest covers the declarative side); POST /
- *     PATCH / DELETE write flows; MySQL vs SQLite behaviour
- *     differences; CSP / inline-handler scanning.
- *
- * The route list is read from Route::getRoutes() by name prefix, so a
- * new admin GET route added later is picked up with no change here.
+ * Out of scope:
+ *   - `admin.ip`, `admin.no-cache`, `member.active`, `verified`,
+ *     `log.admin.activity`, `CheckLockdown` — those are core-side gates
+ *     verified by core's own tests; wiring the full real stack in the
+ *     plugin harness adds fixture surface without catching anything the
+ *     plugin ships
+ *   - POST / PATCH / DELETE write flows
+ *   - MySQL vs SQLite behaviour differences
+ *   - CSP / inline-handler scanning
  */
 class AdminGetRoutesSmokeTest extends TestCase
 {
@@ -72,23 +83,33 @@ class AdminGetRoutesSmokeTest extends TestCase
     /** Route-name prefix the plugin stamps on every admin route. */
     private const ROUTE_NAME_PREFIX = 'dixlase-inquiry::admin.inquiry.';
 
-    private Member $admin;
-
-    private Member $editor;
+    /**
+     * Routes an EDITOR is expected to be denied on (plugin.admin.access
+     * returns 403 for them). Everything else under the prefix returns
+     * 200 for EDITOR. Mirror of config/admin/roles.php: ADMIN-tier
+     * entries deny EDITOR; EDITOR-tier entries grant them.
+     *
+     * The admin-notification setting is `view_roles=ADMIN,
+     * access_roles=SUPER_ADMIN`: ADMIN may VIEW (GET) the page but not
+     * EDIT (POST), so ADMIN still gets 200 here while EDITOR is denied.
+     */
+    private const EDITOR_DENIED_ROUTES = [
+        'dixlase-inquiry::admin.inquiry.settings.index',
+        'dixlase-inquiry::admin.inquiry.settings.form-basic',
+        'dixlase-inquiry::admin.inquiry.settings.form-basic.preview',
+        'dixlase-inquiry::admin.inquiry.settings.completion',
+        'dixlase-inquiry::admin.inquiry.settings.admin-notification',
+        'dixlase-inquiry::admin.inquiry.settings.auto-reply',
+        'dixlase-inquiry::admin.inquiry.settings.privacy',
+    ];
 
     private DixlaseInquiry $inquiry;
 
     private DixlaseInquiry $trashedInquiry;
 
-    /**
-     * Snapshot of `INSTALLED` before setUp overwrites it. `null` means
-     * "was not set at all"; a string means "was set to this value".
-     * The two shapes have to stay distinct so tearDown can restore the
-     * harness exactly the way it was found, even on harnesses whose
-     * phpunit.xml pins the value with `force="true"` -- writing a
-     * blanket 'false' back would make every later test in the same
-     * process see the installer-redirect path.
-     */
+    private string $themeDirectory;
+
+    /** Snapshot of INSTALLED before setUp; see #64. */
     private ?string $installedEnvBefore = null;
 
     private ?string $installedServerBefore = null;
@@ -99,21 +120,13 @@ class AdminGetRoutesSmokeTest extends TestCase
 
         $this->installedEnvBefore = array_key_exists('INSTALLED', $_ENV) ? (string) $_ENV['INSTALLED'] : null;
         $this->installedServerBefore = array_key_exists('INSTALLED', $_SERVER) ? (string) $_SERVER['INSTALLED'] : null;
-
         $_ENV['INSTALLED'] = 'true';
         $_SERVER['INSTALLED'] = 'true';
 
         // Pin a valid 32-byte AES-256-CBC key regardless of what the
-        // surrounding harness supplied. actingAs() writes to the session,
-        // which goes through the Encrypter -- and we have seen two failure
-        // modes in CI: an empty APP_KEY (dev-app's .env hid this locally)
-        // and an APP_KEY that decodes to the wrong number of bytes (the
-        // plugin workflow injects `base64:dGVzdGtleWZvcmRpeGxhc2VpbnF1aXJ5...`
-        // which is 38 bytes after base64_decode, so AES-256-CBC rejects it
-        // with "Unsupported cipher or incorrect key length"). The fix is
-        // the same in both cases: swap in a known-good key and replace the
-        // encrypter binding directly, so no stale closure or stale
-        // instance can resurface.
+        // surrounding harness supplied; the plugin CI workflow injects
+        // an APP_KEY whose base64_decode is not 32 bytes, so AES-256-CBC
+        // rejects it with "Unsupported cipher or incorrect key length".
         $rawKey = random_bytes(32);
         config([
             'app.key' => 'base64:'.base64_encode($rawKey),
@@ -121,49 +134,45 @@ class AdminGetRoutesSmokeTest extends TestCase
         ]);
         $this->app->instance('encrypter', new \Illuminate\Encryption\Encrypter($rawKey, 'AES-256-CBC'));
 
-        // The plugin's own migrations are not auto-applied in this harness.
-        // Apply them explicitly so the controllers have schema to query.
         Artisan::call('migrate', [
             '--path' => 'plugins/DixlaseInquiry/database/migrations',
             '--realpath' => false,
         ]);
 
-        // View + translator namespaces so @extends('dixlase-inquiry::...')
-        // and __('dixlase-inquiry::...') resolve during the request lifecycle.
         $this->app['view']->addNamespace('dixlase-inquiry', base_path('plugins/DixlaseInquiry/resources/views'));
         $this->app['translator']->addNamespace('dixlase-inquiry', base_path('plugins/DixlaseInquiry/lang'));
 
-        // Preview-mode front views extend `themes::layouts.app`, which
-        // production supplies via whatever theme is active. The plugin test
-        // harness does not load a theme, so point `themes::` at the smoke
-        // test's minimal stub -- otherwise the preview GET route would 500
-        // on an unregistered namespace, which is a test-env gap rather than
-        // a product defect this suite is trying to find.
-        $this->app['view']->addNamespace('themes', __DIR__.'/../../stubs/theme');
+        // Preview-mode front views extend `themes::layouts.app`. Production
+        // supplies that through the active theme; the test harness does
+        // not. A bare layout in a throwaway dir stands in; tearDown
+        // removes it.
+        $this->themeDirectory = storage_path('framework/testing/inquiry-admin-theme-'.uniqid());
+        File::ensureDirectoryExists($this->themeDirectory.'/layouts');
+        File::put(
+            $this->themeDirectory.'/layouts/app.blade.php',
+            '<!DOCTYPE html><html><head><title>test-theme-stub</title></head><body>@yield(\'content\')</body></html>',
+        );
+        View::addNamespace('themes', [$this->themeDirectory]);
 
-        // Register the plugin's admin routes under the admin URL prefix with a
-        // reduced middleware stack. Core's `web + auth:member` is enough to
-        // reach every controller; stripping the IP / lockdown / activity-log
-        // layers keeps the test deterministic without pulling in test
-        // fixtures for each of them. plugin.admin.access is intentionally
-        // left off here — role-gating is a separate assertion
-        // (RolePermissionConfigTest) and this test only cares about 5xx.
+        // Register the plugin's admin routes with the role-gating
+        // middleware in the stack. web + auth:member supply session and
+        // authentication; plugin.admin.access supplies the role gate
+        // the Inquiry 0.3.0 class of regression would land in. We
+        // intentionally do NOT include admin.ip / admin.no-cache /
+        // member.active / verified / log.admin.activity /
+        // CheckLockdown — those are core-side gates covered by core
+        // tests, and the plugin never crashes inside them.
         $adminUrl = (string) config('admin.admin_url', 'admin');
         $router = app('router');
         $router->group([
             'prefix' => $adminUrl,
-            'middleware' => ['web', 'auth:member'],
+            'middleware' => ['web', 'auth:member', 'plugin.admin.access:DixlaseInquiry'],
         ], function () {
             include base_path('plugins/DixlaseInquiry/routes/admin.php');
         });
         $router->getRoutes()->refreshNameLookups();
         $router->getRoutes()->refreshActionLookups();
 
-        // Fixtures for `{id}` placeholders. Keep separate rows for the normal
-        // show screen and the (currently zero but future-proof) trash GETs so
-        // one test does not accidentally rely on the other's state.
-        $this->admin = Member::factory()->create(['role' => MemberRole::ADMIN]);
-        $this->editor = Member::factory()->create(['role' => MemberRole::EDITOR]);
         $this->inquiry = DixlaseInquiry::factory()->create();
         $this->trashedInquiry = DixlaseInquiry::factory()->create();
         $this->trashedInquiry->delete();
@@ -171,6 +180,9 @@ class AdminGetRoutesSmokeTest extends TestCase
 
     protected function tearDown(): void
     {
+        if (isset($this->themeDirectory) && File::isDirectory($this->themeDirectory)) {
+            File::deleteDirectory($this->themeDirectory);
+        }
         if ($this->installedEnvBefore === null) {
             unset($_ENV['INSTALLED']);
         } else {
@@ -184,74 +196,105 @@ class AdminGetRoutesSmokeTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_no_admin_get_route_returns_5xx_for_admin_role(): void
+    public function test_every_admin_get_route_opens_for_admin(): void
     {
-        $urls = $this->adminGetRouteUrls();
-
-        foreach ($urls as $name => $url) {
-            $response = $this->actingAs($this->admin, 'member')->get($url);
-
-            $this->assertLessThan(
-                500,
-                $response->status(),
-                "GET {$url} ({$name}) returned {$response->status()} as admin",
-            );
-        }
+        $this->assertScreensOpenFor(MemberRole::ADMIN);
     }
 
-    public function test_no_admin_get_route_returns_5xx_for_editor_role(): void
+    public function test_every_admin_get_route_opens_for_editor(): void
     {
-        $urls = $this->adminGetRouteUrls();
-
-        foreach ($urls as $name => $url) {
-            $response = $this->actingAs($this->editor, 'member')->get($url);
-
-            $this->assertLessThan(
-                500,
-                $response->status(),
-                "GET {$url} ({$name}) returned {$response->status()} as editor",
-            );
-        }
+        $this->assertScreensOpenFor(MemberRole::EDITOR);
     }
 
-    /**
-     * Discover every admin GET route the plugin registered and resolve
-     * `{id}` placeholders against the seeded fixtures.
-     *
-     * @return array<string, string>  Map of route name to request URL.
-     */
-    private function adminGetRouteUrls(): array
+    private function assertScreensOpenFor(MemberRole $role): void
     {
-        $urls = [];
-        foreach (Route::getRoutes() as $route) {
-            $name = $route->getName();
-            if ($name === null || ! str_starts_with($name, self::ROUTE_NAME_PREFIX)) {
+        $member = Member::factory()->create(['role' => $role]);
+        $this->actingAs($member, 'member');
+
+        $opened = [];
+        $failures = [];
+
+        foreach (Route::getRoutes()->getRoutesByName() as $name => $route) {
+            if (! str_starts_with($name, self::ROUTE_NAME_PREFIX)) {
                 continue;
             }
             if (! in_array('GET', $route->methods(), true)) {
                 continue;
             }
 
-            $uri = $route->uri();
-            if (str_contains($uri, '{id}')) {
-                // Trash sub-tree uses the soft-deleted row so routes bound to
-                // withTrashed() lookups can find it; everything else points
-                // at the live row.
-                $isTrash = str_contains($name, '::admin.inquiry.trash.');
-                $uri = str_replace(
-                    '{id}',
-                    (string) ($isTrash ? $this->trashedInquiry->id : $this->inquiry->id),
-                    $uri,
+            $expectedStatus = $this->expectedStatusFor($role, $name);
+            $response = $this->get(route($name, $this->parametersFor($route, $name)));
+            $opened[] = $name;
+
+            $actual = $response->baseResponse->getStatusCode();
+            if ($actual !== $expectedStatus) {
+                $failures[] = sprintf(
+                    '%s -> expected %d, got %d%s',
+                    $name,
+                    $expectedStatus,
+                    $actual,
+                    $response->exception
+                        ? ' ('.get_class($response->exception).': '.$response->exception->getMessage().')'
+                        : '',
                 );
             }
-            $urls[$name] = '/'.ltrim($uri, '/');
         }
 
-        $this->assertNotEmpty(
-            $urls,
-            'No admin GET routes were discovered; did routes/admin.php load correctly in setUp?',
-        );
+        // A discovery pass that finds nothing would otherwise return a
+        // green test. Pin a handful of anchor routes that must show up.
+        $this->assertContains('dixlase-inquiry::admin.inquiry.index', $opened);
+        $this->assertContains('dixlase-inquiry::admin.inquiry.settings.index', $opened);
+        $this->assertSame([], $failures, implode("\n", $failures));
+    }
 
-        return $urls;
+    /**
+     * Expected HTTP status for `$role` on route `$name`.
+     *
+     * ADMIN sees every admin GET route (200). EDITOR is denied by
+     * plugin.admin.access on the ADMIN-tier settings routes
+     * (listed in EDITOR_DENIED_ROUTES); everything else returns 200.
+     */
+    private function expectedStatusFor(MemberRole $role, string $name): int
+    {
+        if ($role === MemberRole::EDITOR && in_array($name, self::EDITOR_DENIED_ROUTES, true)) {
+            return 403;
+        }
+
+        return 200;
+    }
+
+    /**
+     * Resolve route parameters generically from `parameterNames()`.
+     *
+     * A placeholder without a supplied test value fails the test loudly
+     * instead of letting a literal `{slug}` go out on the wire and
+     * return 404.
+     *
+     * `{id}` is context-sensitive: trash routes point at the soft-
+     * deleted row (so withTrashed() lookups find it); everything else
+     * points at the live row.
+     *
+     * @return array<string, int|string>
+     */
+    private function parametersFor(\Illuminate\Routing\Route $route, string $name): array
+    {
+        $isTrash = str_contains($name, '::admin.inquiry.trash.');
+
+        $values = [
+            'id' => $isTrash ? $this->trashedInquiry->id : $this->inquiry->id,
+        ];
+
+        $parameters = [];
+        foreach ($route->parameterNames() as $parameter) {
+            $this->assertArrayHasKey(
+                $parameter,
+                $values,
+                "No test value supplied for route parameter {{$parameter}} on {$name}. ".
+                'Extend AdminGetRoutesSmokeTest::parametersFor() so a new placeholder cannot slip through as a literal path segment.',
+            );
+            $parameters[$parameter] = $values[$parameter];
+        }
+
+        return $parameters;
     }
 }

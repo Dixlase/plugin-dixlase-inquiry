@@ -5,6 +5,31 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.3] — 2026-10-12
+
+### Changed
+
+- Admin GET smoke test now asserts the role-specific status each route
+  should return, not just `< 500` (#66). Three gaps are closed in one
+  go:
+    - 404 no longer counts as a pass. Route parameters are resolved
+      from `parameterNames()`, and a placeholder with no supplied test
+      value fails the test loudly instead of letting a literal
+      `{slug}` go out on the wire and silently return 404.
+    - the stack is now `web + auth:member + plugin.admin.access`, so
+      the role gate the Inquiry 0.3.0 class of regression would land
+      in actually fires. The editor test exercises the editor's gate
+      (admin-tier settings return 403), where before it reached every
+      screen with no gate in the stack.
+    - a discovery pass that finds nothing fails: `assertContains` is
+      pinned against the two anchor routes `inquiry.index` and
+      `inquiry.settings.index`. Failures are collected per role and
+      reported together with the exception class and message, so one
+      run names every broken screen.
+  The theme stub now lives in a throwaway directory under
+  `storage/framework/testing/` and `tearDown` removes it, replacing the
+  tracked `tests/stubs/theme/`.
+
 ## [0.5.2] — 2026-10-12
 
 ### Fixed
