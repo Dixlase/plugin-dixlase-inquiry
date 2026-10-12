@@ -5,6 +5,20 @@ Dixlase Inquiry プラグインの主要な変更はすべてこのファイル�
 フォーマットは [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) に準拠し、
 本プラグインはセマンティックバージョニングに従います。
 
+## [0.5.2] — 2026-10-12
+
+### 修正
+
+- 管理画面 GET スモークテストの `tearDown()` が、以前は無条件に
+  `INSTALLED` を `false` に書き戻していたが、setUp 前の値を保存して
+  そこへ復元するようにした(#64)。本プラグイン自身の `phpunit.xml`
+  は `INSTALLED` を pin していないため従来は偶然害が無かったが、pin
+  している harness(例: `plugin-dixlase-seo`、`plugin-dixlase-menus`)
+  では、同じプロセスで後に走るテストが `false` を見てしまい
+  `CheckInstallationReady` にインストーラへ redirect されていた。
+  「未設定」と `"false"` を別物として扱い、harness をちょうど始まる
+  前の状態に戻すようにした。
+
 ## [0.5.1] — 2026-10-12
 
 ### 変更

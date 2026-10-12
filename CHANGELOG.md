@@ -5,6 +5,20 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.2] — 2026-10-12
+
+### Fixed
+
+- Admin GET smoke tests now restore `INSTALLED` to its original value in
+  `tearDown()` instead of writing a blanket `false` back (#64). The old
+  code happened to be harmless on this plugin's own harness only because
+  `phpunit.xml` does not pin that env var; on harnesses that do pin it
+  (e.g. `plugin-dixlase-seo`, `plugin-dixlase-menus`), subsequent tests
+  running in the same process would have seen `false` and been
+  redirected by `CheckInstallationReady`. Pre-setUp state is now
+  snapshotted — "was not set" and `"false"` are kept distinct — so the
+  harness is left exactly the way it was found.
+
 ## [0.5.1] — 2026-10-12
 
 ### Changed

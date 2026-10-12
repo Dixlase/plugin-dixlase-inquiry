@@ -80,9 +80,25 @@ class AdminGetRoutesSmokeTest extends TestCase
 
     private DixlaseInquiry $trashedInquiry;
 
+    /**
+     * Snapshot of `INSTALLED` before setUp overwrites it. `null` means
+     * "was not set at all"; a string means "was set to this value".
+     * The two shapes have to stay distinct so tearDown can restore the
+     * harness exactly the way it was found, even on harnesses whose
+     * phpunit.xml pins the value with `force="true"` -- writing a
+     * blanket 'false' back would make every later test in the same
+     * process see the installer-redirect path.
+     */
+    private ?string $installedEnvBefore = null;
+
+    private ?string $installedServerBefore = null;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->installedEnvBefore = array_key_exists('INSTALLED', $_ENV) ? (string) $_ENV['INSTALLED'] : null;
+        $this->installedServerBefore = array_key_exists('INSTALLED', $_SERVER) ? (string) $_SERVER['INSTALLED'] : null;
 
         $_ENV['INSTALLED'] = 'true';
         $_SERVER['INSTALLED'] = 'true';
@@ -155,8 +171,16 @@ class AdminGetRoutesSmokeTest extends TestCase
 
     protected function tearDown(): void
     {
-        $_ENV['INSTALLED'] = 'false';
-        $_SERVER['INSTALLED'] = 'false';
+        if ($this->installedEnvBefore === null) {
+            unset($_ENV['INSTALLED']);
+        } else {
+            $_ENV['INSTALLED'] = $this->installedEnvBefore;
+        }
+        if ($this->installedServerBefore === null) {
+            unset($_SERVER['INSTALLED']);
+        } else {
+            $_SERVER['INSTALLED'] = $this->installedServerBefore;
+        }
         parent::tearDown();
     }
 
