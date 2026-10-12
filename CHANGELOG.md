@@ -5,6 +5,23 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.4] — 2026-10-13
+
+### Fixed
+
+- `plugin.json`'s `permissions.settings.write_own` is now `false`, which is
+  what the scanner has always expected it to be (#69). The flag was flipped
+  to `true` in 0.2.0 to match the plugin's own settings-write code paths,
+  but `App\Services\Plugin\Scanning\SettingsDetectionPattern` only matches
+  writes against core's `SiteSetting` / `SecuritySetting` — this plugin
+  writes to its own `plg_dixlase_inquiry_settings` through
+  `DixlaseInquirySetting`, which is already covered by
+  `database.own_tables`. 0.2.0 → 0.5.3 shipped with the mismatch, which
+  surfaced in the admin plugin audit panel as a "permission mismatch:
+  `settings.write_own` — unused permission declaration" warning. The
+  bilingual `_notes` block now spells out why the flag is `false` so the
+  next reader does not flip it back.
+
 ## [0.5.3] — 2026-10-12
 
 ### Changed

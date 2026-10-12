@@ -2,7 +2,7 @@
     "name": "Dixlase Inquiry",
     "package_name": "dixlase/dixlase-inquiry",
     "slug": "dixlase-inquiry",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "description": {
         "ja": "お問い合わせフォーム機能を提供するプラグインです。",
         "en": "This plugin provides inquiry form functionality."
@@ -111,7 +111,7 @@
         },
         "settings": {
             "read_core": true,
-            "write_own": true
+            "write_own": false
         },
         "members": {
             "read": false,
@@ -138,8 +138,8 @@
             "database.core_tables_read"
         ],
         "_notes": {
-            "en": "Reads site_settings via App\\Facades\\SiteSettings for admin-mode detection and mail-test status. Reads captcha_enabled_forms (no core contract yet) for the dashboard 'captcha not enabled' notification — wrapped in DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() so the v0.2 migration to CaptchaServiceInterface is a one-method change. database.core_tables_read is listed under _optional because the core scanner's DatabaseDetectionPattern regex only recognises a hardcoded shortlist of models (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) and tables (users|members|plugins|media|settings|site_settings|security_settings); facade access (SiteSettings) and CaptchaEnabledForm both fall outside that shortlist and are reported as 'unused declaration' false positives. The declaration is kept because it accurately describes what the plugin touches. See Core repo .claude/plans/handoff-plugin-core-access-cleanup.md.",
-            "ja": "site_settings は App\\Facades\\SiteSettings 経由で管理モード判定とメールテスト状態に参照。captcha_enabled_forms はダッシュボードの『CAPTCHA 未設定』通知で参照 (core 契約が未提供のため一時的な直接アクセス) — DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() に隔離してあり、v0.2 で CaptchaServiceInterface に置き換える際は 1 メソッドの差し替えで済む。database.core_tables_read を _optional に入れているのは、コアスキャナの DatabaseDetectionPattern 正規表現が固定のモデル短縮リスト (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) とテーブル短縮リスト (users|members|plugins|media|settings|site_settings|security_settings) しか認識せず、ファサード経由 (SiteSettings) と CaptchaEnabledForm がいずれもその短縮リスト外で『未使用宣言』の false positive として誤検出されるため。宣言自体はプラグインが実際に触るものを正確に表しているので残す。Core リポジトリの .claude/plans/handoff-plugin-core-access-cleanup.md を参照。"
+            "en": "Reads site_settings via App\\Facades\\SiteSettings for admin-mode detection and mail-test status. Reads captcha_enabled_forms (no core contract yet) for the dashboard 'captcha not enabled' notification — wrapped in DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() so the v0.2 migration to CaptchaServiceInterface is a one-method change. database.core_tables_read is listed under _optional because the core scanner's DatabaseDetectionPattern regex only recognises a hardcoded shortlist of models (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) and tables (users|members|plugins|media|settings|site_settings|security_settings); facade access (SiteSettings) and CaptchaEnabledForm both fall outside that shortlist and are reported as 'unused declaration' false positives. The declaration is kept because it accurately describes what the plugin touches. See Core repo .claude/plans/handoff-plugin-core-access-cleanup.md. settings.write_own is false on purpose: the scanner's SettingsDetectionPattern matches writes to core's SiteSetting / SecuritySetting only. This plugin writes to its own plg_dixlase_inquiry_settings table through DixlaseInquirySetting, which is already covered by database.own_tables; declaring settings.write_own would be an unused permission and shows up as a mismatch in the plugin audit panel.",
+            "ja": "site_settings は App\\Facades\\SiteSettings 経由で管理モード判定とメールテスト状態に参照。captcha_enabled_forms はダッシュボードの『CAPTCHA 未設定』通知で参照 (core 契約が未提供のため一時的な直接アクセス) — DixlaseInquiryDashboardProvider::isCaptchaEnabledForInquiryForm() に隔離してあり、v0.2 で CaptchaServiceInterface に置き換える際は 1 メソッドの差し替えで済む。database.core_tables_read を _optional に入れているのは、コアスキャナの DatabaseDetectionPattern 正規表現が固定のモデル短縮リスト (User|Member|Plugin|Media|Setting|SiteSetting|SecuritySetting) とテーブル短縮リスト (users|members|plugins|media|settings|site_settings|security_settings) しか認識せず、ファサード経由 (SiteSettings) と CaptchaEnabledForm がいずれもその短縮リスト外で『未使用宣言』の false positive として誤検出されるため。宣言自体はプラグインが実際に触るものを正確に表しているので残す。Core リポジトリの .claude/plans/handoff-plugin-core-access-cleanup.md を参照。settings.write_own は意図的に false にしてある: スキャナの SettingsDetectionPattern はコアの SiteSetting / SecuritySetting への書き込みにしかマッチしない。本プラグインは自前の plg_dixlase_inquiry_settings テーブルに DixlaseInquirySetting 経由で書くだけで、これは database.own_tables で既に宣言されている。ここで settings.write_own を true にすると『未使用の権限宣言』として audit に不一致として表示される。"
         }
     },
     "declares": {
