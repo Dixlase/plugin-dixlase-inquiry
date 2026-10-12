@@ -35,4 +35,5 @@ return [
     'configure_captcha' => 'Configure CAPTCHA',
     'unread_inquiries' => 'You have :count unread inquir(y/ies).',
     'view_inquiries' => 'View inquiries',
+    'mail_failures_24h' => ':count inquiry mail delivery failure(s) in the last 24 hours. Visitors may have reached the error page; check the mail transport.',
 ];

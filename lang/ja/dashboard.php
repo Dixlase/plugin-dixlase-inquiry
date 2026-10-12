@@ -35,4 +35,5 @@ return [
     'configure_captcha' => 'CAPTCHAを設定する',
     'unread_inquiries' => '未読のお問い合わせが :count 件あります。',
     'view_inquiries' => '一覧を表示',
+    'mail_failures_24h' => '直近 24 時間で問い合わせメールの送信失敗が :count 件発生しています。訪問者はエラー画面に戻された可能性があります。メールの送信設定をご確認ください。',
 ];
