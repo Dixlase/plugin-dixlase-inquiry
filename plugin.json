@@ -2,7 +2,7 @@
     "name": "Dixlase Inquiry",
     "package_name": "dixlase/dixlase-inquiry",
     "slug": "dixlase-inquiry",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": {
         "ja": "お問い合わせフォーム機能を提供するプラグインです。",
         "en": "This plugin provides inquiry form functionality."
