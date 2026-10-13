@@ -162,7 +162,13 @@ class AdminAuditLogTest extends TestCase
         $this->assertSame(AuditLog::OUTCOME_SUCCESS, $log->outcome);
         $this->assertArrayHasKey('store_inquiries', $log->context);
         $this->assertArrayHasKey('retention_days', $log->context);
-        $this->assertSame(['from' => false, 'to' => true], $log->context['store_inquiries']);
+        // Per key, not as a whole array. `context` is a `json` column, and
+        // MySQL 8 normalises an object's key order when it stores it (by key
+        // length, then by value), so `to` comes back before `from` and
+        // `assertSame` on the array fails there while passing on SQLite,
+        // which round-trips the document verbatim (#73).
+        $this->assertFalse($log->context['store_inquiries']['from']);
+        $this->assertTrue($log->context['store_inquiries']['to']);
         $this->assertSame(180, $log->context['retention_days']['to']);
         $this->assertAuditContextHasNoPii($log->context);
     }
