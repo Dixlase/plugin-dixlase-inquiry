@@ -5,6 +5,20 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.5] — 2026-10-14
+
+### Development
+
+- A self-audit test replays the admin plugin audit's own checks: it fails when a
+  permission declared in `plugin.json` does not match the code, or when a view breaks
+  the CSP strict mode (#72, fixes #71). The `settings.write_own` mismatch that shipped
+  from 0.2.0 to 0.5.3 would have failed this test.
+- The admin audit log test compares the recorded context key by key instead of as an
+  ordered array. MySQL 8 reorders the keys of a JSON column, so the test failed only
+  against MySQL (#74, fixes #73).
+
+No runtime code changed.
+
 ## [0.5.4] — 2026-10-13
 
 ### Fixed
