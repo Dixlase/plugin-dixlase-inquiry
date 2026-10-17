@@ -289,9 +289,10 @@ class DixlaseInquiryFrontController extends Controller
                     ->subject(__('dixlase-inquiry::front.mail.new_inquiry_subject'));
             });
 
-            // Resolve auto-reply text via the helper so DixlaseMultilingual's
-            // current-locale translation wins over the primary-locale value
-            // stored in plg_dixlase_inquiry_settings.
+            // Resolve auto-reply text via the helper so the current-locale
+            // translation (from whichever plugin provides the
+            // SingletonTranslationResolver contract) wins over the
+            // primary-locale value stored in plg_dixlase_inquiry_settings.
             $autoReplySubject = dls_inquiry_localized_setting('auto_reply_subject')
                 ?? ($settings['auto_reply_subject'] ?? '');
             $autoReplyBody = dls_inquiry_localized_setting('auto_reply_body')

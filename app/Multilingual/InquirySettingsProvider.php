@@ -42,10 +42,11 @@ use Plugins\DixlaseInquiry\App\Models\DixlaseInquirySetting;
  * completion_message / auto_reply_subject / auto_reply_body).
  *
  * Registered in plugin.json as the `provider` for the
- * `dixlase-inquiry:settings` singleton type. DixlaseMultilingual calls
- * this when no per-locale translation exists for the requested locale,
- * so the inquiry form falls back to the primary value stored in the
- * existing key-value `plg_dixlase_inquiry_settings` table.
+ * `dixlase-inquiry:settings` singleton type. A translation plugin that
+ * consumes core's TranslatableContentProvider contract calls this when
+ * no per-locale translation exists for the requested locale, so the
+ * inquiry form falls back to the primary value stored in the existing
+ * key-value `plg_dixlase_inquiry_settings` table.
  *
  * The previous Phase-A implementation routed this read through a
  * `DixlaseInquirySettingsAggregate` Eloquent model (with a custom

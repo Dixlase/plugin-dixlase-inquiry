@@ -36,18 +36,17 @@ use App\Helpers\LocaleHelper;
 use Throwable;
 
 /**
- * Bridges the inquiry plugin to the optional Dixlase Multilingual plugin.
+ * Bridges the inquiry plugin to an optional multilingual sibling plugin.
  *
- * When the multilingual plugin is installed and active, the form's selectable
+ * When a multilingual plugin is installed and active, the form's selectable
  * locales and the "auto" resolution follow that plugin's settings. When it is
  * absent, the form falls back to the inquiry plugin's static config and the
  * site's primary locale from core.
  *
- * Multilingual references use string literals rather than class references
- * because DixlaseMultilingual is an optional sibling plugin and may not be on
- * the autoloader at all (e.g. CI environments that exclude it). Touching its
- * `::class` constants would trigger autoload and a fatal error on those
- * environments.
+ * The sibling-plugin reference uses a string literal rather than a `::class`
+ * reference because the sibling is optional and may not be on the autoloader
+ * at all (e.g. CI environments that exclude it). Touching a `::class`
+ * constant would trigger autoload and a fatal error on those environments.
  */
 class InquiryLocaleSupport
 {
