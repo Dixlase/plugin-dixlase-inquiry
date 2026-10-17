@@ -201,8 +201,8 @@ if (! function_exists('dls_inquiry_localized_setting')) {
      *      (derived from the `lang` setting, or the site default when
      *      `lang = 'auto'`), skip the resolver and return the primary
      *      value directly — the primary IS the value for that locale.
-     *   1. DixlaseMultilingual's SingletonTranslationResolver for the
-     *      current locale (anchored on
+     *   1. A plugin that provides core's SingletonTranslationResolver
+     *      contract, for the current locale (anchored on
      *      `(translatable_type='dixlase-inquiry:settings', translatable_id=1)`)
      *   2. Same resolver for the site's default locale
      *   3. The primary value from `plg_dixlase_inquiry_settings`
@@ -214,10 +214,9 @@ if (! function_exists('dls_inquiry_localized_setting')) {
      * save. Without this guard the helper would return `""` and the
      * caller would render empty text instead of the primary fallback.
      *
-     * On single-language sites (no DixlaseMultilingual installed) steps
-     * 1 and 2 are skipped because no resolver is bound, and the helper
-     * returns the primary value directly — the same behaviour as before
-     * Phase 3.
+     * On single-language sites (no resolver bound in the container)
+     * steps 1 and 2 are skipped, and the helper returns the primary
+     * value directly — the same behaviour as before Phase 3.
      *
      * Intended fields: form_heading, form_description, completion_title,
      * completion_message, auto_reply_subject, auto_reply_body. Callers
