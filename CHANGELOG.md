@@ -5,6 +5,13 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.6] — 2026-10-18
+
+### Changed
+
+- Comments, language-file comments and the notes in `plugin.json` no longer name plugins that are not distributed publicly. Each integration is
+  described by the core mechanism it goes through (#76, fixes #75). No behaviour changed.
+
 ## [0.5.5] — 2026-10-14
 
 ### Development
