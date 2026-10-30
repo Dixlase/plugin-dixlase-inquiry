@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/assets/social-preview.png" alt="Dixlase Inquiry" width="640">
+</p>
+
 # Dixlase Inquiry
 
 For Japanese, see [README.ja.md](./README.ja.md).
