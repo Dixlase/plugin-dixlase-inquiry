@@ -140,8 +140,14 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
             ],
             'privacy_consent_text' => 'nullable|string|max:500',
             'throttle_enabled' => 'boolean',
-            'throttle_max_attempts' => 'required_if:throttle_enabled,true|integer|min:1|max:100',
-            'throttle_decay_minutes' => 'required_if:throttle_enabled,true|integer|min:1|max:1440',
+            // `nullable` matters once core restores Laravel's
+            // ConvertEmptyStringsToNull (dixlase-core#642): a cleared field then
+            // arrives as null instead of ''. Laravel skips non-implicit rules for
+            // '' but not for null, so without it `integer` refuses a field the
+            // operator cleared while the limit is off. `required_if` is implicit
+            // and still runs, so the field stays required while the limit is on.
+            'throttle_max_attempts' => 'required_if:throttle_enabled,true|nullable|integer|min:1|max:100',
+            'throttle_decay_minutes' => 'required_if:throttle_enabled,true|nullable|integer|min:1|max:1440',
         ];
     }
 
