@@ -5,6 +5,25 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.8] — 2026-10-30
+
+### Changed
+
+- `requires.dixlase` states the oldest core this works on as a floor (`>=0.1.0`) rather than a
+  caret, so a core 0.2 release does not refuse to install or update it (#88;
+  Dixlase/dixlase-core#790).
+- The plugin thumbnail is replaced with a version with an adjusted layout and colours (#84, fixes
+  #83).
+
+### Development
+
+- Pull requests against `next`, the development branch, run the checks (#80, fixes #79).
+- The release build compares the files with the signature manifest at the tag and stops before
+  building the ZIP on a mismatch (#81; part of Dixlase/dixlase-core#520).
+- The deploy workflow recognises a checkout of this repository by its identity rather than by the
+  text of its URL, and a site it refuses no longer holds the update back from the others (#85; fixes
+  Dixlase/dixlase-core#518 and #519).
+
 ## [0.5.7] — 2026-10-24
 
 ### Development

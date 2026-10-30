@@ -2,7 +2,7 @@
     "name": "Dixlase Inquiry",
     "package_name": "dixlase/dixlase-inquiry",
     "slug": "dixlase-inquiry",
-    "version": "0.5.7",
+    "version": "0.5.9-dev",
     "description": {
         "ja": "お問い合わせフォーム機能を提供するプラグインです。",
         "en": "This plugin provides inquiry form functionality."
@@ -83,7 +83,7 @@
         ]
     },
     "requires": {
-        "dixlase": "^0.1.0",
+        "dixlase": ">=0.1.0",
         "dixlase_api": "^0.1",
         "php": ">=8.3"
     },
@@ -178,8 +178,8 @@
     "files": {
         ".backlog/SPINOFF-extension-prebuilt-assets-release.ja.md": "sha256:c5b79561e4d94b9909ac2c2d609620b939b632bc65a085ccafbcdb2c278f4ed8",
         ".backlog/SPINOFF-extension-prebuilt-assets-release.md": "sha256:cb389be98e08fc5839d05e147d3cf1fbe921163de078f577ca8fad5ed2974831",
-        "CHANGELOG.ja.md": "sha256:1f0d6e56da5b2dec1b8d35c613110cea6da7733a2d4ae5bf4c96e3c999dae554",
-        "CHANGELOG.md": "sha256:b8ed7cca7b14d53a31dfff2f8d9b2b420b4c0be8b6cadfe6df734f053918e047",
+        "CHANGELOG.ja.md": "sha256:5c5e7e7a29e51ee6f56824dab5cc81ab86171c9de16ca6d1bd4240ad18c07d0e",
+        "CHANGELOG.md": "sha256:82b594685c62765c286069db43887d00af9b3bc9b5c28d549d3505686769c23e",
         "CONTRIBUTING.ja.md": "sha256:3a4caffe44c8894f643ca5f9ba48052ae993ec310a0786046cf96cf085572645",
         "CONTRIBUTING.md": "sha256:43210e8040acc963eedfde3869e318b6685ac3bcd8284ea160a8741910bec7c4",
         "COPYRIGHT-POLICY.ja.md": "sha256:d4fc70b09d8c14afd862827d3a55a7c3d2368622327bddf4502109b07e4724b2",
@@ -221,7 +221,7 @@
         "app/Support/MailMarkdown.php": "sha256:99d2fdd0abdc12dfd87f64f0fe466ac3cb36668e098df8a68ca95362d7a5a006",
         "app/Traits/EmitsAdminAuditTrait.php": "sha256:6c2bd13baa8b67b4bf870eafca6684b1cc6a0b8bf8c9e175bbabb31546b813bb",
         "app/Traits/InquiryFormDataTrait.php": "sha256:7075cbbfe732338c75dc67d474d125bd772c9c81a814a86d40f017d423d28d79",
-        "composer.json": "sha256:00695ae50c57c50322a28190c81b3c41fd0b1fa72509d3c22e8725032bf8ab13",
+        "composer.json": "sha256:a123787892e6e0d0e340a6b13e92b4a28c5d0eb06f05b3115bf332d67973af1d",
         "config/admin.php": "sha256:0a00da1bd6724b803a781ae3e74d17b039793f10aeba08a9321465036aa374bd",
         "config/admin/database-cleanup.php": "sha256:05b8aba91318bf9f71546e7612485caaf28e6e85c89b321ede89c1701ccbe29c",
         "config/admin/navigation.php": "sha256:23a017fade3c2fc89bd8279ebbb908c50f1f767811ed37031cf99428b8c08e27",
@@ -275,7 +275,7 @@
         "lang/ja/multilingual_types.php": "sha256:1740e9ee6ef3def8ace893a45d47ec91ad0b86c29c131aa10e4f08cd00af9737",
         "lang/ja/route-slug.php": "sha256:f0112b898cd2517fa59c9ee6b449657aea3ad1a185b6f713d31ec3d7b5f5c937",
         "package-lock.json": "sha256:3a7b5109f13fdc03dfa6521deb12f81188eff0e937a93bdb4d52f39bfd1784c5",
-        "package.json": "sha256:14397896662a0f01164b1f89ff7b4221ee589a099b1f66d641ed99caa148d199",
+        "package.json": "sha256:6a5555c77e64362e0c445f65d79cc9f81db5a49fe92463826efdb32f68760ff0",
         "phpunit.xml": "sha256:5af224233d2b1a5dd0fb482b2b0ef525a5a821044a0c25e8eff2f8f3a52190d7",
         "resources/comment-translations/ja/resources/views/front/inquiries/embed-form.blade.php": "sha256:fbde70a9db7157f5158aa202bd376588dfa5e34d8c645a445e2873aa731ae940",
         "resources/src/css/components/embed-form.scss": "sha256:4adf5cc847d1110c620591d57ddc9ff798690e6d61369df8907c06b26b5ffcc4",
@@ -332,12 +332,12 @@
         "tests/Unit/SettingsConfigTest.php": "sha256:e442309c0717cbe4e1d7830e4fddde18200922a377b065949e180d45d5851a3d",
         "tests/Unit/TranslationFileTest.php": "sha256:087a5f6c39ea78f618bf65ef9b3dbd0b50bfe295af6fbe0aa5c7d0bd0e3fa997",
         "tests/Unit/VersionManifestConsistencyTest.php": "sha256:9c1b33f03c784c3d88c04717750d4ecf5ba2a9bff183174cf8263ccfca54196a",
-        "thumbnail.png": "sha256:be90bef29875c2867473d4d4e45eb80739d5112f6a7de935535204073157d34f",
+        "thumbnail.png": "sha256:3f5b68ae7c39dfeb0254e934f2fcc26eaa5f93386da9e24f666efe7dbf83b926",
         "vite.config.js": "sha256:9e25c76c8453ab58e0279a0bf688f7e11075a1ce38c370fb8d8ca81e168ba8d6"
     },
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-10-23T16:54:09+00:00"
+        "signed_at": "2026-10-30T09:48:10+00:00"
     }
 }
