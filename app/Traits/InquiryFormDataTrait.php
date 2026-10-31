@@ -57,7 +57,7 @@ trait InquiryFormDataTrait
      * Apply the form locale to the application.
      *
      * Resolution is delegated to InquiryLocaleSupport::resolveFormLocale so
-     * the multilingual plugin's settings (when active) and the site's basic
+     * the bound locale resolver's settings (when active) and the site's basic
      * settings (when not) are honoured consistently. After locale resolution
      * the 'auto' name_order_western value is materialised to a bool for views
      * and validation.
@@ -76,7 +76,7 @@ trait InquiryFormDataTrait
      */
     protected function resolvePrivacyPolicyUrl(object $settings): ?string
     {
-        // 法務プラグインが登録されていれば優先
+        // Prefer the registered PrivacyPolicyProviderInterface implementation when available.
         if (app()->bound(PrivacyPolicyProviderInterface::class)) {
             $provider = app(PrivacyPolicyProviderInterface::class);
             if ($provider->isPrivacyPolicyEnabled()) {

@@ -46,7 +46,7 @@ use Tests\TestCase;
  * `DixlaseInquirySettingsAggregate` aggregate model:
  *
  * 1. {@see InquirySettingsProvider} — primary-locale source the
- *    Multilingual plugin calls when no translation exists for the
+ *    the bound SingletonTranslationResolver calls when no translation exists for the
  *    requested locale.
  * 2. `dls_inquiry_localized_setting()` — front-side helper that drives
  *    the actual lookup chain: current locale via

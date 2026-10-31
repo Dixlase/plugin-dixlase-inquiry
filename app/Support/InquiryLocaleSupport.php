@@ -38,10 +38,10 @@ use Throwable;
 /**
  * Bridges the inquiry plugin to an optional multilingual sibling plugin.
  *
- * When a multilingual plugin is installed and active, the form's selectable
- * locales and the "auto" resolution follow that plugin's settings. When it is
- * absent, the form falls back to the inquiry plugin's static config and the
- * site's primary locale from core.
+ * When a sibling plugin binds a locale resolver, the form's selectable
+ * locales and the "auto" resolution follow that resolver's settings. When
+ * it is absent, the form falls back to the inquiry plugin's static config
+ * and the site's primary locale from core.
  *
  * The sibling-plugin reference uses a string literal rather than a `::class`
  * reference because the sibling is optional and may not be on the autoloader
@@ -50,17 +50,17 @@ use Throwable;
  */
 class InquiryLocaleSupport
 {
-    /** FQCN of the multilingual plugin's locale resolver service. */
+    /** FQCN of the sibling plugin's locale resolver service. */
     private const RESOLVER_CLASS = 'Plugins\\DixlaseMultilingual\\App\\Services\\EnabledLocaleResolver';
 
-    /** Mirror of the multilingual plugin's DEFAULT_MODE_FIXED sentinel value. */
+    /** Mirror of the sibling plugin's DEFAULT_MODE_FIXED sentinel value. */
     private const DEFAULT_MODE_FIXED = 'fixed';
 
     /**
-     * Whether the multilingual plugin is installed and bound in the container.
+     * Whether the sibling plugin's locale resolver is bound in the container.
      *
      * Uses the container binding as the single source of truth. A bound entry
-     * implies the multilingual plugin's service provider ran (which only
+     * implies the sibling plugin's service provider ran (which only
      * happens when its class file is autoloadable), so a separate
      * `class_exists` check would be redundant — and would also defeat
      * Mockery-based test mocks where the binding is provided but the class
@@ -75,7 +75,7 @@ class InquiryLocaleSupport
      * Locales selectable as form language.
      *
      * Priority:
-     *   1. Multilingual plugin's enabled locales (when active)
+     *   1. Sibling plugin's enabled locales (when active)
      *   2. config('dixlase-inquiry.locales') fallback
      *   3. LocaleHelper::supportedLocales()
      *

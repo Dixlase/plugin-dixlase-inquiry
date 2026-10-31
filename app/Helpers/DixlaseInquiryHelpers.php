@@ -281,8 +281,8 @@ if (! function_exists('dls_inquiry_is_western')) {
      * Resolve whether the name order should be treated as western.
      *
      * Delegates to InquiryFormResolver so the locale fallback rules stay in
-     * a single place (multilingual plugin → middleware-set locale; otherwise
-     * → site basic-settings default).
+     * a single place (sibling locale resolver bound → middleware-set locale;
+     * otherwise → site basic-settings default).
      *
      * @param  object  $settings  問い合わせ設定オブジェクト
      */

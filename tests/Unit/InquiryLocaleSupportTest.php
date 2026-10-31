@@ -118,7 +118,7 @@ class InquiryLocaleSupportTest extends TestCase
 
     public function test_resolved_default_locale_in_auto_mode_falls_back_to_site_default(): void
     {
-        // In 'auto' mode, the multilingual plugin does not pin a fixed
+        // In 'auto' mode, the bound locale resolver does not pin a fixed
         // default — the inquiry plugin then asks core for the site's
         // basic-settings primary locale (or app locale if site context
         // isn't bootstrapped, which is the case in this unit test).
@@ -149,7 +149,7 @@ class InquiryLocaleSupportTest extends TestCase
     }
 
     /**
-     * Mock the multilingual plugin's EnabledLocaleResolver and bind it as
+     * Mock the sibling plugin's EnabledLocaleResolver and bind it as
      * the singleton instance.
      *
      * @param  list<string>  $enabled
