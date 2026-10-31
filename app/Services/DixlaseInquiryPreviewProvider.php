@@ -322,8 +322,8 @@ class DixlaseInquiryPreviewProvider implements PreviewProviderInterface
      * Resolve a `lang` setting value to a concrete locale.
      *
      * Delegates to InquiryLocaleSupport so the preview shows what visitors
-     * would actually see at the root URL, including the multilingual plugin's
-     * default and the site's basic-settings default.
+     * would actually see at the root URL, including the bound locale
+     * resolver's default and the site's basic-settings default.
      */
     private function resolveLocale(string $lang): string
     {

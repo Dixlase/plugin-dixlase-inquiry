@@ -50,7 +50,7 @@ return [
     'lang_auto' => 'Auto',
     'lang_auto_desc' => "Use the site's default language",
     'lang_help' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" uses the site\'s default language from the basic settings.',
-    'lang_help_multilingual' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" follows the URL locale (e.g., /ja/, /en/), and at the root URL (/) it uses the multilingual plugin\'s default language.',
+    'lang_help_multilingual' => 'Select the language for the inquiry form displayed to visitors. Selecting "Auto" follows the URL locale (e.g., /ja/, /en/), and at the root URL (/) it uses the site\'s default language.',
 
     // フォーム表示方式（form-displayから移動）
     'form_type' => 'Display Settings',
@@ -71,7 +71,7 @@ return [
     'format_western' => 'Western Style',
     'format_western_desc' => 'First/Last name order, single field postal code/phone, single field address',
     'format_style_help' => 'Switches name order (Last/First vs First/Last), postal code/phone number formats, and address input order. Selecting "Auto" follows the site\'s default language (Japanese style for Japanese, Western style otherwise).',
-    'format_style_help_multilingual' => 'Switches name order (Last/First vs First/Last), postal code/phone number formats, and address input order. Selecting "Auto" follows the URL locale (Japanese style at /ja/, Western style at /en/), and at the root URL (/) it follows the multilingual plugin\'s default language.',
+    'format_style_help_multilingual' => 'Switches name order (Last/First vs First/Last), postal code/phone number formats, and address input order. Selecting "Auto" follows the URL locale (Japanese style at /ja/, Western style at /en/), and at the root URL (/) it follows the site\'s default language.',
 
     // フィールド設定
     'field_settings' => 'Field Settings',
