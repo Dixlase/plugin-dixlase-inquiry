@@ -36,8 +36,19 @@ return [
 
     // セクション見出し
     'section_form_settings' => 'Form Settings',
+    'section_lang_format' => 'Language & Format',
+    'section_heading_description' => 'Heading & Description',
     'section_field_settings' => 'Field Settings',
     'section_display_settings' => 'Display Settings',
+    'section_page_layout' => 'Page Layout',
+
+    // Closed-section summaries (shown next to the title in the right sidebar)
+    'summary_not_set' => 'Not set',
+    'summary_required' => 'Required',
+    'summary_optional' => 'Optional',
+    'summary_disabled' => 'Off',
+    'summary_fields' => 'On :enabled · required :required',
+    'summary_throttle_on' => 'On: :max per :min min',
 
     // Form heading & description
     'form_heading' => 'Form Heading',

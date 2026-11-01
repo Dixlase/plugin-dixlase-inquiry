@@ -28,6 +28,65 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
+@php
+    // Closed-section summaries. They describe the form as it was loaded
+    // (or as it came back from validation), so an operator can tell at a
+    // glance what a collapsed section holds.
+
+    $langOptions = \Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::langSelectOptions();
+    $langValue = old('lang', $settings->lang ?? 'auto');
+    $formatValue = old('name_order_western', $settings->name_order_western ?? '0');
+    $formatLabel = match ((string) $formatValue) {
+        'auto' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_auto'),
+        '1' => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_western'),
+        default => __('dixlase-inquiry::admin/inquiry/settings/form-basic.format_japanese'),
+    };
+    $summaryLangFormat = ($langOptions[$langValue] ?? $langValue).' · '.$formatLabel;
+
+    $headingValue = (string) old('form_heading', $settings->form_heading ?? '');
+    $summaryHeading = trim($headingValue) !== ''
+        ? \Illuminate\Support\Str::limit($headingValue, 20)
+        : __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_not_set');
+
+    $fieldEnabledFlags = [
+        'show_subject' => old('show_subject', $settings->show_subject ?? false),
+        'show_address' => old('show_address', $settings->show_address ?? false),
+        'show_phone' => old('show_phone', $settings->show_phone ?? true),
+        'show_gender' => old('show_gender', $settings->show_gender ?? false),
+        'show_kana' => old('show_kana', $settings->show_kana ?? false),
+    ];
+    $fieldRequiredFlags = [
+        'subject_required' => old('subject_required', $settings->subject_required ?? false),
+        'postal_code_required' => old('postal_code_required', $settings->postal_code_required ?? false),
+        'phone_required' => old('phone_required', $settings->phone_required ?? false),
+        'gender_required' => old('gender_required', $settings->gender_required ?? false),
+        'require_kana' => old('require_kana', $settings->require_kana ?? false),
+    ];
+    $summaryFields = __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_fields', [
+        'enabled' => collect($fieldEnabledFlags)->filter(fn ($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN))->count(),
+        'required' => collect($fieldRequiredFlags)->filter(fn ($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN))->count(),
+    ]);
+
+    $isSinglePage = filter_var(old('use_single_page', $settings->use_single_page ?? true), FILTER_VALIDATE_BOOLEAN);
+    $slugValue = (string) old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry');
+    $summaryLayout = ($isSinglePage
+            ? __('dixlase-inquiry::admin/inquiry/settings/form-basic.single_page')
+            : __('dixlase-inquiry::admin/inquiry/settings/form-basic.separate_pages'))
+        .' · /'.$slugValue;
+
+    $summaryPrivacy = filter_var(old('privacy_consent_enabled', $settings->privacy_consent_enabled ?? false), FILTER_VALIDATE_BOOLEAN)
+        ? __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_required')
+        : __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_optional');
+
+    $throttleOn = filter_var(old('throttle_enabled', $settings->throttle_enabled ?? true), FILTER_VALIDATE_BOOLEAN);
+    $summaryThrottle = $throttleOn
+        ? __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_throttle_on', [
+            'max' => (int) old('throttle_max_attempts', $settings->throttle_max_attempts ?? 3),
+            'min' => (int) old('throttle_decay_minutes', $settings->throttle_decay_minutes ?? 5),
+        ])
+        : __('dixlase-inquiry::admin/inquiry/settings/form-basic.summary_disabled');
+@endphp
+
 <x-admin.right-sidebar
     :openLabel="__('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_open')"
     :closeLabel="__('dixlase-inquiry::admin/inquiry/settings/form-basic.sidebar_close')"
@@ -53,24 +112,27 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.preview_page_help')" />
     </div>
 
-    {{-- Form settings section (hidden in simple mode) --}}
+    {{-- ===== 1. Language & input format ===== --}}
     @if($isSimpleMode)
         <input type="hidden" name="lang" value="auto">
         <input type="hidden" name="name_order_western" value="0">
     @else
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_form_settings') }}
-            </h3>
-
-            {{-- Language selector --}}
+        <x-content-editor.sidebar-section
+            :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_lang_format')"
+            icon="fas fa-language"
+            :open="true"
+            :summary="$summaryLangFormat"
+            :errorFields="['lang', 'name_order_western']"
+            rememberKey="dixlase-inquiry.form-basic.lang-format"
+        >
             <div class="space-y-4">
+                {{-- Form language --}}
                 <div>
                     <x-form-label for="lang" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.lang')" />
                     <x-form-select
                         name="lang"
-                        :options="\Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::langSelectOptions()"
-                        :value="old('lang', $settings->lang ?? 'auto')"
+                        :options="$langOptions"
+                        :value="$langValue"
                         xModel="selectedLocale"
                     />
                     @if(\Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport::multilingualEnabled())
@@ -84,8 +146,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 <div>
                     <x-form-label for="name_order_western" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style')" />
                     @php
-                        $rawNameOrder = old('name_order_western', $settings->name_order_western ?? '0');
-                        $nameOrderValue = $rawNameOrder === 'auto' ? 'auto' : (filter_var($rawNameOrder, FILTER_VALIDATE_BOOLEAN) ? '1' : '0');
+                        $nameOrderValue = $formatValue === 'auto' ? 'auto' : (filter_var($formatValue, FILTER_VALIDATE_BOOLEAN) ? '1' : '0');
                     @endphp
                     <x-form-select
                         name="name_order_western"
@@ -103,7 +164,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                         <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.format_style_help')" />
                     @endif
                 </div>
+            </div>
+        </x-content-editor.sidebar-section>
+    @endif
 
+    {{-- ===== 2. Heading & description ===== --}}
+    @unless($isSimpleMode)
+        <x-content-editor.sidebar-section
+            :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_heading_description')"
+            icon="fas fa-heading"
+            :summary="$summaryHeading"
+            :errorFields="['form_heading', 'form_description']"
+            rememberKey="dixlase-inquiry.form-basic.heading-description"
+        >
+            <div class="space-y-4">
                 {{-- Form heading --}}
                 <div>
                     <x-form-label for="form_heading" :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_heading')" />
@@ -128,15 +202,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_description_help')" />
                 </div>
             </div>
-        </div>
-    @endif
+        </x-content-editor.sidebar-section>
+    @endunless
 
-    {{-- Field settings section --}}
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_field_settings') }}
-        </h3>
-
+    {{-- ===== 3. Collected fields ===== --}}
+    <x-content-editor.sidebar-section
+        :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_field_settings')"
+        icon="fas fa-list-check"
+        :open="true"
+        :summary="$summaryFields"
+        :errorFields="[
+            'email_confirm_paste_disabled',
+            'show_kana', 'require_kana',
+            'show_subject', 'subject_required',
+            'show_address', 'postal_code_required', 'address_required',
+            'show_phone', 'phone_required',
+            'show_gender', 'gender_required', 'show_gender_other', 'show_gender_prefer_not_to_say',
+        ]"
+        rememberKey="dixlase-inquiry.form-basic.fields"
+    >
         <x-ui-message type="info" :message="__('dixlase-inquiry::admin/inquiry/settings/form-basic.required_fields_note')" textSize="text-xs" />
 
         <div class="space-y-3">
@@ -260,19 +344,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 />
             </div>
         </div>
-    </div>
+    </x-content-editor.sidebar-section>
 
-    {{-- Display settings section (hidden in simple mode) --}}
+    {{-- ===== 4. Page layout ===== --}}
     @if($isSimpleMode)
         <input type="hidden" name="use_single_page" value="1">
         <input type="hidden" name="inquiry_url_slug" value="{{ old('inquiry_url_slug', $settings->inquiry_url_slug ?? 'inquiry') }}">
         <input type="hidden" name="show_confirmation_page" value="1">
     @else
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_display_settings') }}
-            </h3>
-
+        <x-content-editor.sidebar-section
+            :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_page_layout')"
+            icon="fas fa-sitemap"
+            :summary="$summaryLayout"
+            :errorFields="['use_single_page', 'inquiry_url_slug', 'show_confirmation_page']"
+            rememberKey="dixlase-inquiry.form-basic.page-layout"
+        >
             <div class="space-y-4">
                 <div>
                     <x-form-label :label="__('dixlase-inquiry::admin/inquiry/settings/form-basic.form_type')" />
@@ -317,15 +403,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 />
                 <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.show_confirmation_help')" />
             </div>
-        </div>
+        </x-content-editor.sidebar-section>
     @endif
 
-    {{-- Privacy consent section --}}
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_privacy') }}
-        </h3>
-
+    {{-- ===== 5. Privacy consent ===== --}}
+    <x-content-editor.sidebar-section
+        :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_privacy')"
+        icon="fas fa-shield-halved"
+        :summary="$summaryPrivacy"
+        :errorFields="['privacy_consent_enabled', 'privacy_policy_url', 'privacy_consent_text']"
+        rememberKey="dixlase-inquiry.form-basic.privacy"
+    >
         <div class="space-y-4">
             <div>
                 <x-form-toggle
@@ -361,19 +449,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                 </div>
             </div>
         </div>
-    </div>
+    </x-content-editor.sidebar-section>
 
-    {{-- Throttle section (hidden in simple mode) --}}
+    {{-- ===== 6. Submission throttle ===== --}}
     @if($isSimpleMode)
         <input type="hidden" name="throttle_enabled" value="1">
         <input type="hidden" name="throttle_max_attempts" value="3">
         <input type="hidden" name="throttle_decay_minutes" value="5">
     @else
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                {{ __('dixlase-inquiry::admin/inquiry/settings/form-basic.section_throttle') }}
-            </h3>
-
+        <x-content-editor.sidebar-section
+            :title="__('dixlase-inquiry::admin/inquiry/settings/form-basic.section_throttle')"
+            icon="fas fa-gauge-high"
+            :summary="$summaryThrottle"
+            :errorFields="['throttle_enabled', 'throttle_max_attempts', 'throttle_decay_minutes']"
+            rememberKey="dixlase-inquiry.form-basic.throttle"
+        >
             <div class="space-y-4">
                 <div>
                     <x-form-toggle
@@ -410,7 +500,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
                     <x-form-help-text :text="__('dixlase-inquiry::admin/inquiry/settings/form-basic.throttle_help')" />
                 </div>
             </div>
-        </div>
+        </x-content-editor.sidebar-section>
     @endif
 
 </x-admin.right-sidebar>
