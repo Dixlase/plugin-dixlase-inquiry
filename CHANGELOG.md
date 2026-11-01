@@ -5,6 +5,17 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.5.9] — 2026-11-01
+
+### Fixed
+
+- A cleared submission-limit field no longer stops the basic settings screen from saving (#89, fixes
+  #82). `throttle_max_attempts` and `throttle_decay_minutes` are now nullable, so they accept an
+  empty value while the submission limit is off and stay required while it is on. Core 0.2.0
+  converts empty inputs to `null` (Dixlase/dixlase-core#783), which these fields refused; this
+  release works on both the current and the coming core, so install it before updating core to
+  0.2.0.
+
 ## [0.5.8] — 2026-10-30
 
 ### Changed

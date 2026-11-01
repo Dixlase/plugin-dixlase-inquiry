@@ -2,7 +2,7 @@
     "name": "Dixlase Inquiry",
     "package_name": "dixlase/dixlase-inquiry",
     "slug": "dixlase-inquiry",
-    "version": "0.5.8",
+    "version": "0.5.9",
     "description": {
         "ja": "お問い合わせフォーム機能を提供するプラグインです。",
         "en": "This plugin provides inquiry form functionality."
@@ -178,8 +178,8 @@
     "files": {
         ".backlog/SPINOFF-extension-prebuilt-assets-release.ja.md": "sha256:c5b79561e4d94b9909ac2c2d609620b939b632bc65a085ccafbcdb2c278f4ed8",
         ".backlog/SPINOFF-extension-prebuilt-assets-release.md": "sha256:cb389be98e08fc5839d05e147d3cf1fbe921163de078f577ca8fad5ed2974831",
-        "CHANGELOG.ja.md": "sha256:5c5e7e7a29e51ee6f56824dab5cc81ab86171c9de16ca6d1bd4240ad18c07d0e",
-        "CHANGELOG.md": "sha256:82b594685c62765c286069db43887d00af9b3bc9b5c28d549d3505686769c23e",
+        "CHANGELOG.ja.md": "sha256:2a1b937dd7820bc7eae1b8d40282f8391f412d525ea0cd184f0d455f7d7845ee",
+        "CHANGELOG.md": "sha256:7ee9e2215fe38959ce9acf656c068529a9ebe2d8bd6102d818dd8bddea1c7a49",
         "CONTRIBUTING.ja.md": "sha256:3a4caffe44c8894f643ca5f9ba48052ae993ec310a0786046cf96cf085572645",
         "CONTRIBUTING.md": "sha256:43210e8040acc963eedfde3869e318b6685ac3bcd8284ea160a8741910bec7c4",
         "COPYRIGHT-POLICY.ja.md": "sha256:d4fc70b09d8c14afd862827d3a55a7c3d2368622327bddf4502109b07e4724b2",
@@ -201,7 +201,7 @@
         "app/Http/Requests/Admin/DixlaseInquiryAdminNotificationRequest.php": "sha256:b84635fcd45ff49720b7c20ef235fb1e18d0ab8eca8d1e54414c7593072c306f",
         "app/Http/Requests/Admin/DixlaseInquiryAutoReplyRequest.php": "sha256:ae0286ccae34c132eb3cb47e75db7efc987567b321ab034322b96744a15b7933",
         "app/Http/Requests/Admin/DixlaseInquiryCompletionRequest.php": "sha256:bad4157794232f6d92fb3ce700d283b75af51139b37e8daafe6c4302e1a5efd0",
-        "app/Http/Requests/Admin/DixlaseInquiryFormBasicRequest.php": "sha256:adb116dc9fc35123600998d1d758bc467e968dcff2c1e716888ba5d2aa51b283",
+        "app/Http/Requests/Admin/DixlaseInquiryFormBasicRequest.php": "sha256:ae8f5b2757b0695880fb11eb42be2b97c893190fc7b401e5e25c23dbf988de8f",
         "app/Http/Requests/Admin/DixlaseInquiryPrivacyRequest.php": "sha256:a3a6820c27d207bcc394b6a9e4e45d79c159f185e9ee2f090a5707c26f011366",
         "app/Http/Requests/DixlaseInquirySubmitRequest.php": "sha256:d539bb60186fbd3b31e78167af9f43d8f8537fa0bd08c6c078462b7fd0885a19",
         "app/Http/Requests/Front/DixlaseInquiryEmbedSendRequest.php": "sha256:de8f83f5580a7ccff126e9b19825ecd2d23fa32655a5898992b5f2e69a60ce81",
@@ -221,7 +221,7 @@
         "app/Support/MailMarkdown.php": "sha256:99d2fdd0abdc12dfd87f64f0fe466ac3cb36668e098df8a68ca95362d7a5a006",
         "app/Traits/EmitsAdminAuditTrait.php": "sha256:6c2bd13baa8b67b4bf870eafca6684b1cc6a0b8bf8c9e175bbabb31546b813bb",
         "app/Traits/InquiryFormDataTrait.php": "sha256:7075cbbfe732338c75dc67d474d125bd772c9c81a814a86d40f017d423d28d79",
-        "composer.json": "sha256:a123787892e6e0d0e340a6b13e92b4a28c5d0eb06f05b3115bf332d67973af1d",
+        "composer.json": "sha256:7f772cfe35fd0e534ea41e1039a9883a786c4b85232fb82e759155a81fd52dd4",
         "config/admin.php": "sha256:0a00da1bd6724b803a781ae3e74d17b039793f10aeba08a9321465036aa374bd",
         "config/admin/database-cleanup.php": "sha256:05b8aba91318bf9f71546e7612485caaf28e6e85c89b321ede89c1701ccbe29c",
         "config/admin/navigation.php": "sha256:23a017fade3c2fc89bd8279ebbb908c50f1f767811ed37031cf99428b8c08e27",
@@ -275,7 +275,7 @@
         "lang/ja/multilingual_types.php": "sha256:1740e9ee6ef3def8ace893a45d47ec91ad0b86c29c131aa10e4f08cd00af9737",
         "lang/ja/route-slug.php": "sha256:f0112b898cd2517fa59c9ee6b449657aea3ad1a185b6f713d31ec3d7b5f5c937",
         "package-lock.json": "sha256:3a7b5109f13fdc03dfa6521deb12f81188eff0e937a93bdb4d52f39bfd1784c5",
-        "package.json": "sha256:6a5555c77e64362e0c445f65d79cc9f81db5a49fe92463826efdb32f68760ff0",
+        "package.json": "sha256:8ef1b7bc1290bcad7b8a770600e153802a6c8956a173d9e682c3c18fd7c4ec22",
         "phpunit.xml": "sha256:5af224233d2b1a5dd0fb482b2b0ef525a5a821044a0c25e8eff2f8f3a52190d7",
         "resources/comment-translations/ja/resources/views/front/inquiries/embed-form.blade.php": "sha256:fbde70a9db7157f5158aa202bd376588dfa5e34d8c645a445e2873aa731ae940",
         "resources/src/css/components/embed-form.scss": "sha256:4adf5cc847d1110c620591d57ddc9ff798690e6d61369df8907c06b26b5ffcc4",
@@ -307,6 +307,7 @@
         "scripts/bump-version.php": "sha256:2842661224a9ec36dd5cb26e7d629bf1db17387b263c5e8e9add4ecb8d4a2ab8",
         "tests/Feature/Admin/AdminAuditLogTest.php": "sha256:33028565f4472d79d9328132e60097dc7d8351bf3e39a1ce4ad661c6bbb1e849",
         "tests/Feature/Admin/AdminGetRoutesSmokeTest.php": "sha256:b41a224d4454746b28e867cd6065b972de3213f22d066e5f34e3cb0357f97b70",
+        "tests/Feature/Admin/FormBasicThrottleFieldsTest.php": "sha256:429726e7cc6e8595b59147d96eaece9a9bedfcfde79f36af15ec50b3f66bb1df",
         "tests/Feature/PluginSelfAuditTest.php": "sha256:52a6a008aef16aeae0b67e01acdfd999d72b33a7aee509125fa3fcdbec80d153",
         "tests/Unit/AdminModalEscapeTest.php": "sha256:b4c027f68b85811f5c4595f07be448eb8b447bfd658e4bf8a3c3df096bd3179c",
         "tests/Unit/ClosedFormAndMailEscapingTest.php": "sha256:1475057faa5a663a5a4ff10236886c9d561e19fe956931f6892a8395537add79",
@@ -338,6 +339,6 @@
     "signing": {
         "algo": "ed25519",
         "key_id": "dixlase-authority-2026",
-        "signed_at": "2026-10-30T09:48:10+00:00"
+        "signed_at": "2026-11-01T13:49:45+00:00"
     }
 }
