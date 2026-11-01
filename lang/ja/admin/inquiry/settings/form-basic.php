@@ -36,8 +36,19 @@ return [
 
     // セクション見出し
     'section_form_settings' => 'フォーム設定',
+    'section_lang_format' => '言語と入力形式',
+    'section_heading_description' => '見出しと説明文',
     'section_field_settings' => 'フィールド設定',
     'section_display_settings' => 'フォーム表示設定',
+    'section_page_layout' => 'ページ構成',
+
+    // サイドバーの閉じたセクションに表示するサマリー
+    'summary_not_set' => '未設定',
+    'summary_required' => '必須',
+    'summary_optional' => '任意',
+    'summary_disabled' => '無効',
+    'summary_fields' => '有効 :enabled・必須 :required',
+    'summary_throttle_on' => '有効: :max 回 / :min 分',
 
     // フォーム見出し・説明
     'form_heading' => 'フォーム見出し',
