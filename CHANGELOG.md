@@ -5,6 +5,22 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.6.0] — 2026-11-01
+
+### Added
+
+- The right sidebar of the form's basic settings is grouped into sections that open and close, built
+  on core's sidebar-section part, matching the blog post editor (#93, fixes #92). Validation and the
+  saved settings are unchanged.
+
+### Changed
+
+- **This release needs core 0.2.0**, the first release with that part (`requires.dixlase` is
+  `>=0.2.0`).
+- Comments, test descriptions and admin text no longer name other extensions that are not published
+  (#90, fixes #77).
+- Both READMEs open with the social preview image (#87, fixes #86).
+
 ## [0.5.9] — 2026-11-01
 
 ### Fixed
