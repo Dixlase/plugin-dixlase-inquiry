@@ -57,4 +57,32 @@ final class MailMarkdown
 
         return (string) preg_replace('/([\\\\`*_{}\[\]()!#|~])/', '\\\\$1', $text);
     }
+
+    /**
+     * Escape a block of text and keep the line breaks the visitor typed.
+     *
+     * escape() leaves newlines alone, and a bare newline in Markdown is a
+     * soft break, which renders as a single space -- so a message written
+     * in paragraphs arrived as one run-on line in the HTML part of the
+     * mail. Each newline becomes a hard break (two trailing spaces, the
+     * CommonMark form) so the shape of the message survives.
+     *
+     * A blank line keeps its paragraph break: the two spaces left on an
+     * otherwise empty line do not make it non-blank for Markdown. The
+     * plain-text part is unaffected, because the trailing spaces are
+     * invisible there.
+     *
+     * Use this for free-form text. Single-line fields (a name, a subject)
+     * stay on escape(), where a trailing hard break would be noise.
+     */
+    public static function escapeBlock(mixed $value): string
+    {
+        $text = self::escape($value);
+
+        // Normalise CRLF / CR first so a Windows browser's line endings do
+        // not produce two breaks where the visitor typed one.
+        $text = (string) preg_replace('/\\r\\n?/', "\n", $text);
+
+        return (string) preg_replace('/\\n/', "  \n", $text);
+    }
 }
