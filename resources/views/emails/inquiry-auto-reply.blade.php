@@ -29,7 +29,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 --}}
 
 {{-- Visitor-supplied values go through MailMarkdown::escape() so Markdown
-     in them (links, images, emphasis) renders as plain text. --}}
+     in them (links, images, emphasis) renders as plain text. The message
+     uses escapeBlock(), which also keeps the line breaks the visitor
+     typed; a bare newline is a soft break in Markdown and would render
+     the whole message as one line. --}}
 <x-mail::message>
 # {{ __('dixlase-inquiry::front.mail.auto_reply.title') }}
 
@@ -54,7 +57,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 **{{ __('dixlase-inquiry::front.form.message') }}**
 
-{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escape($inquiryData['message'] ?? '') }}
+{{ \Plugins\DixlaseInquiry\App\Support\MailMarkdown::escapeBlock($inquiryData['message'] ?? '') }}
 
 ---
 
