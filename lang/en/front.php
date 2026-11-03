@@ -182,7 +182,6 @@ return [
     ],
 
     'messages' => [
-        'service_unavailable' => 'The contact form is currently unavailable.',
         'submit_success' => 'Your inquiry has been sent successfully. Thank you.',
         'submit_error' => 'An error occurred while sending your inquiry. Please try again later.',
         'too_many_requests' => 'Too many submissions in a short time. Please wait a few minutes and try again.',
