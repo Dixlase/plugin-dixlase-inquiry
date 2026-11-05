@@ -5,6 +5,19 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.6.1] — 2026-11-05
+
+### Fixed
+
+- The line breaks of an inquiry's message are kept in the HTML part of both the notification to the
+  administrator and the auto-reply to the visitor (#96, fixes #94). The message used to arrive as one
+  run-on line.
+
+### Removed
+
+- Two controller methods left from the old standalone inquiry page, which no route reached, and the
+  message only they used (#97, fixes #95).
+
 ## [0.6.0] — 2026-11-01
 
 ### Added
