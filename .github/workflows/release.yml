@@ -64,20 +64,12 @@ jobs:
         # Dixlase/dixlase-core#520.
         run: .github/scripts/check-manifest.sh plugin.json
 
-      - name: Setup Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install npm dependencies
-        run: npm ci --no-audit --no-fund
-
-      - name: Build frontend assets
-        # `resources/assets/` is gitignored so a plain git archive
-        # would omit the compiled output. Populate it now so the
-        # stage step (below) can include the freshly-built tree.
-        run: NODE_ENV=production npm run build
+      # No front-end build here any more. resources/assets is committed, so
+      # the step above has already compared those bytes against the signed
+      # manifest: a release whose assets were not rebuilt and re-signed
+      # fails there rather than shipping a tree the signature does not
+      # describe. Building here would overwrite the signed bytes with new
+      # hashed filenames and break every hash in the manifest.
 
       - name: Stage release payload
         id: stage
