@@ -39,6 +39,34 @@ use Plugins\DixlaseInquiry\App\Support\InquiryLocaleSupport;
 class DixlaseInquiryFormBasicRequest extends FormRequest
 {
     /**
+     * The settings on this page that are booleans.
+     *
+     * Shared with DixlaseInquiryFormBasicPreviewRequest, which normalizes
+     * them differently because the preview button sends them in another
+     * spelling. One list, so the two cannot drift apart.
+     */
+    public const BOOLEAN_FIELDS = [
+        'use_single_page',
+        'show_subject',
+        'subject_required',
+        'show_address',
+        'postal_code_required',
+        'address_required',
+        'show_phone',
+        'phone_required',
+        'show_gender',
+        'gender_required',
+        'show_gender_other',
+        'show_gender_prefer_not_to_say',
+        'email_confirm_paste_disabled',
+        'show_kana',
+        'require_kana',
+        'show_confirmation_page',
+        'privacy_consent_enabled',
+        'throttle_enabled',
+    ];
+
+    /**
      * リクエストの認可判定
      */
     public function authorize(): bool
@@ -157,29 +185,8 @@ class DixlaseInquiryFormBasicRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $booleanFields = [
-            'use_single_page',
-            'show_subject',
-            'subject_required',
-            'show_address',
-            'postal_code_required',
-            'address_required',
-            'show_phone',
-            'phone_required',
-            'show_gender',
-            'gender_required',
-            'show_gender_other',
-            'show_gender_prefer_not_to_say',
-            'email_confirm_paste_disabled',
-            'show_kana',
-            'require_kana',
-            'show_confirmation_page',
-            'privacy_consent_enabled',
-            'throttle_enabled',
-        ];
-
         $data = [];
-        foreach ($booleanFields as $field) {
+        foreach (self::BOOLEAN_FIELDS as $field) {
             $data[$field] = $this->has($field) ? (bool) $this->input($field) : false;
         }
 
