@@ -47,6 +47,7 @@ use Plugins\DixlaseInquiry\App\Enums\InquiryStatus;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAdminNotificationRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryAutoReplyRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryCompletionRequest;
+use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicPreviewRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryFormBasicRequest;
 use Plugins\DixlaseInquiry\App\Http\Requests\Admin\DixlaseInquiryPrivacyRequest;
 use Plugins\DixlaseInquiry\App\Mail\DixlaseInquiryAdminNotification;
@@ -691,28 +692,12 @@ class DixlaseInquiryAdminController extends Controller
     /**
      * プレビュー設定をセッションに保存してリダイレクト
      */
-    public function storePreviewSettings(Request $request): RedirectResponse
+    public function storePreviewSettings(DixlaseInquiryFormBasicPreviewRequest $request): RedirectResponse
     {
         $this->authorizeEdit('inquiry.settings.form-basic');
 
-        $settingsData = $request->except(['_token']);
-        // 真偽値フィールドを正規化
-        $boolFields = [
-            'use_single_page', 'show_subject', 'subject_required',
-            'show_address', 'postal_code_required', 'address_required',
-            'show_phone', 'phone_required', 'show_gender', 'gender_required',
-            'show_gender_other', 'show_gender_prefer_not_to_say',
-            'email_confirm_paste_disabled',
-            'show_kana', 'require_kana', 'privacy_consent_enabled', 'throttle_enabled',
-            'show_confirmation_page',
-        ];
-        foreach ($boolFields as $field) {
-            if (isset($settingsData[$field])) {
-                $settingsData[$field] = filter_var($settingsData[$field], FILTER_VALIDATE_BOOLEAN);
-            }
-        }
-
-        session(['inquiry_preview_settings' => $settingsData]);
+        // Only what this page saves, validated the way saving it is.
+        session(['inquiry_preview_settings' => $request->validated()]);
 
         return redirect()->route('dixlase-inquiry::admin.inquiry.settings.form-basic.preview');
     }
@@ -731,8 +716,17 @@ class DixlaseInquiryAdminController extends Controller
         }
 
         // DB設定をベースにプレビュー設定で上書き
+        //
+        // The keys this page owns, so the merge states what the preview
+        // is about rather than taking whatever the session holds.
+        //
+        // Instantiated directly rather than resolved from the container:
+        // resolving a FormRequest validates it, and nothing is being
+        // submitted here.
+        $allowedKeys = array_keys((new DixlaseInquiryFormBasicPreviewRequest())->rules());
+
         $merged = (array) $dbSettings;
-        foreach ($previewData as $key => $value) {
+        foreach (array_intersect_key($previewData, array_flip($allowedKeys)) as $key => $value) {
             $merged[$key] = $value;
         }
 
@@ -815,12 +809,18 @@ class DixlaseInquiryAdminController extends Controller
         }
 
         // トグルに応じてメール送信
-        if ($previewSendEmail && ! empty($settings->admin_email)) {
-            try {
-                Mail::to($settings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $settings));
+        //
+        // Built from the stored settings, so the mail the preview sends
+        // is the mail the site sends. The notification settings belong to
+        // their own page.
+        $mailSettings = DixlaseInquirySetting::getSettings();
 
-                if (($settings->auto_reply_enabled ?? false) && ! empty($validated['email'])) {
-                    Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $settings));
+        if ($previewSendEmail && ! empty($mailSettings->admin_email)) {
+            try {
+                Mail::to($mailSettings->admin_email)->send(new DixlaseInquiryAdminNotification($inquiryData, $mailSettings));
+
+                if (($mailSettings->auto_reply_enabled ?? false) && ! empty($validated['email'])) {
+                    Mail::to($validated['email'])->send(new DixlaseInquiryAutoReply($inquiryData, $mailSettings));
                 }
             } catch (\Exception $e) {
                 \Log::error('Inquiry preview mail send failed: '.$e->getMessage());
