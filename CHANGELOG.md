@@ -5,6 +5,14 @@ All notable changes to the Dixlase Inquiry plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this plugin follows Semantic Versioning.
 
+## [0.6.3] — 2026-11-08
+
+### Security
+
+- The form preview applied weaker validation than the page it previews, so input the page
+  itself would refuse could reach the preview. The preview now validates against the previewed
+  page's own rules (#103, GHSA-rpww-qm4f-82v3).
+
 ## [0.6.2] — 2026-11-06
 
 ### Changed
