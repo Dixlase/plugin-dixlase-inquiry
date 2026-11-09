@@ -1,6 +1,6 @@
 {
     "name": "plugins/dixlase-inquiry",
-    "version": "0.6.4",
+    "version": "0.6.5-dev",
     "description": "Dixlase Inquiry - Contact form plugin for Dixlase",
     "private": true,
     "type": "module",
