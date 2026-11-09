@@ -2,7 +2,7 @@
     "name": "dixlase/dixlase-inquiry",
     "description": "This is the DixlaseInquiry.",
     "type": "dixlase-plugin",
-    "version": "0.6.4-dev",
+    "version": "0.6.4",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
